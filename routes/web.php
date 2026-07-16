@@ -1,0 +1,87 @@
+<?php
+
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\SmartTagController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PublicTagController;
+use Illuminate\Support\Facades\Route;
+
+$services = [
+    'biker-tag' => [
+        'eyebrow' => 'Linea inicial',
+        'title' => 'Biker Tag QR de emergencia',
+        'short' => 'Identificacion fisica para motociclistas con perfil privado, contactos de emergencia y datos medicos esenciales.',
+        'price' => '$449 a $699',
+        'renewal' => '$149 a $299 anual',
+        'hero_image' => 'connected-products-hero.png',
+        'accent' => 'warning',
+        'audience' => 'Motociclistas, clubes y riders que necesitan una forma simple de compartir informacion critica cuando cada minuto cuenta.',
+        'features' => [
+            'Tag metalico o acrilico grabado con QR',
+            'Perfil editable con alergias, tipo de sangre y contactos',
+            'Boton directo de WhatsApp o llamada',
+            'Activacion, desactivacion y cambio de propietario',
+            'Opcion para motoclubes con registro por integrante',
+            'Reposicion y renovacion anual del perfil',
+        ],
+        'packages' => [
+            ['name' => 'Biker Esencial', 'range' => '$549-$799', 'items' => 'Tag QR, perfil privado, 2 contactos y activacion.'],
+            ['name' => 'Biker Club', 'range' => '$1,099-$1,599', 'items' => 'Tag, parche/nombre, pagina de club y carga de miembros.'],
+            ['name' => 'Motoclub', 'range' => 'Desde $4,500', 'items' => 'Lote de tags, panel, imagen del club y reposiciones.'],
+        ],
+    ],
+    'dog-tags' => [
+        'eyebrow' => 'Producto independiente',
+        'title' => 'Dog Tags QR para mascotas',
+        'short' => 'Placas personalizadas para mascotas con perfil editable, alerta al propietario y contacto rapido desde el celular.',
+        'price' => '$249 a $549',
+        'renewal' => '$149 a $299 anual',
+        'hero_image' => 'connected-products-hero.png',
+        'accent' => 'success',
+        'audience' => 'Familias, veterinarias, esteticas caninas y rescatistas que quieren identificacion bonita, durable y conectada.',
+        'features' => [
+            'Placa MDF, acrilico o 3D con QR grabado',
+            'Perfil con nombre, foto, notas y datos del responsable',
+            'Boton de contacto por WhatsApp',
+            'Control de privacidad para mostrar solo lo necesario',
+            'Cambio de propietario o datos sin fabricar otra placa',
+            'Paquetes para una mascota o familia completa',
+        ],
+        'packages' => [
+            ['name' => 'Pet Basico', 'range' => '$349-$499', 'items' => 'Placa QR, perfil editable y contacto principal.'],
+            ['name' => 'Pet Smart', 'range' => '$599-$799', 'items' => 'Placa premium, foto, datos medicos y alerta por WhatsApp.'],
+            ['name' => 'Pet Family', 'range' => '$999-$1,499', 'items' => 'Set de placas para varias mascotas y perfiles agrupados.'],
+        ],
+    ],
+];
+
+Route::get('/', function () {
+    return view('home');
+})->name('home');
+
+Route::get('/servicios/{service}', function (string $service) use ($services) {
+    abort_unless(isset($services[$service]), 404);
+
+    return view('service', [
+        'service' => $services[$service],
+        'slug' => $service,
+    ]);
+})->name('services.show');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/admin/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/admin/login', [AuthController::class, 'login'])->name('login.store');
+});
+
+Route::post('/admin/logout', [AuthController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');
+
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', DashboardController::class)->name('dashboard');
+    Route::get('/tags/{tag}/qr', [SmartTagController::class, 'qr'])->name('tags.qr');
+    Route::resource('tags', SmartTagController::class)->except('destroy');
+});
+
+Route::get('/t/{token}', PublicTagController::class)->name('tags.public');
+Route::post('/t/{token}/scan', [PublicTagController::class, 'scan'])->name('tags.scan');
