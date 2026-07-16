@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Dog Tag QR | LabCustom')
+@section('title', 'Dog Tag QR | ForjaLab')
 
 @section('content')
     <section class="qr-landing dog-qr">

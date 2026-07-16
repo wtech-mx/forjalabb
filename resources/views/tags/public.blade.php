@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Perfil de emergencia | LabCustom')
+@section('title', 'Perfil de emergencia | ForjaLab')
 
 @section('content')
     <section class="public-profile-section">

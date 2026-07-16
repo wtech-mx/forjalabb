@@ -1,12 +1,13 @@
 @extends('layouts.app')
 
-@section('title', $service['title'].' | LabCustom')
+@section('title', $service['title'].' | ForjaLab')
 
 @section('content')
     <section class="service-hero">
         <div class="container">
             <div class="row align-items-center g-5">
                 <div class="col-lg-6">
+                    <div class="glass-copy">
                     <div class="eyebrow">{{ $service['eyebrow'] }}</div>
                     <h1 class="display-5 fw-bold mt-3 mb-3">{{ $service['title'] }}</h1>
                     <p class="lead text-secondary mb-4">{{ $service['short'] }}</p>
@@ -27,6 +28,7 @@
                             <span>Renovacion</span>
                             <strong>{{ $service['renewal'] }}</strong>
                         </div>
+                    </div>
                     </div>
                 </div>
                 <div class="col-lg-6">

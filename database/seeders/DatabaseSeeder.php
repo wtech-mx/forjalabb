@@ -16,9 +16,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'admin@labcustom.test'],
+            ['email' => 'admin@forjalab.test'],
             [
-                'name' => 'Admin LabCustom',
+                'name' => 'Admin ForjaLab',
                 'password' => 'password',
             ]
         );

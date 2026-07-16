@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Biker Tag de emergencia | LabCustom')
+@section('title', 'Biker Tag de emergencia | ForjaLab')
 
 @section('content')
     <section class="qr-landing biker-qr">
@@ -16,7 +16,7 @@
                 </div>
 
                 @unless ($tag->is_active)
-                    <div class="alert alert-light border">Este Biker Tag no esta activo. Verifica con el responsable o con LabCustom.</div>
+                    <div class="alert alert-light border">Este Biker Tag no esta activo. Verifica con el responsable o con ForjaLab.</div>
                 @endunless
 
                 <div class="scan-alert-box" data-scan-status>

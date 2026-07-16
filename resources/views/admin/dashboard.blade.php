@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Panel administrativo | LabCustom')
+@section('title', 'Panel administrativo | ForjaLab')
 
 @section('content')
     <section class="admin-section">

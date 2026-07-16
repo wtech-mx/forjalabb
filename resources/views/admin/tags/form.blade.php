@@ -7,7 +7,7 @@
     $bloodTypes = \App\Models\SmartTag::bloodTypes();
 @endphp
 
-@section('title', ($isEdit ? 'Editar tag' : 'Nuevo tag').' | LabCustom')
+@section('title', ($isEdit ? 'Editar tag' : 'Nuevo tag').' | ForjaLab')
 
 @section('content')
     <section class="admin-section">

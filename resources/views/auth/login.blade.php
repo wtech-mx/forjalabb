@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Acceso administrativo | LabCustom')
+@section('title', 'Acceso administrativo | ForjaLab')
 
 @section('content')
     <section class="admin-auth-section">
@@ -9,7 +9,7 @@
                 <div class="col-md-7 col-lg-5">
                     <div class="auth-card">
                         <div class="eyebrow">Panel administrativo</div>
-                        <h1 class="h3 fw-bold mt-2 mb-4">Entrar a LabCustom</h1>
+                        <h1 class="h3 fw-bold mt-2 mb-4">Entrar a ForjaLab</h1>
 
                         <form method="POST" action="{{ route('login.store') }}">
                             @csrf

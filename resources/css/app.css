@@ -2,18 +2,28 @@
 @import "bootstrap-icons/font/bootstrap-icons.css";
 
 :root {
-    --ink: #121417;
-    --muted: #66717f;
-    --line: #dfe5ea;
-    --paper: #f7f9fb;
-    --teal: #0e8585;
-    --orange: #f47b20;
+    --ink: #1b120b;
+    --muted: #75675a;
+    --line: rgba(80, 52, 31, .16);
+    --paper: #fff7e8;
+    --cream: #fff1d6;
+    --forge-orange: #f8751f;
+    --forge-green: #6f9f34;
+    --forge-yellow: #f5b02e;
+    --forge-brown: #5a351d;
+    --glass: rgba(255, 248, 234, .68);
+    --glass-strong: rgba(255, 255, 255, .78);
+    --teal: #4f8a37;
+    --orange: #f8751f;
 }
 
 body {
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     color: var(--ink);
-    background: #fff;
+    background:
+        radial-gradient(circle at 6% 0%, rgba(248, 117, 31, .16), transparent 26rem),
+        radial-gradient(circle at 92% 8%, rgba(111, 159, 52, .14), transparent 24rem),
+        linear-gradient(180deg, #fff8ec 0%, #fffdf8 42%, #f8f2e4 100%);
 }
 
 .public-scan-body {
@@ -25,9 +35,10 @@ a {
 }
 
 .navbar-glass {
-    background: rgba(255, 255, 255, .92);
-    border-bottom: 1px solid rgba(18, 20, 23, .08);
-    backdrop-filter: blur(14px);
+    background: rgba(255, 244, 222, .7);
+    border-bottom: 1px solid rgba(90, 53, 29, .14);
+    box-shadow: 0 .85rem 2.2rem rgba(90, 53, 29, .08);
+    backdrop-filter: blur(18px) saturate(1.35);
 }
 
 .brand-mark {
@@ -37,18 +48,20 @@ a {
     height: 2rem;
     margin-right: .45rem;
     border-radius: .5rem;
-    color: #fff;
-    background: var(--ink);
+    color: #fff8eb;
+    background: linear-gradient(135deg, var(--forge-orange), var(--forge-green));
     font-size: .78rem;
     letter-spacing: 0;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 .5rem 1.2rem rgba(248, 117, 31, .28);
 }
 
 .hero-section,
 .service-hero {
     padding: 8.5rem 0 4.5rem;
     background:
-        linear-gradient(115deg, #fff 0%, #fff 48%, rgba(14, 133, 133, .09) 48%, rgba(244, 123, 32, .1) 100%),
-        var(--paper);
+        radial-gradient(circle at 13% 24%, rgba(248, 117, 31, .26), transparent 22rem),
+        radial-gradient(circle at 85% 12%, rgba(111, 159, 52, .24), transparent 24rem),
+        linear-gradient(135deg, rgba(255, 242, 214, .95), rgba(255, 255, 255, .72) 44%, rgba(111, 159, 52, .12) 100%);
 }
 
 .service-hero {
@@ -56,19 +69,29 @@ a {
 }
 
 .eyebrow {
-    color: var(--teal);
+    color: var(--forge-green);
     font-size: .78rem;
     font-weight: 800;
     letter-spacing: .12em;
     text-transform: uppercase;
 }
 
+.glass-copy {
+    padding: clamp(1rem, 2.5vw, 1.5rem);
+    border: 1px solid rgba(255, 255, 255, .56);
+    border-radius: .8rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, .74), rgba(255, 241, 214, .48));
+    box-shadow: 0 1.4rem 3.5rem rgba(90, 53, 29, .12);
+    backdrop-filter: blur(20px) saturate(1.25);
+}
+
 .hero-image {
     width: 100%;
     aspect-ratio: 16 / 10;
     object-fit: cover;
-    border-radius: .5rem;
-    box-shadow: 0 1.5rem 4rem rgba(18, 20, 23, .16);
+    border: 1px solid rgba(255, 255, 255, .62);
+    border-radius: .85rem;
+    box-shadow: 0 1.5rem 4rem rgba(90, 53, 29, .22);
 }
 
 .hero-metrics,
@@ -86,9 +109,11 @@ a {
 .price-strip div {
     min-height: 5.25rem;
     padding: 1rem;
-    border: 1px solid var(--line);
-    border-radius: .5rem;
-    background: rgba(255, 255, 255, .78);
+    border: 1px solid rgba(255, 255, 255, .58);
+    border-radius: .75rem;
+    background: var(--glass-strong);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .58);
+    backdrop-filter: blur(14px);
 }
 
 .hero-metrics strong,
@@ -109,16 +134,20 @@ a {
 }
 
 .surface-band {
-    background: var(--paper);
+    background:
+        radial-gradient(circle at 90% 12%, rgba(248, 117, 31, .12), transparent 22rem),
+        linear-gradient(180deg, rgba(255, 242, 214, .72), rgba(255, 255, 255, .58));
 }
 
 .feature-card,
 .line-card,
 .package-card {
     padding: 1.4rem;
-    border: 1px solid var(--line);
-    border-radius: .5rem;
-    background: #fff;
+    border: 1px solid rgba(255, 255, 255, .58);
+    border-radius: .75rem;
+    background: var(--glass);
+    box-shadow: 0 1rem 2.4rem rgba(90, 53, 29, .08);
+    backdrop-filter: blur(16px) saturate(1.2);
 }
 
 .feature-card i {
@@ -128,8 +157,8 @@ a {
     height: 2.75rem;
     margin-bottom: 1rem;
     border-radius: .5rem;
-    color: var(--teal);
-    background: rgba(14, 133, 133, .1);
+    color: #fff8eb;
+    background: linear-gradient(135deg, var(--forge-green), var(--forge-orange));
     font-size: 1.35rem;
 }
 
@@ -154,15 +183,40 @@ a {
 .product-card {
     display: flex;
     flex-direction: column;
+    position: relative;
+    overflow: hidden;
     min-height: 20rem;
     padding: 2rem;
-    border-radius: .5rem;
+    border: 1px solid rgba(255, 255, 255, .55);
+    border-radius: .85rem;
+    isolation: isolate;
     transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.product-card::before {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background-position: center;
+    background-size: cover;
+    content: "";
+}
+
+.product-card::after {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(135deg, rgba(27, 18, 11, .82), rgba(27, 18, 11, .36) 58%, rgba(111, 159, 52, .24));
+    content: "";
+}
+
+.product-card > * {
+    position: relative;
 }
 
 .product-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 1.25rem 3rem rgba(18, 20, 23, .14);
+    box-shadow: 0 1.25rem 3rem rgba(90, 53, 29, .18);
 }
 
 .product-card h3 {
@@ -178,15 +232,227 @@ a {
 
 .product-card-dark {
     color: #fff;
-    background: linear-gradient(135deg, #121417, #2b3137 70%, #4b3525);
+    background: #1b120b;
 }
 
 .product-card-light {
-    color: var(--ink);
+    color: #fff;
+    background: #1b120b;
+}
+
+.product-card-biker::before {
+    background-image: url("/images/biker-tag-hero.png");
+}
+
+.product-card-dog::before {
+    background-image: url("/images/dog-tags-hero.png");
+}
+
+.product-card-embroidery::before {
+    background-image: url("/images/embroidery-jacket.png");
+    background-position: center 42%;
+}
+
+.product-card-embroidery::after {
+    background: linear-gradient(135deg, rgba(27, 18, 11, .78), rgba(90, 53, 29, .42) 58%, rgba(248, 117, 31, .24));
+}
+
+.product-card-laser::before {
+    background-image: url("/images/laser-hero.png");
+    background-position: center;
+}
+
+.product-card-laser::after {
+    background: linear-gradient(135deg, rgba(27, 18, 11, .82), rgba(90, 53, 29, .38) 58%, rgba(248, 117, 31, .36));
+}
+
+.laser-hero {
+    padding: 8.5rem 0 4.5rem;
     background:
-        linear-gradient(135deg, rgba(14, 133, 133, .12), rgba(244, 123, 32, .12)),
-        #fff;
-    border: 1px solid var(--line);
+        radial-gradient(circle at 16% 18%, rgba(248, 117, 31, .3), transparent 23rem),
+        radial-gradient(circle at 90% 16%, rgba(111, 159, 52, .18), transparent 22rem),
+        linear-gradient(135deg, rgba(255, 242, 214, .98), rgba(255, 255, 255, .7) 42%, rgba(248, 117, 31, .12));
+}
+
+.laser-config-section {
+    background:
+        radial-gradient(circle at 14% 18%, rgba(248, 117, 31, .18), transparent 23rem),
+        radial-gradient(circle at 88% 0%, rgba(245, 176, 46, .16), transparent 24rem),
+        linear-gradient(180deg, rgba(255, 252, 246, .7), rgba(255, 241, 214, .78));
+}
+
+.laser-notes {
+    display: grid;
+    gap: .75rem;
+    margin-top: 1.35rem;
+}
+
+.laser-notes div {
+    padding: .9rem;
+    border: 1px solid rgba(255, 255, 255, .56);
+    border-radius: .75rem;
+    background: rgba(255, 255, 255, .55);
+}
+
+.laser-notes strong,
+.laser-notes span {
+    display: block;
+}
+
+.laser-notes span {
+    color: var(--muted);
+    font-size: .9rem;
+}
+
+.laser-tool {
+    padding: clamp(1rem, 2.5vw, 1.35rem);
+    border: 1px solid rgba(255, 255, 255, .6);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, .54);
+    box-shadow: 0 1.5rem 3.5rem rgba(90, 53, 29, .14);
+    backdrop-filter: blur(20px) saturate(1.2);
+}
+
+.laser-toolbar,
+.laser-controls {
+    display: grid;
+    grid-template-columns: minmax(11rem, .8fr) 1.2fr;
+    gap: .85rem;
+    margin-bottom: .9rem;
+}
+
+.laser-text-input {
+    display: grid;
+    gap: .35rem;
+    color: var(--muted);
+    font-size: .82rem;
+    font-weight: 800;
+}
+
+.laser-text-input .form-control {
+    min-height: 4.25rem;
+    border: 1px solid rgba(90, 53, 29, .12);
+    border-radius: .85rem;
+    background: rgba(255, 248, 234, .76);
+    font-weight: 900;
+}
+
+.laser-material-picker {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .6rem;
+    margin-bottom: .9rem;
+}
+
+.laser-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+    min-height: 3.65rem;
+    padding: .7rem;
+    border: 1px solid rgba(90, 53, 29, .12);
+    border-radius: .85rem;
+    color: var(--ink);
+    background: rgba(255, 255, 255, .58);
+    font-weight: 800;
+}
+
+.laser-option.active {
+    color: #fff8eb;
+    background: linear-gradient(135deg, var(--forge-orange), var(--forge-brown));
+    box-shadow: 0 .9rem 1.8rem rgba(248, 117, 31, .22);
+}
+
+.laser-stage {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1;
+    border: 1px solid rgba(255, 255, 255, .68);
+    border-radius: 1rem;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .42), rgba(255, 241, 214, .3)),
+        #fff2d7;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7);
+    touch-action: none;
+}
+
+.laser-surface-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    user-select: none;
+    pointer-events: none;
+}
+
+.laser-mark,
+.laser-frame {
+    position: absolute;
+    left: var(--laser-x, 50%);
+    top: var(--laser-y, 44%);
+    transform: translate(-50%, -50%) rotate(var(--laser-rotate, 0deg));
+}
+
+.laser-mark {
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: var(--laser-size, 24%);
+    min-height: 3.5rem;
+    color: rgba(59, 35, 19, .72);
+    cursor: grab;
+    filter: sepia(.65) saturate(.75) contrast(1.2) drop-shadow(0 .22rem .28rem rgba(27, 18, 11, .18));
+    mix-blend-mode: multiply;
+    touch-action: none;
+    user-select: none;
+}
+
+.laser-mark:active {
+    cursor: grabbing;
+}
+
+.laser-mark img {
+    width: 100%;
+    max-height: 8rem;
+    object-fit: contain;
+}
+
+.laser-mark span {
+    display: block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    font-size: clamp(1rem, 3vw, 2.2rem);
+    font-weight: 950;
+    line-height: 1;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.laser-frame {
+    z-index: 2;
+    width: calc(var(--laser-size, 24%) + 1rem);
+    aspect-ratio: 1.8 / 1;
+    border: 1px dashed rgba(248, 117, 31, .72);
+    border-radius: .8rem;
+    pointer-events: none;
+}
+
+.laser-controls {
+    grid-template-columns: 1fr 1fr auto;
+    align-items: end;
+    margin: .9rem 0 0;
+}
+
+.laser-controls label {
+    display: grid;
+    gap: .35rem;
+    color: var(--muted);
+    font-size: .82rem;
+    font-weight: 800;
+}
+
+.laser-controls input[type="range"] {
+    accent-color: var(--forge-orange);
 }
 
 .card-action {
@@ -194,14 +460,225 @@ a {
     font-weight: 800;
 }
 
+.embroidery-section {
+    background:
+        radial-gradient(circle at 10% 14%, rgba(248, 117, 31, .16), transparent 22rem),
+        radial-gradient(circle at 92% 20%, rgba(111, 159, 52, .16), transparent 24rem),
+        linear-gradient(180deg, rgba(255, 252, 246, .62), rgba(255, 241, 214, .74));
+}
+
+.embroidery-steps {
+    display: grid;
+    gap: .75rem;
+    margin-top: 1.35rem;
+}
+
+.embroidery-steps div {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .85rem;
+    border: 1px solid rgba(255, 255, 255, .56);
+    border-radius: .75rem;
+    background: rgba(255, 255, 255, .55);
+}
+
+.embroidery-steps i {
+    display: inline-grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: .65rem;
+    color: #fff8eb;
+    background: linear-gradient(135deg, var(--forge-orange), var(--forge-green));
+}
+
+.embroidery-tool {
+    padding: clamp(1rem, 2.5vw, 1.35rem);
+    border: 1px solid rgba(255, 255, 255, .6);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, .54);
+    box-shadow: 0 1.5rem 3.5rem rgba(90, 53, 29, .14);
+    backdrop-filter: blur(20px) saturate(1.2);
+}
+
+.embroidery-toolbar,
+.embroidery-controls {
+    display: grid;
+    grid-template-columns: minmax(11rem, .8fr) 1.2fr;
+    gap: .85rem;
+    margin-bottom: .9rem;
+}
+
+.upload-tile {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    min-height: 4.25rem;
+    padding: .85rem;
+    border: 1px solid rgba(255, 255, 255, .62);
+    border-radius: .85rem;
+    background: rgba(255, 248, 234, .76);
+    cursor: pointer;
+}
+
+.upload-tile i {
+    display: inline-grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: .7rem;
+    color: #fff;
+    background: #1b120b;
+    font-size: 1.2rem;
+}
+
+.upload-tile strong,
+.upload-tile small {
+    display: block;
+}
+
+.upload-tile small {
+    color: var(--muted);
+}
+
+.garment-picker {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .6rem;
+}
+
+.garment-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+    min-height: 4.25rem;
+    padding: .7rem;
+    border: 1px solid rgba(90, 53, 29, .12);
+    border-radius: .85rem;
+    color: var(--ink);
+    background: rgba(255, 255, 255, .58);
+    font-weight: 800;
+}
+
+.garment-option.active {
+    color: #fff8eb;
+    background: linear-gradient(135deg, var(--forge-green), var(--forge-orange));
+    box-shadow: 0 .9rem 1.8rem rgba(248, 117, 31, .2);
+}
+
+.mockup-stage {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1;
+    border: 1px solid rgba(255, 255, 255, .68);
+    border-radius: 1rem;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .42), rgba(255, 241, 214, .3)),
+        #fff2d7;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7);
+    touch-action: none;
+}
+
+.garment-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    user-select: none;
+    pointer-events: none;
+}
+
+.logo-overlay,
+.embroidery-placeholder {
+    position: absolute;
+    left: var(--logo-x, 50%);
+    top: var(--logo-y, 37%);
+    width: var(--logo-size, 24%);
+    transform: translate(-50%, -50%) rotate(var(--logo-rotate, 0deg));
+}
+
+.logo-overlay {
+    z-index: 3;
+    max-height: 42%;
+    object-fit: contain;
+    padding: .35rem;
+    border-radius: .65rem;
+    filter: saturate(.85) contrast(1.05) drop-shadow(0 .35rem .45rem rgba(27, 18, 11, .22));
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+}
+
+.logo-overlay:active {
+    cursor: grabbing;
+}
+
+.embroidery-placeholder {
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    min-height: 4.5rem;
+    border: 1px dashed rgba(248, 117, 31, .72);
+    border-radius: .8rem;
+    color: rgba(90, 53, 29, .72);
+    background: rgba(255, 248, 234, .66);
+    font-weight: 900;
+    text-align: center;
+    backdrop-filter: blur(8px);
+}
+
+.embroidery-placeholder i {
+    font-size: 1.5rem;
+}
+
+.embroidery-placeholder span {
+    display: block;
+    font-size: .8rem;
+}
+
+.stitch-frame {
+    position: absolute;
+    left: var(--logo-x, 50%);
+    top: var(--logo-y, 37%);
+    z-index: 1;
+    width: calc(var(--logo-size, 24%) + 1rem);
+    aspect-ratio: 1.7 / 1;
+    transform: translate(-50%, -50%) rotate(var(--logo-rotate, 0deg));
+    border: 1px dashed rgba(111, 159, 52, .64);
+    border-radius: 999px;
+    pointer-events: none;
+}
+
+.embroidery-controls {
+    grid-template-columns: 1fr 1fr auto;
+    align-items: end;
+    margin: .9rem 0 0;
+}
+
+.embroidery-controls label {
+    display: grid;
+    gap: .35rem;
+    color: var(--muted);
+    font-size: .82rem;
+    font-weight: 800;
+}
+
+.embroidery-controls input[type="range"] {
+    accent-color: var(--forge-orange);
+}
+
 .launch-band {
-    background: #142024;
+    background:
+        linear-gradient(135deg, rgba(27, 18, 11, .94), rgba(90, 53, 29, .88)),
+        #1b120b;
     color: #fff;
 }
 
 .launch-band .eyebrow,
 .launch-band .text-secondary {
-    color: #8be0dc !important;
+    color: #c5e38f !important;
 }
 
 .timeline {
@@ -214,9 +691,10 @@ a {
     grid-template-columns: 9rem 1fr;
     gap: 1rem;
     padding: 1rem;
-    border: 1px solid rgba(255, 255, 255, .16);
-    border-radius: .5rem;
-    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .22);
+    border-radius: .75rem;
+    background: rgba(255, 255, 255, .1);
+    backdrop-filter: blur(14px);
 }
 
 .timeline span {
@@ -234,9 +712,10 @@ a {
     gap: .75rem;
     min-height: 5.5rem;
     padding: 1rem;
-    border: 1px solid var(--line);
-    border-radius: .5rem;
-    background: #fff;
+    border: 1px solid rgba(255, 255, 255, .58);
+    border-radius: .75rem;
+    background: var(--glass);
+    backdrop-filter: blur(14px);
 }
 
 .check-item i {
@@ -257,14 +736,17 @@ a {
     justify-content: space-between;
     gap: 2rem;
     padding: 2rem;
-    border: 1px solid var(--line);
-    border-radius: .5rem;
-    background: var(--paper);
+    border: 1px solid rgba(255, 255, 255, .58);
+    border-radius: .85rem;
+    background: var(--glass);
+    box-shadow: 0 1.2rem 3rem rgba(90, 53, 29, .1);
+    backdrop-filter: blur(18px);
 }
 
 .footer-band {
-    border-top: 1px solid var(--line);
-    background: #fff;
+    border-top: 1px solid rgba(90, 53, 29, .12);
+    background: rgba(255, 244, 222, .7);
+    backdrop-filter: blur(14px);
 }
 
 .admin-auth-section,
@@ -272,17 +754,21 @@ a {
 .public-profile-section {
     padding: 8rem 0 5rem;
     min-height: 82vh;
-    background: var(--paper);
+    background:
+        radial-gradient(circle at 10% 0%, rgba(248, 117, 31, .14), transparent 24rem),
+        radial-gradient(circle at 88% 12%, rgba(111, 159, 52, .12), transparent 22rem),
+        var(--paper);
 }
 
 .auth-card,
 .panel-card,
 .emergency-card {
     padding: 1.5rem;
-    border: 1px solid var(--line);
-    border-radius: .5rem;
-    background: #fff;
-    box-shadow: 0 1rem 2.5rem rgba(18, 20, 23, .06);
+    border: 1px solid rgba(255, 255, 255, .58);
+    border-radius: .85rem;
+    background: var(--glass-strong);
+    box-shadow: 0 1rem 2.5rem rgba(90, 53, 29, .1);
+    backdrop-filter: blur(18px);
 }
 
 .admin-header {
@@ -828,5 +1314,23 @@ a {
 
     .qr-hero {
         flex-direction: column;
+    }
+
+    .embroidery-toolbar,
+    .embroidery-controls,
+    .laser-toolbar,
+    .laser-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .garment-picker,
+    .laser-material-picker {
+        grid-template-columns: 1fr;
+    }
+
+    .garment-option,
+    .laser-option,
+    .upload-tile {
+        min-height: 3.6rem;
     }
 }

@@ -3,16 +3,16 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Taller de manufactura digital en CDMX: laser, impresion 3D, bordado, QR, NFC y software conectado.">
-    <title>@yield('title', 'LabCustom | Productos fabricados y conectados')</title>
+    <meta name="description" content="ForjaLab en CDMX: corte laser, impresion 3D, bordado, QR, NFC y software conectado.">
+    <title>@yield('title', 'ForjaLab | Productos fabricados y conectados')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
     <nav class="navbar navbar-expand-lg fixed-top navbar-glass">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-                <span class="brand-mark">LC</span>
-                LabCustom
+                <img class="hero-image" src="{{ asset('images/logo.png') }}" alt="Productos personalizados con QR, NFC, bordado e impresion 3D" style="width: 90px;">
+                ForjaLab
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menu">
                 <span class="navbar-toggler-icon"></span>
@@ -20,6 +20,8 @@
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#servicios">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#bordado">Bordado</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('services.laser') }}">Laser</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#valor">Valor</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#lanzamiento">Lanzamiento</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Panel</a></li>
@@ -50,7 +52,7 @@
     <footer class="footer-band py-5">
         <div class="container d-flex flex-column flex-lg-row justify-content-between gap-3">
             <div>
-                <div class="fw-bold fs-5">LabCustom</div>
+                <div class="fw-bold fs-5">ForjaLab</div>
                 <p class="mb-0 text-secondary">Tu idea, fabricada y conectada en CDMX.</p>
             </div>
             <div class="d-flex flex-wrap gap-2">

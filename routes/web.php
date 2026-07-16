@@ -13,7 +13,7 @@ $services = [
         'short' => 'Identificacion fisica para motociclistas con perfil privado, contactos de emergencia y datos medicos esenciales.',
         'price' => '$449 a $699',
         'renewal' => '$149 a $299 anual',
-        'hero_image' => 'connected-products-hero.png',
+        'hero_image' => 'biker-tag-hero.png',
         'accent' => 'warning',
         'audience' => 'Motociclistas, clubes y riders que necesitan una forma simple de compartir informacion critica cuando cada minuto cuenta.',
         'features' => [
@@ -36,7 +36,7 @@ $services = [
         'short' => 'Placas personalizadas para mascotas con perfil editable, alerta al propietario y contacto rapido desde el celular.',
         'price' => '$249 a $549',
         'renewal' => '$149 a $299 anual',
-        'hero_image' => 'connected-products-hero.png',
+        'hero_image' => 'dog-tags-hero.png',
         'accent' => 'success',
         'audience' => 'Familias, veterinarias, esteticas caninas y rescatistas que quieren identificacion bonita, durable y conectada.',
         'features' => [
@@ -58,6 +58,10 @@ $services = [
 Route::get('/', function () {
     return view('home');
 })->name('home');
+
+Route::get('/servicios/laser', function () {
+    return view('laser');
+})->name('services.laser');
 
 Route::get('/servicios/{service}', function (string $service) use ($services) {
     abort_unless(isset($services[$service]), 404);

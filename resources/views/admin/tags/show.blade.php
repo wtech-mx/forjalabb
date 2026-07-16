@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $tag->display_name.' | LabCustom')
+@section('title', $tag->display_name.' | ForjaLab')
 
 @section('content')
     <section class="admin-section">
