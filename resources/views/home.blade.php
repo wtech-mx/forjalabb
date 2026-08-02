@@ -10,7 +10,7 @@
                     <div class="glass-copy">
                     <div class="eyebrow mb-3">Personalizamos · creamos · conectamos</div>
                     <h1 class="display-4 fw-bold mb-4">Productos personalizados que conectan lo fisico con lo digital.</h1>
-                    <p class="lead text-secondary mb-4">ForjaLab convierte ideas en productos reales: placas QR, Biker Tags, tarjetas NFC, piezas 3D, bordados y soluciones web desde una pieza hasta volumen.</p>
+                    <p class="lead text-secondary mb-4">ForjaLab convierte ideas en productos reales: placas QR, Biker Tags, tarjetas NFC, piezas 3D, sublimacion, DTF y soluciones web desde una pieza hasta volumen.</p>
                     <div class="d-flex flex-wrap gap-2 mb-4">
                         <a class="btn btn-dark btn-lg" href="#servicios"><i class="bi bi-grid-1x2-fill me-2"></i>Ver servicios</a>
                         <a class="btn btn-outline-dark btn-lg" href="{{ route('services.show', 'biker-tag') }}"><i class="bi bi-shield-check me-2"></i>Biker Tag</a>
@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <img class="hero-image" src="{{ asset('images/forjalab-hero.png') }}" alt="Productos personalizados con QR, NFC, bordado e impresion 3D">
+                    <img class="hero-image" src="{{ asset('images/forjalab-hero.png') }}" alt="Productos personalizados con QR, NFC, sublimacion, DTF e impresion 3D">
                 </div>
             </div>
         </div>
@@ -40,7 +40,7 @@
             </div>
             <div class="row g-3">
                 @foreach ([
-                    ['icon' => 'boxes', 'title' => 'Produccion hibrida', 'text' => 'Laser, 3D, bordado, QR, NFC y desarrollo web en un mismo flujo.'],
+                    ['icon' => 'boxes', 'title' => 'Produccion hibrida', 'text' => 'Laser, 3D, sublimacion, DTF, QR, NFC y desarrollo web en un mismo flujo.'],
                     ['icon' => 'person-check', 'title' => 'Sin minimos elevados', 'text' => 'Atencion desde una pieza hasta campanas empresariales completas.'],
                     ['icon' => 'arrow-repeat', 'title' => 'Ingresos recurrentes', 'text' => 'Hosting, renovaciones, menus, soporte, dominios y reposiciones.'],
                     ['icon' => 'cpu', 'title' => 'Automatizacion interna', 'text' => 'Cotizacion, QR, archivos por lote, listas de nombres y seguimiento.'],
@@ -64,7 +64,7 @@
                     <div class="eyebrow">Landings iniciales</div>
                     <h2 class="fw-bold mt-2 mb-0">Mini productos independientes</h2>
                 </div>
-                <p class="text-secondary mb-0 max-copy">Empezamos con ofertas claras para validar rapido: seguridad para bikers, placas inteligentes para mascotas y bordado personalizado.</p>
+                <p class="text-secondary mb-0 max-copy">Empezamos con ofertas claras para validar rapido: seguridad para bikers, placas inteligentes para mascotas y personalizacion textil con sublimacion y DTF.</p>
             </div>
             <div class="row g-4">
                 <div class="col-md-6 col-xl-3">
@@ -84,10 +84,10 @@
                     </a>
                 </div>
                 <div class="col-md-6 col-xl-3">
-                    <a class="product-card product-card-light product-card-embroidery" href="#bordado">
+                    <a class="product-card product-card-light product-card-embroidery" href="#textil">
                         <span class="badge text-bg-light">Interactivo</span>
-                        <h3>Bordado & ponchado</h3>
-                        <p>Sube tu logo, elige gorra, chamarra o playera y acomoda el bordado antes de cotizar.</p>
+                        <h3>Sublimacion & DTF</h3>
+                        <p>Sube tu logo, elige gorra, chamarra o playera y acomoda el diseno antes de cotizar.</p>
                         <span class="card-action">Abrir simulador <i class="bi bi-arrow-down-right"></i></span>
                     </a>
                 </div>
@@ -103,18 +103,134 @@
         </div>
     </section>
 
-    <section class="section-pad embroidery-section" id="bordado">
+    <section class="section-pad catalog-section" id="catalogo">
+        <div class="container">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+                <div>
+                    <div class="eyebrow">Mini catalogo de temporada</div>
+                    <h2 class="fw-bold mt-2 mb-0">Productos listos para regalar, vender o personalizar.</h2>
+                </div>
+                <p class="text-secondary mb-0 max-copy">Piezas seleccionadas para temporadas, eventos, kits empresariales y regalos con nombre, logo o detalle especial.</p>
+            </div>
+
+            <div class="season-package season-package-photo mb-4">
+                <a class="season-package-media" href="{{ route('catalog.package') }}">
+                    <img src="{{ asset('images/catalog/paquete-15-septiembre.png') }}" alt="Paquete de tabla, dos tequileros y botella para 15 de septiembre">
+                </a>
+                <div>
+                    <span class="badge text-bg-warning mb-3">Paquete recomendado</span>
+                    <h3>Tabla + 2 tequileros + botella</h3>
+                    <p>Un set completo para regalo, celebracion o marca: tabla personalizada, dos tequileros y botella licorera con diseno coordinado.</p>
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        <a class="btn btn-dark" href="{{ route('catalog.package') }}">
+                            <i class="bi bi-images me-2"></i>Ver paquete
+                        </a>
+                        <a class="btn btn-outline-light" href="https://wa.me/?text=Hola%2C%20quiero%20cotizar%20el%20paquete%20de%20tabla%2C%202%20tequileros%20y%20botella" target="_blank" rel="noopener">
+                            <i class="bi bi-whatsapp me-2"></i>Cotizar
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="catalog-grid">
+                <a class="catalog-card catalog-card-link" href="{{ route('catalog.coasters') }}">
+                    <div class="catalog-media catalog-photo-media">
+                        <img src="{{ asset('images/catalog/porta-vasos-viva-mexico-square.png') }}" alt="Porta vasos negro con diseno Viva Mexico">
+                    </div>
+                    <div class="catalog-body">
+                        <h3>Porta vasos</h3>
+                        <p>Set de 4 piezas con disenos patrios. Pueden ser iguales o combinados.</p>
+                        <span class="catalog-action">Ver galeria <i class="bi bi-arrow-right"></i></span>
+                    </div>
+                </a>
+                <a class="catalog-card catalog-card-link tequila-catalog-card" href="{{ route('catalog.tequileros') }}">
+                    <div class="catalog-media tequila-mini-media">
+                        <div class="mini-tequila-set" aria-hidden="true">
+                            @foreach ([
+                                'aguacate-teq-transparent.png',
+                                'nopal-teq-transparent.png',
+                                'chile-teq-transparent.png',
+                                'pastor-teq-transparent.png',
+                                'elote-teq-transparent.png',
+                                'botella-teq-transparent.png',
+                            ] as $file)
+                                <span class="mini-tequila-shot">
+                                    <img src="{{ asset('images/catalog/'.$file) }}" alt="">
+                                </span>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="catalog-body">
+                        <h3>Tequileros personalizados</h3>
+                        <p>Sets de 3 o 6 piezas en blanco, satinado o transparente con disenos oficiales.</p>
+                        <span class="catalog-action">Configurar <i class="bi bi-arrow-right"></i></span>
+                    </div>
+                </a>
+                <a class="catalog-card catalog-card-link" href="{{ route('catalog.mugs') }}">
+                    <div class="catalog-media catalog-photo-media">
+                        <img src="{{ asset('images/catalog/taza-producto-studio.png') }}" alt="Taza blanca con interior de color">
+                    </div>
+                    <div class="catalog-body">
+                        <h3>Tazas</h3>
+                        <p>Tazas blancas con interior de color y disenos patrios para regalo o temporada.</p>
+                        <span class="catalog-action">Configurar <i class="bi bi-arrow-right"></i></span>
+                    </div>
+                </a>
+                <a class="catalog-card catalog-card-link" href="{{ route('catalog.ceramic-cup') }}">
+                    <div class="catalog-media catalog-photo-media">
+                        <img src="{{ asset('images/catalog/vaso-cafe-producto-studio.png') }}" alt="Vaso cafe ceramica con tapa de color">
+                    </div>
+                    <div class="catalog-body">
+                        <h3>Vaso cafe ceramica</h3>
+                        <p>Vaso tipo cafe con tapa e interior de color, personalizable con los disenos oficiales.</p>
+                        <span class="catalog-action">Configurar <i class="bi bi-arrow-right"></i></span>
+                    </div>
+                </a>
+                <a class="catalog-card catalog-card-link" href="{{ route('catalog.matte-thermo') }}">
+                    <div class="catalog-media catalog-photo-media">
+                        <img src="{{ asset('images/catalog/termo-mate-producto-studio.png') }}" alt="Termo color mate blanco">
+                    </div>
+                    <div class="catalog-body">
+                        <h3>Termo color mate</h3>
+                        <p>Termos mate en negro, gris, verde o blanco para personalizar por temporada.</p>
+                        <span class="catalog-action">Configurar <i class="bi bi-arrow-right"></i></span>
+                    </div>
+                </a>
+                @foreach ([
+                    ['icon' => 'bottle', 'name' => 'Botella licorera', 'text' => 'Botella decorativa o de regalo con grabado, vinil o diseno aplicado.'],
+                    ['icon' => 'grid-3x3-gap', 'name' => 'Tabla', 'text' => 'Tabla personalizada para cocina, botanero, parrilla o kit de regalo.'],
+                    ['icon' => 'tag', 'name' => 'Collar para perros o motos', 'text' => 'Collar o placa con identidad visual, QR o datos de contacto segun el uso.'],
+                ] as $product)
+                    <article class="catalog-card">
+                        <div class="catalog-media">
+                            <i class="bi bi-{{ $product['icon'] }}"></i>
+                            <span>Foto pendiente</span>
+                        </div>
+                        <div class="catalog-body">
+                            <h3>{{ $product['name'] }}</h3>
+                            <p>{{ $product['text'] }}</p>
+                            <a href="https://wa.me/?text=Hola%2C%20quiero%20cotizar%20{{ urlencode($product['name']) }}" target="_blank" rel="noopener">
+                                Cotizar <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <section class="section-pad embroidery-section" id="textil">
         <div class="container">
             <div class="row g-4 align-items-start">
                 <div class="col-lg-5">
                     <div class="sticky-copy glass-copy">
-                        <div class="eyebrow">Bordado y ponchado</div>
+                        <div class="eyebrow">Sublimacion y DTF</div>
                         <h2 class="fw-bold mt-2">Carga tu logo y arma un mockup rapido antes de cotizar.</h2>
-                        <p class="text-secondary">El ponchado convierte tu imagen en puntadas: definimos caminos, densidad, colores de hilo y tamano para que la maquina pueda bordarlo limpio sobre tela.</p>
+                        <p class="text-secondary">Aplicamos sublimacion para prendas claras de poliester y DTF para textiles de algodon, mezclas o colores intensos. Preparamos tu archivo, revisamos tamano, posicion y acabado para producir piezas limpias y listas para entrega.</p>
                         <div class="embroidery-steps">
                             <div><i class="bi bi-upload"></i><span>Sube tu logo o imagen.</span></div>
-                            <div><i class="bi bi-bounding-box"></i><span>Elige prenda y acomoda el bordado.</span></div>
-                            <div><i class="bi bi-scissors"></i><span>Cotizamos ponchado, muestra y produccion.</span></div>
+                            <div><i class="bi bi-bounding-box"></i><span>Elige prenda y acomoda el diseno.</span></div>
+                            <div><i class="bi bi-fire"></i><span>Cotizamos sublimacion, DTF, muestra y produccion.</span></div>
                         </div>
                     </div>
                 </div>
@@ -144,12 +260,12 @@
                         </div>
 
                         <div class="mockup-stage" data-mockup-stage>
-                            <img class="garment-preview" src="{{ asset('images/embroidery-cap.png') }}" alt="Mockup de gorra para bordado" data-garment-preview>
+                            <img class="garment-preview" src="{{ asset('images/embroidery-cap.png') }}" alt="Mockup de gorra para sublimacion o DTF" data-garment-preview>
                             <div class="embroidery-placeholder" data-logo-placeholder>
                                 <i class="bi bi-cloud-arrow-up-fill"></i>
                                 <span>Tu logo aqui</span>
                             </div>
-                            <img class="logo-overlay" alt="Logo cargado para simular bordado" data-logo-preview hidden>
+                            <img class="logo-overlay" alt="Logo cargado para simular sublimacion o DTF" data-logo-preview hidden>
                             <div class="stitch-frame" aria-hidden="true"></div>
                         </div>
 
@@ -177,7 +293,7 @@
             <div class="row g-4">
                 @foreach ([
                     'Restaurantes' => 'Bases QR, menu editable, WhatsApp, estadisticas y panel por sucursal.',
-                    'Corporativo' => 'Kits, credenciales NFC, uniformes, portal interno y reposiciones por sede.',
+                    'Corporativo' => 'Kits, credenciales NFC, uniformes personalizados, portal interno y reposiciones por sede.',
                     'Eventos' => 'Invitaciones hibridas, RSVP, mapas, seating charts y recuerdos personalizados.',
                     'Maquila' => 'Produccion sin marca para agencias, imprentas, wedding planners y disenadores.',
                 ] as $title => $text)

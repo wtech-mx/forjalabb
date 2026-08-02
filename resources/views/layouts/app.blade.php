@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="ForjaLab en CDMX: corte laser, impresion 3D, bordado, QR, NFC y software conectado.">
+    <meta name="description" content="ForjaLab en CDMX: corte laser, impresion 3D, sublimacion, DTF, QR, NFC y software conectado.">
     <title>@yield('title', 'ForjaLab | Productos fabricados y conectados')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -11,7 +11,7 @@
     <nav class="navbar navbar-expand-lg fixed-top navbar-glass">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-                <img class="hero-image" src="{{ asset('images/logo.png') }}" alt="Productos personalizados con QR, NFC, bordado e impresion 3D" style="width: 90px;">
+                <img class="hero-image" src="{{ asset('images/logo.png') }}" alt="Productos personalizados con QR, NFC, sublimacion, DTF e impresion 3D" style="width: 90px;">
                 ForjaLab
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menu">
@@ -20,7 +20,8 @@
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#servicios">Servicios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#bordado">Bordado</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#catalogo">Catalogo</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#textil">Textil</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('services.laser') }}">Laser</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#valor">Valor</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#lanzamiento">Lanzamiento</a></li>
@@ -58,7 +59,8 @@
             <div class="d-flex flex-wrap gap-2">
                 <span class="badge text-bg-light">Laser</span>
                 <span class="badge text-bg-light">3D</span>
-                <span class="badge text-bg-light">Bordado</span>
+                <span class="badge text-bg-light">Sublimacion</span>
+                <span class="badge text-bg-light">DTF</span>
                 <span class="badge text-bg-light">QR/NFC</span>
                 <span class="badge text-bg-light">Software</span>
             </div>
