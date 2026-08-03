@@ -11,7 +11,7 @@
     <nav class="navbar navbar-expand-lg fixed-top navbar-glass">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-                <img class="hero-image" src="{{ asset('images/logo.png') }}" alt="Productos personalizados con QR, NFC, sublimacion, DTF e impresion 3D" style="width: 90px;">
+                <img class="brand-logo" src="{{ asset('images/logo.png') }}" alt="Productos personalizados con QR, NFC, sublimacion, DTF e impresion 3D">
                 ForjaLab
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menu">

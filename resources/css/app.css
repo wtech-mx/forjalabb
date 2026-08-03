@@ -26,6 +26,12 @@ body {
         linear-gradient(180deg, #fff8ec 0%, #fffdf8 42%, #f8f2e4 100%);
 }
 
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
 .public-scan-body {
     margin: 0;
 }
@@ -458,6 +464,12 @@ a {
 .card-action {
     margin-top: auto;
     font-weight: 800;
+}
+
+.brand-logo {
+    width: 5.625rem;
+    height: auto;
+    object-fit: contain;
 }
 
 .catalog-section {
@@ -2412,9 +2424,69 @@ a {
 }
 
 @media (max-width: 767.98px) {
+    .navbar-glass .container {
+        align-items: center;
+    }
+
+    .navbar-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        max-width: 72%;
+        font-size: 1.05rem;
+        white-space: nowrap;
+    }
+
+    .brand-logo {
+        width: 4rem;
+    }
+
+    .navbar-collapse {
+        margin-top: .75rem;
+        padding: .75rem;
+        border: 1px solid rgba(90, 53, 29, .12);
+        border-radius: .75rem;
+        background: rgba(255, 248, 234, .92);
+        box-shadow: 0 1rem 2rem rgba(90, 53, 29, .12);
+    }
+
+    .navbar-nav {
+        align-items: stretch !important;
+    }
+
+    .navbar-nav .btn,
+    .navbar-nav .nav-link {
+        width: 100%;
+    }
+
+    .section-pad {
+        padding: 3rem 0;
+    }
+
     .hero-section,
     .service-hero {
-        padding-top: 7rem;
+        padding-top: 6.75rem;
+        padding-bottom: 3rem;
+    }
+
+    .package-page {
+        padding-top: 6.75rem;
+    }
+
+    .hero-section h1,
+    .service-hero h1,
+    .package-page h1 {
+        font-size: clamp(2.25rem, 12vw, 3.25rem);
+        line-height: .98;
+    }
+
+    .lead,
+    .tequila-copy p {
+        font-size: 1rem;
+    }
+
+    .max-copy {
+        max-width: 100%;
     }
 
     .hero-metrics,
@@ -2454,27 +2526,130 @@ a {
     }
 
     .tequila-photo {
-        min-height: 15rem;
+        min-height: auto;
+        padding: 1rem;
+    }
+
+    .tequila-copy {
+        gap: .85rem;
+        padding: 1.1rem;
+    }
+
+    .tequila-copy h2,
+    .tequila-copy h3 {
+        font-size: clamp(2rem, 11vw, 2.8rem);
+    }
+
+    .tequila-preview {
+        min-height: 18rem;
+        width: 100%;
+    }
+
+    .tequila-shot {
+        width: min(54%, 9.5rem);
+        height: 17rem;
+    }
+
+    .photo-drinkware-preview,
+    .drinkware-preview,
+    .thermo-preview {
+        min-height: auto;
+        width: 100%;
+    }
+
+    .drinkware-photo-stage {
+        width: 100%;
+        max-width: 22rem;
+    }
+
+    .mug-photo-preview .drinkware-design-on-photo {
+        left: 42%;
+        top: 52%;
+        width: 32%;
+    }
+
+    .travel-photo-preview .drinkware-design-on-photo {
+        left: 33%;
+        top: 55%;
+        width: 32%;
+    }
+
+    .coaster-preview {
+        min-height: auto;
+        width: 100%;
+    }
+
+    .coaster-tile {
+        width: min(88%, 18rem);
     }
 
     .design-strip {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .5rem;
+    }
+
+    .design-strip img {
+        padding: .28rem;
+    }
+
+    .design-strip figcaption {
+        font-size: .68rem;
     }
 
     .coaster-design-strip {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .coaster-preview {
-        min-height: 18rem;
+    .thermo-design-strip {
+        grid-template-columns: 1fr;
+    }
+
+    .finish-list,
+    .color-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .finish-list button,
+    .color-list button {
+        justify-content: center;
+        min-height: 2.75rem;
+        padding: .6rem .65rem;
     }
 
     .catalog-media {
         min-height: 10rem;
     }
 
+    .catalog-photo-media img {
+        height: 12.5rem;
+    }
+
     .catalog-body {
         min-height: auto;
+    }
+
+    .season-package h3 {
+        font-size: clamp(1.65rem, 10vw, 2.35rem);
+    }
+
+    .season-package-photo > div {
+        padding: 1.1rem;
+    }
+
+    .season-package .btn,
+    .tequila-copy .btn {
+        width: 100%;
+    }
+
+    .package-carousel .carousel-caption {
+        left: .75rem;
+        bottom: .75rem;
+        max-width: calc(100% - 1.5rem);
+    }
+
+    .package-carousel .carousel-caption span {
+        font-size: .85rem;
     }
 
     .admin-header {
