@@ -47,6 +47,13 @@ a {
     backdrop-filter: blur(18px) saturate(1.35);
 }
 
+.navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    white-space: nowrap;
+}
+
 .brand-mark {
     display: inline-grid;
     place-items: center;
