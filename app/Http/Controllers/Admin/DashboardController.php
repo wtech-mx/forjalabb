@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\SmartTag;
+use App\Models\CatalogProduct;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -11,11 +13,11 @@ class DashboardController extends Controller
     public function __invoke(): View
     {
         return view('admin.dashboard', [
-            'totalTags' => SmartTag::count(),
-            'activeTags' => SmartTag::where('is_active', true)->count(),
-            'bikerTags' => SmartTag::where('type', SmartTag::TYPE_BIKER)->count(),
-            'dogTags' => SmartTag::where('type', SmartTag::TYPE_DOG)->count(),
-            'latestTags' => SmartTag::latest()->take(6)->get(),
+            'totalProducts' => CatalogProduct::count(),
+            'activeProducts' => CatalogProduct::where('is_active', true)->count(),
+            'totalUsers' => User::count(),
+            'totalRoles' => Role::count(),
+            'latestProducts' => CatalogProduct::latest()->take(6)->get(),
         ]);
     }
 }

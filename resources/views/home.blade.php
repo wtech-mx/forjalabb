@@ -113,108 +113,21 @@
                 <p class="text-secondary mb-0 max-copy">Piezas seleccionadas para temporadas, eventos, kits empresariales y regalos con nombre, logo o detalle especial.</p>
             </div>
 
-            <div class="season-package season-package-photo mb-4">
-                <a class="season-package-media" href="{{ route('catalog.package') }}">
-                    <img src="{{ asset('images/catalog/paquete-15-septiembre.png') }}" alt="Paquete de tabla, dos tequileros y botella para 15 de septiembre">
-                </a>
-                <div>
-                    <span class="badge text-bg-warning mb-3">Paquete recomendado</span>
-                    <h3>Tabla + 2 tequileros + botella</h3>
-                    <p>Un set completo para regalo, celebracion o marca: tabla personalizada, dos tequileros y botella licorera con diseno coordinado.</p>
-                    <div class="d-flex flex-wrap gap-2 mt-3">
-                        <a class="btn btn-dark" href="{{ route('catalog.package') }}">
-                            <i class="bi bi-images me-2"></i>Ver paquete
-                        </a>
-                        <a class="btn btn-outline-light" href="https://wa.me/?text=Hola%2C%20quiero%20cotizar%20el%20paquete%20de%20tabla%2C%202%20tequileros%20y%20botella" target="_blank" rel="noopener">
-                            <i class="bi bi-whatsapp me-2"></i>Cotizar
-                        </a>
-                    </div>
-                </div>
-            </div>
+            @if ($featuredCatalogProduct)
+                @include('catalog.partials.product-card', ['product' => $featuredCatalogProduct])
+            @endif
 
             <div class="catalog-grid">
-                <a class="catalog-card catalog-card-link" href="{{ route('catalog.coasters') }}">
-                    <div class="catalog-media catalog-photo-media">
-                        <img src="{{ asset('images/catalog/porta-vasos-viva-mexico-square.png') }}" alt="Porta vasos negro con diseno Viva Mexico">
-                    </div>
-                    <div class="catalog-body">
-                        <h3>Porta vasos</h3>
-                        <p>Set de 4 piezas con disenos patrios. Pueden ser iguales o combinados.</p>
-                        <span class="catalog-action">Ver galeria <i class="bi bi-arrow-right"></i></span>
-                    </div>
-                </a>
-                <a class="catalog-card catalog-card-link tequila-catalog-card" href="{{ route('catalog.tequileros') }}">
-                    <div class="catalog-media tequila-mini-media">
-                        <div class="mini-tequila-set" aria-hidden="true">
-                            @foreach ([
-                                'aguacate-teq-transparent.png',
-                                'nopal-teq-transparent.png',
-                                'chile-teq-transparent.png',
-                                'pastor-teq-transparent.png',
-                                'elote-teq-transparent.png',
-                                'botella-teq-transparent.png',
-                            ] as $file)
-                                <span class="mini-tequila-shot">
-                                    <img src="{{ asset('images/catalog/'.$file) }}" alt="">
-                                </span>
-                            @endforeach
-                        </div>
-                    </div>
-                    <div class="catalog-body">
-                        <h3>Tequileros personalizados</h3>
-                        <p>Sets de 3 o 6 piezas en blanco, satinado o transparente con disenos oficiales.</p>
-                        <span class="catalog-action">Configurar <i class="bi bi-arrow-right"></i></span>
-                    </div>
-                </a>
-                <a class="catalog-card catalog-card-link" href="{{ route('catalog.mugs') }}">
-                    <div class="catalog-media catalog-photo-media">
-                        <img src="{{ asset('images/catalog/taza-producto-studio.png') }}" alt="Taza blanca con interior de color">
-                    </div>
-                    <div class="catalog-body">
-                        <h3>Tazas</h3>
-                        <p>Tazas blancas con interior de color y disenos patrios para regalo o temporada.</p>
-                        <span class="catalog-action">Configurar <i class="bi bi-arrow-right"></i></span>
-                    </div>
-                </a>
-                <a class="catalog-card catalog-card-link" href="{{ route('catalog.ceramic-cup') }}">
-                    <div class="catalog-media catalog-photo-media">
-                        <img src="{{ asset('images/catalog/vaso-cafe-producto-studio.png') }}" alt="Vaso cafe ceramica con tapa de color">
-                    </div>
-                    <div class="catalog-body">
-                        <h3>Vaso cafe ceramica</h3>
-                        <p>Vaso tipo cafe con tapa e interior de color, personalizable con los disenos oficiales.</p>
-                        <span class="catalog-action">Configurar <i class="bi bi-arrow-right"></i></span>
-                    </div>
-                </a>
-                <a class="catalog-card catalog-card-link" href="{{ route('catalog.matte-thermo') }}">
-                    <div class="catalog-media catalog-photo-media">
-                        <img src="{{ asset('images/catalog/termo-mate-producto-studio.png') }}" alt="Termo color mate blanco">
-                    </div>
-                    <div class="catalog-body">
-                        <h3>Termo color mate</h3>
-                        <p>Termos mate en negro, gris, verde o blanco para personalizar por temporada.</p>
-                        <span class="catalog-action">Configurar <i class="bi bi-arrow-right"></i></span>
-                    </div>
-                </a>
-                @foreach ([
-                    ['icon' => 'bottle', 'name' => 'Botella licorera', 'text' => 'Botella decorativa o de regalo con grabado, vinil o diseno aplicado.'],
-                    ['icon' => 'grid-3x3-gap', 'name' => 'Tabla', 'text' => 'Tabla personalizada para cocina, botanero, parrilla o kit de regalo.'],
-                    ['icon' => 'tag', 'name' => 'Collar para perros o motos', 'text' => 'Collar o placa con identidad visual, QR o datos de contacto segun el uso.'],
-                ] as $product)
-                    <article class="catalog-card">
-                        <div class="catalog-media">
-                            <i class="bi bi-{{ $product['icon'] }}"></i>
-                            <span>Foto pendiente</span>
-                        </div>
+                @forelse ($catalogProducts as $product)
+                    @include('catalog.partials.product-card', ['product' => $product])
+                @empty
+                    <div class="catalog-card">
                         <div class="catalog-body">
-                            <h3>{{ $product['name'] }}</h3>
-                            <p>{{ $product['text'] }}</p>
-                            <a href="https://wa.me/?text=Hola%2C%20quiero%20cotizar%20{{ urlencode($product['name']) }}" target="_blank" rel="noopener">
-                                Cotizar <i class="bi bi-arrow-right"></i>
-                            </a>
+                            <h3>Catalogo en preparacion</h3>
+                            <p>Pronto agregaremos productos disponibles para cotizar.</p>
                         </div>
-                    </article>
-                @endforeach
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>

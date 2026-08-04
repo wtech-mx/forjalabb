@@ -46,7 +46,25 @@
         </div>
     </nav>
 
+    @auth
+        @if (request()->routeIs('admin.*'))
+            @include('admin.partials.menu')
+        @endif
+    @endauth
+
     <main>
+        @if (request()->routeIs('admin.*'))
+            <div class="admin-flash container">
+                @if (session('status'))
+                    <div class="alert alert-success mb-0">{{ session('status') }}</div>
+                @endif
+                @if ($errors->any())
+                    <div class="alert alert-danger mb-0">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
+            </div>
+        @endif
         @yield('content')
     </main>
 

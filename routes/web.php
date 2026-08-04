@@ -1,9 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\SmartTagController;
+use App\Http\Controllers\Admin\CatalogBundleController;
+use App\Http\Controllers\Admin\CatalogProductController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PublicTagController;
+use App\Models\CatalogProduct;
 use Illuminate\Support\Facades\Route;
 
 $services = [
@@ -56,7 +60,17 @@ $services = [
 ];
 
 Route::get('/', function () {
-    return view('home');
+    return view('home', [
+        'featuredCatalogProduct' => CatalogProduct::active()
+            ->where('is_featured', true)
+            ->orderBy('sort_order')
+            ->first(),
+        'catalogProducts' => CatalogProduct::active()
+            ->where('is_featured', false)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get(),
+    ]);
 })->name('home');
 
 Route::get('/servicios/laser', function () {
@@ -87,6 +101,14 @@ Route::get('/catalogo/termo-color-mate', function () {
     return view('catalog.termo-color-mate');
 })->name('catalog.matte-thermo');
 
+Route::get('/catalogo/{catalogProduct:slug}', function (CatalogProduct $catalogProduct) {
+    abort_unless($catalogProduct->is_active, 404);
+
+    return view('catalog.show', [
+        'product' => $catalogProduct->load(['costs', 'options']),
+    ]);
+})->name('catalog.show');
+
 Route::get('/servicios/{service}', function (string $service) use ($services) {
     abort_unless(isset($services[$service]), 404);
 
@@ -106,9 +128,45 @@ Route::post('/admin/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', DashboardController::class)->name('dashboard');
-    Route::get('/tags/{tag}/qr', [SmartTagController::class, 'qr'])->name('tags.qr');
-    Route::resource('tags', SmartTagController::class)->except('destroy');
+    Route::get('/', DashboardController::class)->middleware('can:dashboard.view')->name('dashboard');
+
+    Route::resource('catalog', CatalogProductController::class)
+        ->parameters(['catalog' => 'catalog'])
+        ->only('index')
+        ->middleware('can:catalog.view');
+    Route::resource('catalog', CatalogProductController::class)
+        ->parameters(['catalog' => 'catalog'])
+        ->except(['index', 'show'])
+        ->middleware('can:catalog.manage');
+    Route::get('/catalog/{catalog}/preview', [CatalogProductController::class, 'preview'])
+        ->middleware('can:catalog.view')
+        ->name('catalog.preview');
+
+    Route::resource('packages', CatalogBundleController::class)
+        ->parameters(['packages' => 'package'])
+        ->only('index')
+        ->middleware('can:catalog.view');
+    Route::resource('packages', CatalogBundleController::class)
+        ->parameters(['packages' => 'package'])
+        ->except(['index', 'show'])
+        ->middleware('can:catalog.manage');
+    Route::get('/packages/{package}/preview', [CatalogBundleController::class, 'preview'])
+        ->middleware('can:catalog.view')
+        ->name('packages.preview');
+
+    Route::resource('users', UserController::class)
+        ->only('index')
+        ->middleware('can:users.view');
+    Route::resource('users', UserController::class)
+        ->except(['index', 'show'])
+        ->middleware('can:users.manage');
+
+    Route::resource('roles', RoleController::class)
+        ->only('index')
+        ->middleware('can:roles.view');
+    Route::resource('roles', RoleController::class)
+        ->except(['index', 'show'])
+        ->middleware('can:roles.manage');
 });
 
 Route::get('/t/{token}', PublicTagController::class)->name('tags.public');

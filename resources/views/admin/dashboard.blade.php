@@ -18,10 +18,10 @@
 
             <div class="row g-3 mb-4">
                 @foreach ([
-                    ['label' => 'Total', 'value' => $totalTags],
-                    ['label' => 'Activos', 'value' => $activeTags],
-                    ['label' => 'Biker Tags', 'value' => $bikerTags],
-                    ['label' => 'Dog Tags', 'value' => $dogTags],
+                    ['label' => 'Productos', 'value' => $totalProducts],
+                    ['label' => 'Activos', 'value' => $activeProducts],
+                    ['label' => 'Usuarios', 'value' => $totalUsers],
+                    ['label' => 'Roles', 'value' => $totalRoles],
                 ] as $metric)
                     <div class="col-6 col-lg-3">
                         <div class="metric-card">
@@ -34,10 +34,10 @@
 
             <div class="panel-card">
                 <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
-                    <h2 class="h5 fw-bold mb-0">Ultimos tags</h2>
-                    <a class="btn btn-sm btn-outline-dark" href="{{ route('admin.tags.index') }}">Ver todos</a>
+                    <h2 class="h5 fw-bold mb-0">Ultimos productos</h2>
+                    <a class="btn btn-sm btn-outline-dark" href="{{ route('admin.catalog.index') }}">Ver catalogo</a>
                 </div>
-                @include('admin.tags.partials.table', ['tags' => $latestTags])
+                @include('admin.catalog-products.partials.table', ['products' => $latestProducts])
             </div>
         </div>
     </section>
