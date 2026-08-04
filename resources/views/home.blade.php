@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <img class="hero-image" src="{{ asset('images/forjalab-hero.png') }}" alt="Productos personalizados con QR, NFC, sublimacion, DTF e impresion 3D">
+                    <img class="hero-image" src="{{ asset('images/forjalab-hero.png') }}" alt="Productos personalizados con QR, NFC, sublimacion, DTF e impresion 3D" fetchpriority="high" decoding="async">
                 </div>
             </div>
         </div>

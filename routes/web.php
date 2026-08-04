@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CatalogBundleController;
 use App\Http\Controllers\Admin\CatalogProductController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\SmartTagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PublicTagController;
@@ -129,6 +130,9 @@ Route::post('/admin/logout', [AuthController::class, 'logout'])
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', DashboardController::class)->middleware('can:dashboard.view')->name('dashboard');
+
+    Route::get('/tags/{tag}/qr', [SmartTagController::class, 'qr'])->name('tags.qr');
+    Route::resource('tags', SmartTagController::class)->except('destroy');
 
     Route::resource('catalog', CatalogProductController::class)
         ->parameters(['catalog' => 'catalog'])

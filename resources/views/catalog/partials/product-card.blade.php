@@ -7,7 +7,7 @@
     <div class="season-package season-package-photo mb-4">
         <a class="season-package-media" href="{{ $href }}" @if($isExternal) target="_blank" rel="noopener" @endif>
             @if ($product->image_url)
-                <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
+                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" loading="lazy" decoding="async">
             @else
                 <div class="catalog-media"><i class="bi bi-{{ $product->icon ?: 'gift' }}"></i><span>Foto pendiente</span></div>
             @endif
@@ -45,14 +45,14 @@
                         'botella-teq-transparent.png',
                     ] as $file)
                         <span class="mini-tequila-shot">
-                            <img src="{{ asset('images/catalog/'.$file) }}" alt="">
+                            <img src="{{ asset('images/catalog/'.$file) }}" alt="" loading="lazy" decoding="async">
                         </span>
                     @endforeach
                 </div>
             </div>
         @elseif ($product->image_url)
             <div class="catalog-media catalog-photo-media">
-                <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
+                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" loading="lazy" decoding="async">
             </div>
         @else
             <div class="catalog-media">

@@ -17,6 +17,306 @@
     --orange: #f8751f;
 }
 
+/* User-facing mobile refinements */
+@media (max-width: 575.98px) {
+    body {
+        background:
+            radial-gradient(circle at 0% 0%, rgba(248, 117, 31, .12), transparent 18rem),
+            linear-gradient(180deg, #fff8ec 0%, #fffdf8 55%, #f8f2e4 100%);
+    }
+
+    .container {
+        padding-right: 1rem;
+        padding-left: 1rem;
+    }
+
+    .navbar-glass {
+        min-height: 4rem;
+    }
+
+    .navbar-toggler {
+        width: 2.75rem;
+        height: 2.75rem;
+        padding: .35rem;
+        border-radius: .75rem;
+        background: rgba(255, 255, 255, .62);
+    }
+
+    .hero-section,
+    .service-hero,
+    .laser-hero {
+        padding-top: 5.8rem;
+        padding-bottom: 2.25rem;
+    }
+
+    .glass-copy {
+        padding: 1rem;
+        border-radius: .9rem;
+    }
+
+    .hero-section h1,
+    .service-hero h1,
+    .laser-hero h1 {
+        margin-bottom: 1rem !important;
+        font-size: clamp(2rem, 11vw, 2.75rem);
+    }
+
+    .hero-section .lead,
+    .service-hero .lead,
+    .laser-hero .lead {
+        margin-bottom: 1rem !important;
+        font-size: .98rem;
+        line-height: 1.55;
+    }
+
+    .hero-section .btn-lg,
+    .service-hero .btn-lg,
+    .cta-panel .btn-lg,
+    .season-package .btn,
+    .product-card .card-action {
+        width: 100%;
+    }
+
+    .hero-section .d-flex.flex-wrap,
+    .service-hero .d-flex.flex-wrap {
+        display: grid !important;
+        grid-template-columns: 1fr;
+        gap: .65rem !important;
+    }
+
+    .hero-image {
+        aspect-ratio: 4 / 3;
+        border-radius: .85rem;
+        box-shadow: 0 1rem 2.25rem rgba(90, 53, 29, .16);
+    }
+
+    .hero-metrics div,
+    .price-strip div {
+        min-height: auto;
+        padding: .85rem;
+    }
+
+    .feature-card,
+    .line-card,
+    .package-card,
+    .panel-card {
+        padding: 1rem;
+    }
+
+    .product-card {
+        min-height: 16rem;
+        padding: 1.25rem;
+    }
+
+    .product-card h3 {
+        margin-top: 1rem;
+        font-size: clamp(1.65rem, 10vw, 2.35rem);
+        line-height: 1;
+    }
+
+    .product-card p {
+        font-size: .96rem;
+    }
+
+    .catalog-grid {
+        gap: 1rem;
+    }
+
+    .catalog-card,
+    .season-package {
+        border-radius: .9rem;
+    }
+
+    .catalog-photo-media img,
+    .season-package-media img {
+        height: auto;
+        aspect-ratio: 4 / 3;
+    }
+
+    .package-carousel img {
+        aspect-ratio: auto;
+    }
+
+    .embroidery-tool,
+    .laser-tool {
+        padding: .85rem;
+        border-radius: .9rem;
+    }
+
+    .mockup-stage,
+    .laser-stage {
+        border-radius: .85rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .public-scan-body {
+        background: #f6faf9;
+    }
+
+    .qr-landing {
+        min-height: 100svh;
+        padding: .75rem 0 1rem;
+    }
+
+    .qr-landing .container {
+        padding-right: .7rem;
+        padding-left: .7rem;
+    }
+
+    .qr-shell {
+        padding: .75rem;
+        border-radius: 1rem;
+        box-shadow: 0 1rem 2.25rem rgba(18, 20, 23, .16);
+    }
+
+    .qr-hero {
+        margin-bottom: .75rem;
+        padding: 1rem;
+        border-radius: .9rem;
+    }
+
+    .qr-hero h1 {
+        font-size: clamp(2rem, 14vw, 3rem);
+        line-height: .95;
+    }
+
+    .qr-hero p {
+        margin-top: .65rem;
+        font-size: .95rem;
+        line-height: 1.45;
+    }
+
+    .qr-kicker {
+        margin-bottom: .65rem;
+        font-size: .7rem;
+    }
+
+    .status-pill {
+        padding: .45rem .65rem;
+        font-size: .76rem;
+    }
+
+    .scan-alert-box {
+        align-items: stretch;
+        flex-direction: column;
+        gap: .65rem;
+        padding: .8rem;
+        font-size: .9rem;
+    }
+
+    .scan-alert-box i {
+        display: none;
+    }
+
+    .scan-location-button {
+        width: 100%;
+        min-height: 3rem;
+        font-size: .95rem;
+    }
+
+    .qr-alert-grid,
+    .pet-profile-band {
+        gap: .6rem;
+        margin-bottom: .75rem;
+    }
+
+    .qr-alert-item,
+    .pet-profile-band div {
+        min-height: auto;
+        padding: .85rem;
+        border-radius: .8rem;
+    }
+
+    .qr-alert-item.blood {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: .75rem;
+    }
+
+    .qr-alert-item.blood strong {
+        margin-top: 0;
+        font-size: 1.85rem;
+    }
+
+    .qr-glass-panel {
+        margin-bottom: .75rem;
+        padding: .85rem;
+        border-radius: .85rem;
+    }
+
+    .qr-glass-panel h2 {
+        margin-bottom: .75rem;
+        font-size: 1rem;
+    }
+
+    .qr-note {
+        padding: .85rem;
+        border-radius: .75rem;
+    }
+
+    .qr-contact-strip {
+        position: sticky;
+        bottom: .65rem;
+        z-index: 10;
+        gap: .55rem;
+        margin-top: .75rem;
+        padding: .55rem;
+        border: 1px solid rgba(255, 255, 255, .6);
+        border-radius: 1rem;
+        background: rgba(255, 255, 255, .68);
+        box-shadow: 0 .8rem 1.8rem rgba(18, 20, 23, .14);
+        backdrop-filter: blur(14px);
+    }
+
+    .qr-contact-strip a {
+        min-height: 4.25rem;
+        padding: .75rem;
+        border-radius: .8rem;
+    }
+
+    .qr-contact-strip a i {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    .qr-contact-strip a span {
+        font-size: .9rem;
+    }
+
+    .qr-contact-strip a span small {
+        font-size: .75rem;
+    }
+
+    .qr-disclaimer {
+        padding-bottom: .25rem;
+        font-size: .76rem;
+        line-height: 1.45;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+    .hero-section,
+    .service-hero,
+    .laser-hero {
+        padding-top: 7rem;
+    }
+
+    .qr-landing {
+        padding-top: 1.25rem;
+    }
+
+    .qr-alert-grid,
+    .pet-profile-band {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .qr-contact-strip {
+        grid-template-columns: 1fr;
+    }
+}
+
 body {
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     color: var(--ink);
@@ -603,10 +903,22 @@ a {
     background: #1b120b;
 }
 
+.package-slide-frame {
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    background:
+        radial-gradient(circle at 50% 18%, rgba(255, 255, 255, .38), transparent 18rem),
+        linear-gradient(135deg, rgba(255, 248, 234, .18), rgba(248, 117, 31, .16)),
+        #1b120b;
+}
+
 .package-carousel img {
+    display: block;
     width: 100%;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
+    height: 100%;
+    object-fit: contain;
     object-position: center;
 }
 
@@ -2964,5 +3276,225 @@ a {
     .laser-option,
     .upload-tile {
         min-height: 3.6rem;
+    }
+}
+
+/* Final user-facing mobile pass: keep these rules last in the cascade. */
+@media (max-width: 575.98px) {
+    .container {
+        padding-right: 1rem;
+        padding-left: 1rem;
+    }
+
+    .hero-section,
+    .service-hero,
+    .laser-hero {
+        padding-top: 5.8rem;
+        padding-bottom: 2.25rem;
+    }
+
+    .glass-copy {
+        padding: 1rem;
+        border-radius: .9rem;
+    }
+
+    .hero-section h1,
+    .service-hero h1,
+    .laser-hero h1 {
+        margin-bottom: 1rem !important;
+        font-size: clamp(2rem, 11vw, 2.75rem);
+    }
+
+    .hero-section .lead,
+    .service-hero .lead,
+    .laser-hero .lead {
+        margin-bottom: 1rem !important;
+        font-size: .98rem;
+        line-height: 1.55;
+    }
+
+    .hero-section .d-flex.flex-wrap,
+    .service-hero .d-flex.flex-wrap {
+        display: grid !important;
+        grid-template-columns: 1fr;
+        gap: .65rem !important;
+    }
+
+    .hero-section .btn-lg,
+    .service-hero .btn-lg,
+    .cta-panel .btn-lg,
+    .season-package .btn,
+    .tequila-copy .btn {
+        width: 100%;
+        min-height: 3rem;
+    }
+
+    .hero-image {
+        aspect-ratio: 4 / 3;
+        border-radius: .85rem;
+        box-shadow: 0 1rem 2.25rem rgba(90, 53, 29, .16);
+    }
+
+    .hero-metrics div,
+    .price-strip div {
+        min-height: auto;
+        padding: .85rem;
+    }
+
+    .feature-card,
+    .line-card,
+    .package-card,
+    .panel-card {
+        padding: 1rem;
+    }
+
+    .product-card {
+        min-height: 16rem;
+        padding: 1.25rem;
+    }
+
+    .product-card h3 {
+        margin-top: 1rem;
+        font-size: clamp(1.65rem, 10vw, 2.35rem);
+        line-height: 1;
+    }
+
+    .product-card p {
+        font-size: .96rem;
+    }
+
+    .catalog-photo-media img,
+    .season-package-media img {
+        height: auto;
+        aspect-ratio: 4 / 3;
+    }
+
+    .embroidery-tool,
+    .laser-tool {
+        padding: .85rem;
+        border-radius: .9rem;
+    }
+
+    .qr-landing {
+        min-height: 100svh;
+        padding: .75rem 0 1rem;
+    }
+
+    .qr-landing .container {
+        padding-right: .7rem;
+        padding-left: .7rem;
+    }
+
+    .qr-shell {
+        padding: .75rem;
+        border-radius: 1rem;
+        box-shadow: 0 1rem 2.25rem rgba(18, 20, 23, .16);
+    }
+
+    .qr-hero {
+        flex-direction: column;
+        margin-bottom: .75rem;
+        padding: 1rem;
+        border-radius: .9rem;
+    }
+
+    .qr-hero h1 {
+        font-size: clamp(2rem, 14vw, 3rem);
+        line-height: .95;
+    }
+
+    .qr-hero p {
+        margin-top: .65rem;
+        font-size: .95rem;
+        line-height: 1.45;
+    }
+
+    .scan-alert-box {
+        align-items: stretch;
+        flex-direction: column;
+        gap: .65rem;
+        padding: .8rem;
+        font-size: .9rem;
+    }
+
+    .scan-alert-box i {
+        display: none;
+    }
+
+    .scan-location-button {
+        width: 100%;
+        min-height: 3rem;
+        font-size: .95rem;
+    }
+
+    .qr-alert-grid,
+    .pet-profile-band,
+    .qr-contact-strip {
+        grid-template-columns: 1fr;
+    }
+
+    .qr-alert-item,
+    .pet-profile-band div {
+        min-height: auto;
+        padding: .85rem;
+        border-radius: .8rem;
+    }
+
+    .qr-alert-item.blood {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: .75rem;
+    }
+
+    .qr-alert-item.blood strong {
+        margin-top: 0;
+        font-size: 1.85rem;
+    }
+
+    .qr-glass-panel {
+        margin-bottom: .75rem;
+        padding: .85rem;
+        border-radius: .85rem;
+    }
+
+    .qr-contact-strip {
+        position: sticky;
+        bottom: .65rem;
+        z-index: 10;
+        gap: .55rem;
+        margin-top: .75rem;
+        padding: .55rem;
+        border: 1px solid rgba(255, 255, 255, .6);
+        border-radius: 1rem;
+        background: rgba(255, 255, 255, .68);
+        box-shadow: 0 .8rem 1.8rem rgba(18, 20, 23, .14);
+        backdrop-filter: blur(14px);
+    }
+
+    .qr-contact-strip a {
+        min-height: 4.25rem;
+        padding: .75rem;
+        border-radius: .8rem;
+    }
+
+    .qr-contact-strip a i {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    .qr-contact-strip a span {
+        font-size: .9rem;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+    .qr-landing {
+        padding-top: 1.25rem;
+    }
+
+    .qr-alert-grid,
+    .pet-profile-band {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }

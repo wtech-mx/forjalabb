@@ -32,7 +32,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <img class="hero-image" src="{{ asset('images/'.$service['hero_image']) }}" alt="{{ $service['title'] }}">
+                    <img class="hero-image" src="{{ asset('images/'.$service['hero_image']) }}" alt="{{ $service['title'] }}" fetchpriority="high" decoding="async">
                 </div>
             </div>
         </div>

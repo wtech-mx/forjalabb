@@ -42,7 +42,9 @@
                         ['file' => 'paquete-15-septiembre-botella.png', 'title' => 'Botella licorera', 'alt' => 'Detalle de botella licorera del paquete de temporada'],
                     ] as $index => $slide)
                         <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                            <img src="{{ asset('images/catalog/'.$slide['file']) }}" class="d-block w-100" alt="{{ $slide['alt'] }}">
+                            <div class="package-slide-frame">
+                                <img src="{{ asset('images/catalog/'.$slide['file']) }}" alt="{{ $slide['alt'] }}" loading="{{ $index === 0 ? 'eager' : 'lazy' }}" decoding="async">
+                            </div>
                             <div class="carousel-caption">
                                 <span>{{ $slide['title'] }}</span>
                             </div>
