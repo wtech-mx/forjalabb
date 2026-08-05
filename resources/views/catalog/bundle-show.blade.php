@@ -27,12 +27,19 @@
 
                     @if ($bundle->items->isNotEmpty())
                         <div class="bundle-item-picker" role="group" aria-label="Productos incluidos">
-                            @foreach ($bundle->items as $index => $item)
+                            @if ($bundle->image_url)
+                                <button class="active" type="button" data-bundle-item-option data-image="{{ $bundle->image_url }}" data-name="{{ $bundle->name }}">
+                                    <span><i class="bi bi-box-seam-fill"></i></span>
+                                    <strong>Paquete completo</strong>
+                                </button>
+                            @endif
+
+                            @foreach ($bundle->items as $item)
                                 @php
                                     $product = $item->product;
                                     $image = $product?->image_url ?: $bundle->image_url;
                                 @endphp
-                                <button class="{{ $index === 0 ? 'active' : '' }}" type="button" data-bundle-item-option data-image="{{ $image }}" data-name="{{ $product?->name }}">
+                                <button class="{{ ! $bundle->image_url && $loop->first ? 'active' : '' }}" type="button" data-bundle-item-option data-image="{{ $image }}" data-name="{{ $product?->name }}">
                                     <span>{{ $item->quantity }}x</span>
                                     <strong>{{ $product?->name }}</strong>
                                 </button>
