@@ -151,8 +151,8 @@
                                         @if ($bundle->public_price > 0)
                                             <strong>${{ number_format((float) $bundle->public_price, 2) }}</strong>
                                         @endif
-                                        <a class="btn btn-dark" href="https://wa.me/?text={{ rawurlencode('Hola, quiero cotizar el paquete '.$bundle->name) }}" target="_blank" rel="noopener">
-                                            <i class="bi bi-whatsapp me-2"></i>Cotizar paquete
+                                        <a class="btn btn-dark" href="{{ route('catalog.bundle.show', $bundle) }}">
+                                            <i class="bi bi-arrow-right me-2"></i>Ver paquete
                                         </a>
                                     </div>
                                 </div>

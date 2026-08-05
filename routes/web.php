@@ -109,6 +109,14 @@ Route::get('/catalogo/termo-color-mate', function () {
     return view('catalog.termo-color-mate');
 })->name('catalog.matte-thermo');
 
+Route::get('/catalogo/paquetes/{bundle:slug}', function (CatalogBundle $bundle) {
+    abort_unless($bundle->is_active, 404);
+
+    return view('catalog.bundle-show', [
+        'bundle' => $bundle->load(['items.product', 'photos']),
+    ]);
+})->name('catalog.bundle.show');
+
 Route::get('/catalogo/{catalogProduct:slug}', function (CatalogProduct $catalogProduct) {
     abort_unless($catalogProduct->is_active, 404);
 
