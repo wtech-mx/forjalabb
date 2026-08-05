@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\SmartTagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PublicTagController;
+use App\Models\CatalogBundle;
 use App\Models\CatalogProduct;
 use Illuminate\Support\Facades\Route;
 
@@ -68,6 +69,12 @@ Route::get('/', function () {
             ->first(),
         'catalogProducts' => CatalogProduct::active()
             ->where('is_featured', false)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get(),
+        'catalogBundles' => CatalogBundle::active()
+            ->with(['items.product'])
+            ->orderByDesc('is_featured')
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get(),

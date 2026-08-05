@@ -117,6 +117,51 @@
                 @include('catalog.partials.product-card', ['product' => $featuredCatalogProduct])
             @endif
 
+            @if ($catalogBundles->isNotEmpty())
+                <div class="bundle-showcase">
+                    <div class="bundle-showcase-heading">
+                        <div>
+                            <div class="eyebrow">Paquetes armados</div>
+                            <h3>Sets listos para vender mas en una sola entrega.</h3>
+                        </div>
+                        <span>Incluyen empaque de paquete y precio calculado.</span>
+                    </div>
+                    <div class="bundle-showcase-grid">
+                        @foreach ($catalogBundles as $bundle)
+                            <article class="bundle-home-card {{ $bundle->is_featured ? 'featured' : '' }}">
+                                <div class="bundle-home-media">
+                                    @if ($bundle->image_url)
+                                        <img src="{{ $bundle->image_url }}" alt="{{ $bundle->name }}">
+                                    @else
+                                        <i class="bi bi-box-seam-fill"></i>
+                                    @endif
+                                </div>
+                                <div class="bundle-home-body">
+                                    <span class="badge text-bg-warning">{{ $bundle->is_featured ? 'Destacado' : 'Paquete' }}</span>
+                                    <h4>{{ $bundle->name }}</h4>
+                                    @if ($bundle->description)
+                                        <p>{{ $bundle->description }}</p>
+                                    @endif
+                                    <div class="bundle-home-items">
+                                        @foreach ($bundle->items->take(4) as $item)
+                                            <span>{{ $item->quantity }}x {{ $item->product?->name }}</span>
+                                        @endforeach
+                                    </div>
+                                    <div class="bundle-home-bottom">
+                                        @if ($bundle->public_price > 0)
+                                            <strong>${{ number_format((float) $bundle->public_price, 2) }}</strong>
+                                        @endif
+                                        <a class="btn btn-dark" href="https://wa.me/?text={{ rawurlencode('Hola, quiero cotizar el paquete '.$bundle->name) }}" target="_blank" rel="noopener">
+                                            <i class="bi bi-whatsapp me-2"></i>Cotizar paquete
+                                        </a>
+                                    </div>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <div class="catalog-grid">
                 @forelse ($catalogProducts as $product)
                     @include('catalog.partials.product-card', ['product' => $product])
