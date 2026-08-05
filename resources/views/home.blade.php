@@ -31,17 +31,7 @@
 
     <section class="section-pad catalog-section catalog-section-priority" id="catalogo">
         <div class="container">
-            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
-                <div>
-                    <div class="eyebrow">Mini catalogo de temporada</div>
-                    <h2 class="fw-bold mt-2 mb-0">Productos listos para regalar personalizar.</h2>
-                </div>
-                <p class="text-secondary mb-0 max-copy">Piezas seleccionadas para temporadas, eventos, kits empresariales y regalos con nombre, logo o detalle especial.</p>
-            </div>
 
-            @if ($featuredCatalogProduct)
-                @include('catalog.partials.product-card', ['product' => $featuredCatalogProduct])
-            @endif
 
             @if ($catalogBundles->isNotEmpty())
                 <div class="bundle-showcase">
@@ -50,7 +40,6 @@
                             <div class="eyebrow">Paquetes armados</div>
                             <h3>Sets listos para vender mas en una sola entrega.</h3>
                         </div>
-                        <span>Incluyen empaque de paquete y precio calculado.</span>
                     </div>
                     <div class="bundle-showcase-grid">
                         @foreach ($catalogBundles as $bundle)

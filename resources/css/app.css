@@ -2354,7 +2354,9 @@ a {
 }
 
 .catalog-photo-media {
+    display: block;
     overflow: hidden;
+    min-height: 15.5rem;
     padding: 0;
     background: #1b120b;
 }
@@ -2363,6 +2365,7 @@ a {
     display: block;
     width: 100%;
     height: 15.5rem;
+    min-height: 15.5rem;
     object-fit: cover;
     object-position: center;
 }
@@ -4358,5 +4361,109 @@ a {
     .qr-alert-grid,
     .pet-profile-band {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Final catalog mobile layout overrides. */
+@media (width <= 767.98px) {
+    .catalog-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: .75rem;
+    }
+
+    .catalog-photo-media {
+        min-height: 8.75rem;
+    }
+
+    .catalog-photo-media img {
+        width: 100%;
+        height: 8.75rem;
+        min-height: 8.75rem;
+        aspect-ratio: auto;
+        object-fit: cover;
+    }
+
+    .catalog-body {
+        gap: .4rem;
+        padding: .7rem;
+    }
+
+    .catalog-body h3 {
+        font-size: .92rem;
+        line-height: 1.08;
+    }
+
+    .catalog-body p {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        font-size: .75rem;
+        line-height: 1.3;
+    }
+
+    .catalog-price {
+        font-size: .9rem;
+    }
+
+    .catalog-action {
+        font-size: .72rem;
+    }
+
+    .bundle-showcase-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: .75rem;
+    }
+
+    .bundle-home-card,
+    .bundle-home-card.featured {
+        grid-column: auto !important;
+        grid-template-columns: 1fr !important;
+        min-height: auto;
+        border-radius: .75rem;
+    }
+
+    .bundle-home-media {
+        min-height: 8.75rem;
+    }
+
+    .bundle-home-media img {
+        width: 100%;
+        height: 8.75rem;
+        aspect-ratio: auto;
+        object-fit: cover;
+    }
+
+    .bundle-home-body {
+        gap: .45rem;
+        padding: .7rem;
+    }
+
+    .bundle-home-body h4 {
+        font-size: .95rem;
+        line-height: 1.08;
+    }
+
+    .bundle-home-body p,
+    .bundle-home-items {
+        display: none;
+    }
+
+    .bundle-home-bottom {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: .4rem;
+        margin-top: 0;
+    }
+
+    .bundle-home-bottom strong {
+        font-size: .95rem;
+    }
+
+    .bundle-home-bottom .btn {
+        width: 100%;
+        min-height: 2.25rem;
+        padding: .35rem .45rem;
+        font-size: .72rem;
     }
 }

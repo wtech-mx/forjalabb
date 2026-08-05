@@ -51,7 +51,7 @@
                 </div>
             </div>
         @elseif ($product->image_url)
-            <div class="catalog-media catalog-photo-media">
+            <div class="catalog-photo-media">
                 <img src="{{ $product->image_url }}" alt="{{ $product->name }}" loading="lazy" decoding="async">
             </div>
         @else
