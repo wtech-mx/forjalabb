@@ -1107,6 +1107,24 @@ a {
     color: var(--muted);
 }
 
+.product-spec-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    width: fit-content;
+    max-width: 100%;
+    padding: .55rem .75rem;
+    border: 1px solid rgba(90, 53, 29, .12);
+    border-radius: 999px;
+    color: var(--forge-brown);
+    background: rgba(255, 248, 234, .74);
+    font-weight: 900;
+}
+
+.product-spec-pill span {
+    overflow-wrap: anywhere;
+}
+
 .product-gallery-strip {
     display: flex;
     gap: .55rem;

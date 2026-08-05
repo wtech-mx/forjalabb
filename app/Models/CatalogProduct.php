@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
     'name',
     'slug',
     'description',
+    'specifications',
     'cost_subtotal',
     'friends_price',
     'public_price',

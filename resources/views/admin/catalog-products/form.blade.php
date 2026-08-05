@@ -69,6 +69,11 @@
                                     <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="3">{{ old('description', $product->description) }}</textarea>
                                     @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
+                                <div class="col-12">
+                                    <label class="form-label" for="specifications">Medidas, capacidad o especificaciones</label>
+                                    <input class="form-control @error('specifications') is-invalid @enderror" id="specifications" name="specifications" value="{{ old('specifications', $product->specifications) }}" placeholder="Ej. 20 x 30 cm, 750 ml, acero inoxidable, set de 4 piezas">
+                                    @error('specifications')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
                                 <div class="col-md-6">
                                     <label class="form-label" for="cover_photo">Foto de portada</label>
                                     <input class="form-control @error('cover_photo') is-invalid @enderror" id="cover_photo" name="cover_photo" type="file" accept="image/*">

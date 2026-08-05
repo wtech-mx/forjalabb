@@ -48,6 +48,12 @@
                             </div>
                         @endif
                         <p>{{ $product->description }}</p>
+                        @if ($product->specifications)
+                            <div class="product-spec-pill">
+                                <i class="bi bi-rulers"></i>
+                                <span>{{ $product->specifications }}</span>
+                            </div>
+                        @endif
                         @if ($product->salePackages->isNotEmpty())
                             <div class="sale-package-list sale-package-picker mb-2" role="group" aria-label="Paquetes disponibles">
                                 @foreach ($product->salePackages as $package)
@@ -90,6 +96,12 @@
                     <div class="tequila-copy">
                         <h1>{{ $product->name }}</h1>
                         <p>{{ $product->description }}</p>
+                        @if ($product->specifications)
+                            <div class="product-spec-pill">
+                                <i class="bi bi-rulers"></i>
+                                <span>{{ $product->specifications }}</span>
+                            </div>
+                        @endif
 
                         <div class="d-flex flex-wrap gap-2 mb-3">
                             <span class="badge text-bg-light" data-stock-label>
