@@ -147,7 +147,32 @@
                             </button>
                         </div>
 
-                        <div class="panel-card">
+                        <div class="panel-card mb-4" data-gallery-fields>
+                            <div class="form-section-title">
+                                <i class="bi bi-images"></i>
+                                <div>
+                                    <h2>Galeria del producto</h2>
+                                    <p>Sube varias fotos. El cliente las vera en carrusel.</p>
+                                </div>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-5">
+                                    <label class="form-label" for="stock">Stock del producto</label>
+                                    <input class="form-control @error('stock') is-invalid @enderror" id="stock" name="stock" type="number" min="0" value="{{ old('stock', $product->stock ?? 0) }}" data-gallery-stock>
+                                    @error('stock')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
+                                <div class="col-md-7">
+                                    <label class="form-label" for="gallery_photos">Fotos de galeria</label>
+                                    <input class="form-control @error('gallery_photos.*') is-invalid @enderror" id="gallery_photos" name="gallery_photos[]" type="file" accept="image/*" multiple>
+                                    @error('gallery_photos.*')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @if ($product->photos->isNotEmpty())
+                                        <div class="form-text">{{ $product->photos->count() }} foto(s) cargadas.</div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-card" data-customization-fields>
                             <div class="form-section-title">
                                 <i class="bi bi-palette-fill"></i>
                                 <div>
@@ -192,7 +217,7 @@
                                 <div><span>Precio publico</span><strong data-public-price>$0.00</strong><small data-public-profit>Ganancia $0.00</small></div>
                             </div>
                             <div class="price-summary mt-4">
-                                <div><span>Stock total por colores</span><strong data-total-stock>{{ $product->stock ?? 0 }}</strong></div>
+                                <div><span data-stock-summary-label>Stock total por colores</span><strong data-total-stock>{{ $product->stock ?? 0 }}</strong></div>
                             </div>
                             <div class="form-check form-switch mt-4 mb-3">
                                 <input class="form-check-input" id="is_active" name="is_active" type="checkbox" value="1" @checked(old('is_active', $product->is_active))>
@@ -274,13 +299,20 @@
             const optionTemplate = document.querySelector('[data-option-template]').innerHTML;
             const packageList = form.querySelector('[data-package-list]');
             const packageTemplate = document.querySelector('[data-package-template]').innerHTML;
+            const modeSelect = form.querySelector('[name="presentation_mode"]');
+            const galleryFields = form.querySelector('[data-gallery-fields]');
+            const customizationFields = form.querySelector('[data-customization-fields]');
+            const galleryStock = form.querySelector('[data-gallery-stock]');
+            const stockSummaryLabel = form.querySelector('[data-stock-summary-label]');
 
             const calculate = () => {
+                const isGallery = modeSelect?.value === 'gallery';
                 const subtotal = [...form.querySelectorAll('[data-cost-input]')]
                     .reduce((sum, input) => sum + (Number.parseFloat(input.value) || 0), 0);
-                const totalStock = [...form.querySelectorAll('[data-option-row]')]
+                const colorStock = [...form.querySelectorAll('[data-option-row]')]
                     .filter((row) => row.querySelector('[data-option-group]')?.value === 'color')
                     .reduce((sum, row) => sum + (Number.parseInt(row.querySelector('[data-color-stock]')?.value, 10) || 0), 0);
+                const totalStock = isGallery ? (Number.parseInt(galleryStock?.value, 10) || 0) : colorStock;
                 const friends = subtotal * 1.5;
                 const publicPrice = subtotal * 1.8;
 
@@ -290,6 +322,15 @@
                 form.querySelector('[data-public-price]').textContent = money(publicPrice);
                 form.querySelector('[data-public-profit]').textContent = `Ganancia ${money(publicPrice - subtotal)}`;
                 form.querySelector('[data-total-stock]').textContent = totalStock;
+                if (stockSummaryLabel) {
+                    stockSummaryLabel.textContent = isGallery ? 'Stock del producto' : 'Stock total por colores';
+                }
+                if (galleryFields) {
+                    galleryFields.hidden = !isGallery;
+                }
+                if (customizationFields) {
+                    customizationFields.hidden = isGallery;
+                }
                 form.querySelectorAll('[data-package-row]').forEach((row) => {
                     const quantity = Math.max(1, Number.parseInt(row.querySelector('[data-package-quantity]')?.value, 10) || 1);
                     const packaging = Math.max(0, Number.parseFloat(row.querySelector('[data-package-packaging]')?.value) || 0);
@@ -316,13 +357,13 @@
             };
 
             form.addEventListener('input', (event) => {
-                if (event.target.matches('[data-cost-input], [data-color-stock], [data-package-quantity], [data-package-packaging], [data-package-family-multiplier], [data-package-public-multiplier]')) {
+                if (event.target.matches('[data-cost-input], [data-color-stock], [data-gallery-stock], [data-package-quantity], [data-package-packaging], [data-package-family-multiplier], [data-package-public-multiplier]')) {
                     calculate();
                 }
             });
 
             form.addEventListener('change', (event) => {
-                if (event.target.matches('[data-option-group]')) {
+                if (event.target.matches('[data-option-group], [name="presentation_mode"]')) {
                     calculate();
                 }
             });

@@ -47,7 +47,8 @@ class CatalogProductController extends Controller
             $product = CatalogProduct::create($this->productPayload($request, $data));
             $this->syncCosts($product, $data['costs'] ?? []);
             $this->syncSalePackages($product, $data['sale_packages'] ?? []);
-            $this->syncOptions($product, $request, $data['options'] ?? []);
+            $this->syncPhotos($product, $request);
+            $this->syncOptions($product, $request, $data);
             $this->syncProductMainPrice($product);
 
             return $product;
@@ -61,7 +62,7 @@ class CatalogProductController extends Controller
     public function edit(CatalogProduct $catalog): View
     {
         return view('admin.catalog-products.form', [
-            'product' => $catalog->load(['costs', 'options', 'salePackages']),
+            'product' => $catalog->load(['costs', 'options', 'salePackages', 'photos']),
             'presentationModes' => CatalogProduct::PRESENTATION_MODES,
             'optionGroups' => CatalogProductOption::GROUPS,
         ]);
@@ -74,7 +75,8 @@ class CatalogProductController extends Controller
             $catalog->update($this->productPayload($request, $data, $catalog));
             $this->syncCosts($catalog, $data['costs'] ?? []);
             $this->syncSalePackages($catalog, $data['sale_packages'] ?? []);
-            $this->syncOptions($catalog, $request, $data['options'] ?? []);
+            $this->syncPhotos($catalog, $request);
+            $this->syncOptions($catalog, $request, $data);
             $this->syncProductMainPrice($catalog);
         });
 
@@ -86,7 +88,7 @@ class CatalogProductController extends Controller
     public function preview(CatalogProduct $catalog): View
     {
         return view('admin.catalog-products.preview', [
-            'product' => $catalog->load(['costs', 'options', 'salePackages']),
+            'product' => $catalog->load(['costs', 'options', 'salePackages', 'photos']),
         ]);
     }
 
@@ -111,7 +113,10 @@ class CatalogProductController extends Controller
             'slug' => ['required', 'string', 'max:160', Rule::unique('catalog_products', 'slug')->ignore($productId)],
             'description' => ['nullable', 'string', 'max:700'],
             'cover_photo' => ['nullable', 'image', 'max:8192'],
+            'gallery_photos' => ['nullable', 'array'],
+            'gallery_photos.*' => ['nullable', 'image', 'max:8192'],
             'presentation_mode' => ['required', Rule::in(array_keys(CatalogProduct::PRESENTATION_MODES))],
+            'stock' => ['nullable', 'integer', 'min:0', 'max:999999'],
             'costs' => ['nullable', 'array'],
             'costs.*.name' => ['nullable', 'string', 'max:140'],
             'costs.*.cost' => ['nullable', 'numeric', 'min:0', 'max:999999'],
@@ -157,7 +162,9 @@ class CatalogProductController extends Controller
             'public_price' => $publicPrice,
             'friends_profit' => round($friendsPrice - $costSubtotal, 2),
             'public_profit' => round($publicPrice - $costSubtotal, 2),
-            'stock' => $this->totalColorStock($data['options'] ?? []),
+            'stock' => $data['presentation_mode'] === CatalogProduct::MODE_GALLERY
+                ? (int) ($data['stock'] ?? 0)
+                : $this->totalColorStock($data['options'] ?? []),
             'cover_photo_path' => $coverPhotoPath,
             'presentation_mode' => $data['presentation_mode'],
             'is_active' => $request->boolean('is_active'),
@@ -184,9 +191,32 @@ class CatalogProductController extends Controller
             ]));
     }
 
-    private function syncOptions(CatalogProduct $product, Request $request, array $options): void
+    private function syncPhotos(CatalogProduct $product, Request $request): void
+    {
+        if (! $request->hasFile('gallery_photos')) {
+            return;
+        }
+
+        foreach ($request->file('gallery_photos') as $file) {
+            if (! $file) {
+                continue;
+            }
+
+            $product->photos()->create([
+                'image_path' => $this->storePublicCatalogImage($file, $product->slug, 'galeria'),
+                'sort_order' => (($product->photos()->max('sort_order') ?? 0) + 10),
+            ]);
+        }
+    }
+
+    private function syncOptions(CatalogProduct $product, Request $request, array $data): void
     {
         $product->options()->delete();
+        if (($data['presentation_mode'] ?? null) === CatalogProduct::MODE_GALLERY) {
+            return;
+        }
+
+        $options = $data['options'] ?? [];
 
         collect($options)
             ->filter(fn (array $option) => filled($option['name'] ?? null))

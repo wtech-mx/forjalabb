@@ -86,6 +86,11 @@ class CatalogProduct extends Model
         return $this->hasMany(CatalogProductSalePackage::class)->orderBy('sort_order');
     }
 
+    public function photos(): HasMany
+    {
+        return $this->hasMany(CatalogProductPhoto::class)->orderBy('sort_order');
+    }
+
     #[Scope]
     protected function active(Builder $query): void
     {
