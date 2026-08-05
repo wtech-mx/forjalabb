@@ -5,6 +5,7 @@
     $designOptions = $product->options->where('group', 'diseno')->values();
     $initialBase = $baseOptions->first();
     $initialDesign = $designOptions->first();
+    $initialPackage = $product->salePackages->firstWhere('is_default', true) ?: $product->salePackages->first();
     $baseImage = $initialBase?->image_url ?: $product->image_url;
 @endphp
 
@@ -14,42 +15,37 @@
     <section class="section-pad package-page">
         <div class="container">
             <article class="tequila-feature dynamic-product" data-dynamic-product>
+                <div class="mobile-product-heading">
+                    <h1>{{ $product->name }}</h1>
+                </div>
+
                 <div class="tequila-photo">
                     @if ($baseImage)
                         <img class="dynamic-product-base" src="{{ $baseImage }}" alt="{{ $product->name }}" data-base-preview>
                     @else
                         <div class="catalog-media"><i class="bi bi-box-seam"></i><span>Foto pendiente</span></div>
                     @endif
+
                     @if ($initialDesign?->image_url)
                         <img class="dynamic-product-design" src="{{ $initialDesign->image_url }}" alt="" data-design-preview>
                     @else
                         <img class="dynamic-product-design" alt="" data-design-preview hidden>
                     @endif
                 </div>
+
                 <div class="tequila-copy">
-                    <span class="badge text-bg-success mb-3">Vista interactiva</span>
                     <h1>{{ $product->name }}</h1>
                     <p>{{ $product->description }}</p>
-                    @if ($product->public_price > 0)
-                        <div class="package-price">${{ number_format((float) $product->public_price, 2) }}</div>
-                    @endif
+
                     <div class="d-flex flex-wrap gap-2 mb-3">
                         <span class="badge text-bg-light" data-stock-label>
                             Stock: {{ $initialBase?->group === 'color' ? $initialBase->stock : $product->stock }}
                         </span>
                         <span class="badge text-bg-light">{{ \App\Models\CatalogProduct::PRESENTATION_MODES[$product->presentation_mode] ?? $product->presentation_mode }}</span>
                     </div>
-                    @if ($baseOptions->isNotEmpty())
-                        <div class="finish-list mb-3" role="group" aria-label="Opciones de tipo o color">
-                            @foreach ($baseOptions as $index => $option)
-                                <button class="{{ $index === 0 ? 'active' : '' }}" type="button" data-base-option="{{ $option->image_url ?: $product->image_url }}" data-base-name="{{ $option->name }}" data-base-stock="{{ $option->group === 'color' ? $option->stock : $product->stock }}">
-                                    {{ $option->name }}
-                                </button>
-                            @endforeach
-                        </div>
-                    @endif
+
                     @if ($designOptions->isNotEmpty())
-                        <div>
+                        <div class="design-options-panel">
                             <div class="design-strip mb-4">
                                 @foreach ($designOptions as $index => $option)
                                     <figure class="{{ $index === 0 ? 'active' : '' }}" data-design-option="{{ $option->image_url }}" data-design-name="{{ $option->name }}">
@@ -64,21 +60,38 @@
                             </div>
                         </div>
                     @endif
-                    @if ($product->salePackages->isNotEmpty())
-                        <div class="sale-package-list mb-4">
-                            @foreach ($product->salePackages as $package)
-                                <div class="{{ $package->is_default ? 'active' : '' }}">
-                                    <span>{{ $package->name }}</span>
-                                    <strong>${{ number_format((float) $package->public_price, 2) }}</strong>
-                                    <small>{{ $package->quantity }} pieza{{ $package->quantity === 1 ? '' : 's' }} · ${{ number_format((float) $package->unit_public_price, 2) }} c/u · empaque incluido</small>
-                                </div>
+
+                    @if ($baseOptions->isNotEmpty())
+                        <div class="finish-list mb-3" role="group" aria-label="Opciones de tipo o color">
+                            @foreach ($baseOptions as $index => $option)
+                                <button class="{{ $index === 0 ? 'active' : '' }}" type="button" data-base-option="{{ $option->image_url ?: $product->image_url }}" data-base-name="{{ $option->name }}" data-base-stock="{{ $option->group === 'color' ? $option->stock : $product->stock }}">
+                                    {{ $option->name }}
+                                </button>
                             @endforeach
                         </div>
                     @endif
+
+                    @if ($product->salePackages->isNotEmpty())
+                        <div class="sale-package-list sale-package-picker mb-4" role="group" aria-label="Paquetes disponibles">
+                            @foreach ($product->salePackages as $package)
+                                <button class="{{ $package->is_default ? 'active' : '' }}" type="button" data-package-option data-package-name="{{ $package->name }}" data-package-price="{{ number_format((float) $package->public_price, 2, '.', '') }}">
+                                    <span>{{ $package->name }}</span>
+                                    <strong>${{ number_format((float) $package->public_price, 2) }}</strong>
+                                    <small>{{ $package->quantity }} pieza{{ $package->quantity === 1 ? '' : 's' }} &middot; ${{ number_format((float) $package->unit_public_price, 2) }} c/u &middot; empaque incluido</small>
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
+
                     <p class="tequila-selection" data-product-selection>
-                        Vista: {{ $initialBase?->name ?: 'Base' }}{{ $initialDesign ? ' con diseno '.$initialDesign->name : '' }}
+                        Vista: {{ $initialBase?->name ?: 'Base' }}{{ $initialDesign ? ' con diseno '.$initialDesign->name : '' }}{{ $initialPackage ? ' - '.$initialPackage->name : '' }}
                     </p>
-                    <a class="btn btn-dark btn-lg" href="https://wa.me/?text={{ rawurlencode('Hola, quiero cotizar '.$product->name) }}" target="_blank" rel="noopener">
+
+                    @if (($initialPackage?->public_price ?? $product->public_price) > 0)
+                        <div class="package-price package-price-final" data-price-label>${{ number_format((float) ($initialPackage?->public_price ?? $product->public_price), 2) }}</div>
+                    @endif
+
+                    <a class="btn btn-dark btn-lg" href="https://wa.me/?text={{ rawurlencode('Hola, quiero cotizar '.$product->name.($initialPackage ? ' en '.$initialPackage->name : '')) }}" target="_blank" rel="noopener" data-whatsapp-link data-product-name="{{ $product->name }}">
                         <i class="bi bi-whatsapp me-2"></i>Cotizar
                     </a>
                 </div>
@@ -93,12 +106,21 @@
                 const designPreview = product.querySelector('[data-design-preview]');
                 const selection = product.querySelector('[data-product-selection]');
                 const stockLabel = product.querySelector('[data-stock-label]');
+                const priceLabel = product.querySelector('[data-price-label]');
+                const whatsappLink = product.querySelector('[data-whatsapp-link]');
                 let baseName = product.querySelector('[data-base-option].active')?.dataset.baseName || 'Base';
                 let designName = product.querySelector('[data-design-option].active')?.dataset.designName || '';
+                let packageName = product.querySelector('[data-package-option].active')?.dataset.packageName || '';
 
                 const updateSelection = () => {
                     if (selection) {
-                        selection.textContent = `Vista: ${baseName}${designName ? ` con diseno ${designName}` : ''}`;
+                        selection.textContent = `Vista: ${baseName}${designName ? ` con diseno ${designName}` : ''}${packageName ? ` - ${packageName}` : ''}`;
+                    }
+
+                    if (whatsappLink) {
+                        const productName = whatsappLink.dataset.productName || '';
+                        const text = `Hola, quiero cotizar ${productName}${packageName ? ` en ${packageName}` : ''}${baseName ? `, ${baseName}` : ''}${designName ? ` con diseno ${designName}` : ''}`;
+                        whatsappLink.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
                     }
                 };
 
@@ -123,6 +145,18 @@
                         if (designPreview && figure.dataset.designOption) {
                             designPreview.src = figure.dataset.designOption;
                             designPreview.hidden = false;
+                        }
+                        updateSelection();
+                    });
+                });
+
+                product.querySelectorAll('[data-package-option]').forEach((button) => {
+                    button.addEventListener('click', () => {
+                        product.querySelectorAll('[data-package-option]').forEach((item) => item.classList.toggle('active', item === button));
+                        packageName = button.dataset.packageName || '';
+                        if (priceLabel && button.dataset.packagePrice) {
+                            const amount = Number.parseFloat(button.dataset.packagePrice) || 0;
+                            priceLabel.textContent = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
                         }
                         updateSelection();
                     });

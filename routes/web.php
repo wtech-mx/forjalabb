@@ -106,7 +106,7 @@ Route::get('/catalogo/{catalogProduct:slug}', function (CatalogProduct $catalogP
     abort_unless($catalogProduct->is_active, 404);
 
     return view('catalog.show', [
-        'product' => $catalogProduct->load(['costs', 'options']),
+        'product' => $catalogProduct->load(['costs', 'options', 'salePackages']),
     ]);
 })->name('catalog.show');
 
