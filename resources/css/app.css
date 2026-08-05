@@ -2808,20 +2808,13 @@ a {
     border-radius: .85rem;
 }
 
-.dynamic-product-preview {
-    display: grid;
-    place-items: center;
+.dynamic-product .tequila-photo {
     position: relative;
-    width: 100%;
-    min-height: 32rem;
-    padding: clamp(1rem, 4vw, 3rem);
-    background:
-        radial-gradient(circle at 50% 22%, rgba(255, 255, 255, .72), transparent 13rem),
-        linear-gradient(135deg, rgba(255, 255, 255, .28), rgba(248, 117, 31, .12)),
-        #ead4bb;
+    overflow: hidden;
 }
 
 .dynamic-product-base {
+    position: relative;
     z-index: 1;
     width: min(72%, 24rem);
     max-height: 28rem;
@@ -2834,10 +2827,10 @@ a {
     z-index: 2;
     left: 50%;
     top: 50%;
-    width: min(28%, 9rem);
-    max-height: 12rem;
+    width: min(25%, 4.75rem);
+    max-height: 5.75rem;
     object-fit: contain;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -42%);
     filter: drop-shadow(0 .25rem .32rem rgba(27, 18, 11, .2));
     pointer-events: none;
 }
@@ -3243,10 +3236,6 @@ a {
 
     .permission-grid {
         grid-template-columns: 1fr;
-    }
-
-    .dynamic-product-preview {
-        min-height: 22rem;
     }
 
     .cost-row,

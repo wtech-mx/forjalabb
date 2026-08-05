@@ -15,18 +15,16 @@
         <div class="container">
             <article class="tequila-feature dynamic-product" data-dynamic-product>
                 <div class="tequila-photo">
-                    <div class="dynamic-product-preview">
-                        @if ($baseImage)
-                            <img class="dynamic-product-base" src="{{ $baseImage }}" alt="{{ $product->name }}" data-base-preview>
-                        @else
-                            <div class="catalog-media"><i class="bi bi-box-seam"></i><span>Foto pendiente</span></div>
-                        @endif
-                        @if ($initialDesign?->image_url)
-                            <img class="dynamic-product-design" src="{{ $initialDesign->image_url }}" alt="" data-design-preview>
-                        @else
-                            <img class="dynamic-product-design" alt="" data-design-preview hidden>
-                        @endif
-                    </div>
+                    @if ($baseImage)
+                        <img class="dynamic-product-base" src="{{ $baseImage }}" alt="{{ $product->name }}" data-base-preview>
+                    @else
+                        <div class="catalog-media"><i class="bi bi-box-seam"></i><span>Foto pendiente</span></div>
+                    @endif
+                    @if ($initialDesign?->image_url)
+                        <img class="dynamic-product-design" src="{{ $initialDesign->image_url }}" alt="" data-design-preview>
+                    @else
+                        <img class="dynamic-product-design" alt="" data-design-preview hidden>
+                    @endif
                 </div>
                 <div class="tequila-copy">
                     <span class="badge text-bg-success mb-3">Vista interactiva</span>

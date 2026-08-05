@@ -108,7 +108,7 @@
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
                 <div>
                     <div class="eyebrow">Mini catalogo de temporada</div>
-                    <h2 class="fw-bold mt-2 mb-0">Productos listos para regalar, vender o personalizar.</h2>
+                    <h2 class="fw-bold mt-2 mb-0">Productos listos para regalar personalizar.</h2>
                 </div>
                 <p class="text-secondary mb-0 max-copy">Piezas seleccionadas para temporadas, eventos, kits empresariales y regalos con nombre, logo o detalle especial.</p>
             </div>
