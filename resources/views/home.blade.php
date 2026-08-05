@@ -11,9 +11,9 @@
                     <div class="eyebrow mb-3">Personalizamos · creamos · conectamos</div>
                     <h1 class="display-4 fw-bold mb-4">Productos personalizados que conectan lo fisico con lo digital.</h1>
                     <p class="lead text-secondary mb-4">ForjaLab convierte ideas en productos reales: placas QR, Biker Tags, tarjetas NFC, piezas 3D, sublimacion, DTF y soluciones web desde una pieza hasta volumen.</p>
-                    <div class="d-flex flex-wrap gap-2 mb-4">
-                        <a class="btn btn-dark btn-lg" href="#servicios"><i class="bi bi-grid-1x2-fill me-2"></i>Ver servicios</a>
-                        <a class="btn btn-outline-dark btn-lg" href="{{ route('services.show', 'biker-tag') }}"><i class="bi bi-shield-check me-2"></i>Biker Tag</a>
+                    <div class="hero-actions d-flex flex-wrap gap-2 mb-4">
+                        <a class="btn btn-dark btn-lg" href="#catalogo"><i class="bi bi-bag-heart-fill me-2"></i>Ver catalogo</a>
+                        <a class="btn btn-outline-dark btn-lg" href="#servicios"><i class="bi bi-grid-1x2-fill me-2"></i>Servicios</a>
                     </div>
                     <div class="hero-metrics">
                         <div><strong>1+</strong><span>pieza inicial</span></div>
@@ -22,9 +22,83 @@
                     </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-6 m-0">
                     <img class="hero-image" src="{{ asset('images/forjalab-hero.png') }}" alt="Productos personalizados con QR, NFC, sublimacion, DTF e impresion 3D" fetchpriority="high" decoding="async">
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-pad catalog-section catalog-section-priority" id="catalogo">
+        <div class="container">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+                <div>
+                    <div class="eyebrow">Mini catalogo de temporada</div>
+                    <h2 class="fw-bold mt-2 mb-0">Productos listos para regalar personalizar.</h2>
+                </div>
+                <p class="text-secondary mb-0 max-copy">Piezas seleccionadas para temporadas, eventos, kits empresariales y regalos con nombre, logo o detalle especial.</p>
+            </div>
+
+            @if ($featuredCatalogProduct)
+                @include('catalog.partials.product-card', ['product' => $featuredCatalogProduct])
+            @endif
+
+            @if ($catalogBundles->isNotEmpty())
+                <div class="bundle-showcase">
+                    <div class="bundle-showcase-heading">
+                        <div>
+                            <div class="eyebrow">Paquetes armados</div>
+                            <h3>Sets listos para vender mas en una sola entrega.</h3>
+                        </div>
+                        <span>Incluyen empaque de paquete y precio calculado.</span>
+                    </div>
+                    <div class="bundle-showcase-grid">
+                        @foreach ($catalogBundles as $bundle)
+                            <article class="bundle-home-card {{ $bundle->is_featured ? 'featured' : '' }}">
+                                <div class="bundle-home-media">
+                                    @if ($bundle->image_url)
+                                        <img src="{{ $bundle->image_url }}" alt="{{ $bundle->name }}">
+                                    @else
+                                        <i class="bi bi-box-seam-fill"></i>
+                                    @endif
+                                </div>
+                                <div class="bundle-home-body">
+                                    <span class="badge text-bg-warning">{{ $bundle->is_featured ? 'Destacado' : 'Paquete' }}</span>
+                                    <h4>{{ $bundle->name }}</h4>
+                                    @if ($bundle->description)
+                                        <p>{{ $bundle->description }}</p>
+                                    @endif
+                                    <div class="bundle-home-items">
+                                        @foreach ($bundle->items->take(4) as $item)
+                                            <span>{{ $item->quantity }}x {{ $item->product?->name }}</span>
+                                        @endforeach
+                                    </div>
+                                    <div class="bundle-home-bottom">
+                                        @if ($bundle->public_price > 0)
+                                            <strong>${{ number_format((float) $bundle->public_price, 2) }}</strong>
+                                        @endif
+                                        <a class="btn btn-dark" href="{{ route('catalog.bundle.show', $bundle) }}">
+                                            <i class="bi bi-arrow-right me-2"></i>Ver paquete
+                                        </a>
+                                    </div>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            <div class="catalog-grid">
+                @forelse ($catalogProducts as $product)
+                    @include('catalog.partials.product-card', ['product' => $product])
+                @empty
+                    <div class="catalog-card">
+                        <div class="catalog-body">
+                            <h3>Catalogo en preparacion</h3>
+                            <p>Pronto agregaremos productos disponibles para cotizar.</p>
+                        </div>
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>
@@ -99,80 +173,6 @@
                         <span class="card-action">Ver configurador <i class="bi bi-arrow-right"></i></span>
                     </a>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="section-pad catalog-section" id="catalogo">
-        <div class="container">
-            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
-                <div>
-                    <div class="eyebrow">Mini catalogo de temporada</div>
-                    <h2 class="fw-bold mt-2 mb-0">Productos listos para regalar personalizar.</h2>
-                </div>
-                <p class="text-secondary mb-0 max-copy">Piezas seleccionadas para temporadas, eventos, kits empresariales y regalos con nombre, logo o detalle especial.</p>
-            </div>
-
-            @if ($featuredCatalogProduct)
-                @include('catalog.partials.product-card', ['product' => $featuredCatalogProduct])
-            @endif
-
-            @if ($catalogBundles->isNotEmpty())
-                <div class="bundle-showcase">
-                    <div class="bundle-showcase-heading">
-                        <div>
-                            <div class="eyebrow">Paquetes armados</div>
-                            <h3>Sets listos para vender mas en una sola entrega.</h3>
-                        </div>
-                        <span>Incluyen empaque de paquete y precio calculado.</span>
-                    </div>
-                    <div class="bundle-showcase-grid">
-                        @foreach ($catalogBundles as $bundle)
-                            <article class="bundle-home-card {{ $bundle->is_featured ? 'featured' : '' }}">
-                                <div class="bundle-home-media">
-                                    @if ($bundle->image_url)
-                                        <img src="{{ $bundle->image_url }}" alt="{{ $bundle->name }}">
-                                    @else
-                                        <i class="bi bi-box-seam-fill"></i>
-                                    @endif
-                                </div>
-                                <div class="bundle-home-body">
-                                    <span class="badge text-bg-warning">{{ $bundle->is_featured ? 'Destacado' : 'Paquete' }}</span>
-                                    <h4>{{ $bundle->name }}</h4>
-                                    @if ($bundle->description)
-                                        <p>{{ $bundle->description }}</p>
-                                    @endif
-                                    <div class="bundle-home-items">
-                                        @foreach ($bundle->items->take(4) as $item)
-                                            <span>{{ $item->quantity }}x {{ $item->product?->name }}</span>
-                                        @endforeach
-                                    </div>
-                                    <div class="bundle-home-bottom">
-                                        @if ($bundle->public_price > 0)
-                                            <strong>${{ number_format((float) $bundle->public_price, 2) }}</strong>
-                                        @endif
-                                        <a class="btn btn-dark" href="{{ route('catalog.bundle.show', $bundle) }}">
-                                            <i class="bi bi-arrow-right me-2"></i>Ver paquete
-                                        </a>
-                                    </div>
-                                </div>
-                            </article>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
-
-            <div class="catalog-grid">
-                @forelse ($catalogProducts as $product)
-                    @include('catalog.partials.product-card', ['product' => $product])
-                @empty
-                    <div class="catalog-card">
-                        <div class="catalog-body">
-                            <h3>Catalogo en preparacion</h3>
-                            <p>Pronto agregaremos productos disponibles para cotizar.</p>
-                        </div>
-                    </div>
-                @endforelse
             </div>
         </div>
     </section>
