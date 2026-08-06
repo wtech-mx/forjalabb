@@ -38,7 +38,6 @@
                     <div class="bundle-showcase-heading">
                         <div>
                             <div class="eyebrow">Paquetes armados</div>
-                            <h3>Sets listos para vender mas en una sola entrega.</h3>
                         </div>
                     </div>
                     <div class="bundle-showcase-grid">
