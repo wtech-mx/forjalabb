@@ -40,8 +40,8 @@
                             <div><span>Productos</span><strong>${{ number_format((float) $bundle->items_cost, 2) }}</strong></div>
                             <div><span>Empaque del paquete</span><strong>${{ number_format((float) $bundle->packaging_cost, 2) }}</strong></div>
                             <div><span>Costo total</span><strong>${{ number_format((float) $bundle->total_cost, 2) }}</strong></div>
-                            <div><span>Familiar {{ $bundle->family_multiplier }}x</span><strong>${{ number_format((float) $bundle->family_price, 2) }}</strong><small>Ganancia ${{ number_format((float) $bundle->family_profit, 2) }}</small></div>
-                            <div><span>Publico {{ $bundle->public_multiplier }}x</span><strong>${{ number_format((float) $bundle->public_price, 2) }}</strong><small>Ganancia ${{ number_format((float) $bundle->public_profit, 2) }}</small></div>
+                            <div><span>Familiar {{ $bundle->family_multiplier }}x</span><strong>${{ number_format((float) $bundle->family_price, 0) }}</strong><small>Ganancia ${{ number_format((float) $bundle->family_profit, 0) }}</small></div>
+                            <div><span>Publico {{ $bundle->public_multiplier }}x</span><strong>${{ number_format((float) $bundle->public_price, 0) }}</strong><small>Ganancia ${{ number_format((float) $bundle->public_profit, 0) }}</small></div>
                         </div>
                     </div>
                     <div class="panel-card mt-4">

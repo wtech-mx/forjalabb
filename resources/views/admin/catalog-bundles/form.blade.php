@@ -178,7 +178,8 @@
             const form = document.querySelector('[data-bundle-form]');
             if (!form) return;
 
-            const money = (value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value);
+            const money = (value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(value);
+            const roundPriceUp = (value) => Math.ceil(Number.parseFloat(value) || 0);
             const costs = JSON.parse(form.dataset.productCosts || '{}');
             const list = form.querySelector('[data-bundle-item-list]');
             const template = document.querySelector('[data-bundle-item-template]').innerHTML;
@@ -197,8 +198,8 @@
                 const total = itemsCost + packaging;
                 const familyMultiplier = Math.max(1, Number.parseFloat(form.querySelector('[data-family-multiplier]')?.value) || 1);
                 const publicMultiplier = Math.max(1, Number.parseFloat(form.querySelector('[data-public-multiplier]')?.value) || 1);
-                const family = total * familyMultiplier;
-                const publicPrice = total * publicMultiplier;
+                const family = roundPriceUp(total * familyMultiplier);
+                const publicPrice = roundPriceUp(total * publicMultiplier);
 
                 form.querySelector('[data-items-cost]').textContent = money(itemsCost);
                 form.querySelector('[data-packaging-cost]').textContent = money(packaging);

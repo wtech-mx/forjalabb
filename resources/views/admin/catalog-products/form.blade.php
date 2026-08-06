@@ -297,7 +297,8 @@
             const form = document.querySelector('[data-product-form]');
             if (!form) return;
 
-            const money = (value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value);
+            const money = (value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(value);
+            const roundPriceUp = (value) => Math.ceil(Number.parseFloat(value) || 0);
             const costList = form.querySelector('[data-cost-list]');
             const optionList = form.querySelector('[data-option-list]');
             const costTemplate = document.querySelector('[data-cost-template]').innerHTML;
@@ -318,8 +319,8 @@
                     .filter((row) => row.querySelector('[data-option-group]')?.value === 'color')
                     .reduce((sum, row) => sum + (Number.parseInt(row.querySelector('[data-color-stock]')?.value, 10) || 0), 0);
                 const totalStock = isGallery ? (Number.parseInt(galleryStock?.value, 10) || 0) : colorStock;
-                const friends = subtotal * 1.5;
-                const publicPrice = subtotal * 1.8;
+                const friends = roundPriceUp(subtotal * 1.5);
+                const publicPrice = roundPriceUp(subtotal * 1.8);
 
                 form.querySelector('[data-subtotal]').textContent = money(subtotal);
                 form.querySelector('[data-friends-price]').textContent = money(friends);
@@ -342,14 +343,14 @@
                     const familyMultiplier = Math.max(1, Number.parseFloat(row.querySelector('[data-package-family-multiplier]')?.value) || 1);
                     const publicMultiplier = Math.max(1, Number.parseFloat(row.querySelector('[data-package-public-multiplier]')?.value) || 1);
                     const packageCost = (subtotal * quantity) + packaging;
-                    const familyPrice = packageCost * familyMultiplier;
-                    const publicPackagePrice = packageCost * publicMultiplier;
+                    const familyPrice = roundPriceUp(packageCost * familyMultiplier);
+                    const publicPackagePrice = roundPriceUp(packageCost * publicMultiplier);
 
                     row.querySelector('[data-package-public-price]').textContent = money(publicPackagePrice);
                     row.querySelector('[data-package-family-price]').textContent = `Familiar ${money(familyPrice)}`;
                     row.querySelector('[data-package-cost]').textContent = `Costo ${money(packageCost)} con empaque`;
                     row.querySelector('[data-package-profit]').textContent = `Ganancia pub. ${money(publicPackagePrice - packageCost)}`;
-                    row.querySelector('[data-package-unit]').textContent = `Unitario pub. ${money(publicPackagePrice / quantity)}`;
+                    row.querySelector('[data-package-unit]').textContent = `Unitario pub. ${money(roundPriceUp(publicPackagePrice / quantity))}`;
                 });
                 form.querySelectorAll('[data-option-row]').forEach((row) => {
                     const isColor = row.querySelector('[data-option-group]')?.value === 'color';

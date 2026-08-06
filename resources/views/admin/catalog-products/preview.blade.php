@@ -21,8 +21,8 @@
             <div class="catalog-section rounded-preview">
                 <div class="container px-0">
                     <div class="d-flex flex-wrap gap-2 mb-3">
-                        <span class="badge text-bg-light">Precio publico: ${{ number_format((float) $product->public_price, 2) }}</span>
-                        <span class="badge text-bg-light">Ganancia: ${{ number_format((float) $product->public_profit, 2) }}</span>
+                        <span class="badge text-bg-light">Precio publico: ${{ number_format((float) $product->public_price, 0) }}</span>
+                        <span class="badge text-bg-light">Ganancia: ${{ number_format((float) $product->public_profit, 0) }}</span>
                         <span class="badge text-bg-light">Stock: {{ $product->stock }}</span>
                     </div>
                     @if ($product->salePackages->isNotEmpty())
@@ -30,9 +30,9 @@
                             @foreach ($product->salePackages as $package)
                                 <div class="{{ $package->is_default ? 'active' : '' }}">
                                     <span>{{ $package->name }}</span>
-                                    <strong>${{ number_format((float) $package->public_price, 2) }}</strong>
-                                    <small>Familiar ${{ number_format((float) $package->family_price, 2) }} · Empaque ${{ number_format((float) $package->packaging_cost, 2) }}</small>
-                                    <small>Costo total ${{ number_format((float) $package->total_cost, 2) }} · Ganancia publica ${{ number_format((float) $package->public_profit, 2) }}</small>
+                                    <strong>${{ number_format((float) $package->public_price, 0) }}</strong>
+                                    <small>Familiar ${{ number_format((float) $package->family_price, 0) }} · Empaque ${{ number_format((float) $package->packaging_cost, 2) }}</small>
+                                    <small>Costo total ${{ number_format((float) $package->total_cost, 2) }} · Ganancia publica ${{ number_format((float) $package->public_profit, 0) }}</small>
                                 </div>
                             @endforeach
                         </div>

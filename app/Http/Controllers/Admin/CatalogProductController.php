@@ -142,8 +142,8 @@ class CatalogProductController extends Controller
         $costSubtotal = collect($data['costs'] ?? [])
             ->filter(fn (array $cost) => filled($cost['name'] ?? null))
             ->sum(fn (array $cost) => (float) ($cost['cost'] ?? 0));
-        $friendsPrice = round($costSubtotal * 1.5, 2);
-        $publicPrice = round($costSubtotal * 1.8, 2);
+        $friendsPrice = $this->roundPriceUp($costSubtotal * 1.5);
+        $publicPrice = $this->roundPriceUp($costSubtotal * 1.8);
 
         $coverPhotoPath = $product?->cover_photo_path ?: $product?->image_path;
         if ($request->hasFile('cover_photo')) {
@@ -257,8 +257,8 @@ class CatalogProductController extends Controller
                 $familyMultiplier = max(1, (float) ($package['family_multiplier'] ?? 1.5));
                 $packagingCost = max(0, (float) ($package['packaging_cost'] ?? 0));
                 $totalCost = round(($unitCost * $quantity) + $packagingCost, 2);
-                $familyPrice = round($totalCost * $familyMultiplier, 2);
-                $publicPrice = round($totalCost * $publicMultiplier, 2);
+                $familyPrice = $this->roundPriceUp($totalCost * $familyMultiplier);
+                $publicPrice = $this->roundPriceUp($totalCost * $publicMultiplier);
                 $isDefault = ! $hasDefault && ! empty($package['is_default']);
                 $hasDefault = $hasDefault || $isDefault;
 
@@ -270,10 +270,10 @@ class CatalogProductController extends Controller
                     'unit_cost' => $unitCost,
                     'packaging_cost' => $packagingCost,
                     'total_cost' => $totalCost,
-                    'unit_family_price' => round($familyPrice / $quantity, 2),
+                    'unit_family_price' => $this->roundPriceUp($familyPrice / $quantity),
                     'family_price' => $familyPrice,
                     'family_profit' => round($familyPrice - $totalCost, 2),
-                    'unit_public_price' => round($publicPrice / $quantity, 2),
+                    'unit_public_price' => $this->roundPriceUp($publicPrice / $quantity),
                     'public_price' => $publicPrice,
                     'public_profit' => round($publicPrice - $totalCost, 2),
                     'is_default' => $isDefault,
@@ -290,12 +290,12 @@ class CatalogProductController extends Controller
                 'unit_cost' => $unitCost,
                 'packaging_cost' => 0,
                 'total_cost' => $unitCost,
-                'unit_family_price' => round($unitCost * 1.5, 2),
-                'family_price' => round($unitCost * 1.5, 2),
-                'family_profit' => round(($unitCost * 1.5) - $unitCost, 2),
-                'unit_public_price' => round($unitCost * 1.8, 2),
-                'public_price' => round($unitCost * 1.8, 2),
-                'public_profit' => round(($unitCost * 1.8) - $unitCost, 2),
+                'unit_family_price' => $this->roundPriceUp($unitCost * 1.5),
+                'family_price' => $this->roundPriceUp($unitCost * 1.5),
+                'family_profit' => round($this->roundPriceUp($unitCost * 1.5) - $unitCost, 2),
+                'unit_public_price' => $this->roundPriceUp($unitCost * 1.8),
+                'public_price' => $this->roundPriceUp($unitCost * 1.8),
+                'public_profit' => round($this->roundPriceUp($unitCost * 1.8) - $unitCost, 2),
                 'is_default' => true,
                 'sort_order' => 10,
             ]);
@@ -320,6 +320,11 @@ class CatalogProductController extends Controller
             'public_price' => $package->public_price,
             'public_profit' => $package->public_profit,
         ]);
+    }
+
+    private function roundPriceUp(float $amount): float
+    {
+        return (float) ceil($amount);
     }
 
     private function uniqueSlug(string $name, ?int $ignoreId = null): string

@@ -197,8 +197,8 @@ class CatalogBundleController extends Controller
         $itemsCost = (float) $bundle->items()->sum('total_cost');
         $packagingCost = (float) $bundle->packaging_cost;
         $totalCost = round($itemsCost + $packagingCost, 2);
-        $familyPrice = round($totalCost * (float) $bundle->family_multiplier, 2);
-        $publicPrice = round($totalCost * (float) $bundle->public_multiplier, 2);
+        $familyPrice = $this->roundPriceUp($totalCost * (float) $bundle->family_multiplier);
+        $publicPrice = $this->roundPriceUp($totalCost * (float) $bundle->public_multiplier);
 
         $bundle->update([
             'items_cost' => $itemsCost,
@@ -208,6 +208,11 @@ class CatalogBundleController extends Controller
             'public_price' => $publicPrice,
             'public_profit' => round($publicPrice - $totalCost, 2),
         ]);
+    }
+
+    private function roundPriceUp(float $amount): float
+    {
+        return (float) ceil($amount);
     }
 
     private function productsForSelect()

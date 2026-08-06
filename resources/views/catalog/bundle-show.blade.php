@@ -60,7 +60,7 @@
                     <div class="bundle-single-summary">
                         <span data-bundle-selection>{{ $bundle->items->first()?->product?->name ?: $bundle->name }}</span>
                         @if ($bundle->public_price > 0)
-                            <strong>${{ number_format((float) $bundle->public_price, 2) }}</strong>
+                            <strong>${{ number_format((float) $bundle->public_price, 0) }}</strong>
                         @endif
                     </div>
 

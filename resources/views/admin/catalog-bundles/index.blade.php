@@ -40,8 +40,8 @@
                                     <td>{{ $bundle->items_count }}</td>
                                     <td>${{ number_format((float) $bundle->total_cost, 2) }}</td>
                                     <td>
-                                        <strong>${{ number_format((float) $bundle->public_price, 2) }}</strong>
-                                        <div class="text-muted small">Gan. ${{ number_format((float) $bundle->public_profit, 2) }}</div>
+                                        <strong>${{ number_format((float) $bundle->public_price, 0) }}</strong>
+                                        <div class="text-muted small">Gan. ${{ number_format((float) $bundle->public_profit, 0) }}</div>
                                     </td>
                                     <td>
                                         <span class="badge {{ $bundle->is_active ? 'text-bg-success' : 'text-bg-secondary' }}">

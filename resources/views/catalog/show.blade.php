@@ -7,7 +7,10 @@
     $initialBase = $baseOptions->first();
     $initialDesign = $designOptions->first();
     $initialPackage = $product->salePackages->firstWhere('is_default', true) ?: $product->salePackages->first();
-    $baseImage = $initialBase?->image_url ?: $product->image_url;
+    $coverImage = $product->image_url;
+    $startsWithCover = filled($coverImage);
+    $baseImage = $coverImage ?: $initialBase?->image_url;
+    $initialDesignImage = $startsWithCover ? null : $initialDesign?->image_url;
     $galleryImages = collect([$product->image_url])
         ->merge($product->photos->map->image_url)
         ->filter()
@@ -57,16 +60,16 @@
                         @if ($product->salePackages->isNotEmpty())
                             <div class="sale-package-list sale-package-picker mb-2" role="group" aria-label="Paquetes disponibles">
                                 @foreach ($product->salePackages as $package)
-                                    <button class="{{ $package->is_default ? 'active' : '' }}" type="button" data-package-option data-package-name="{{ $package->name }}" data-package-price="{{ number_format((float) $package->public_price, 2, '.', '') }}">
+                                    <button class="{{ $package->is_default ? 'active' : '' }}" type="button" data-package-option data-package-name="{{ $package->name }}" data-package-price="{{ number_format((float) $package->public_price, 0, '.', '') }}">
                                         <span>{{ $package->name }}</span>
-                                        <strong>${{ number_format((float) $package->public_price, 2) }}</strong>
-                                        <small>{{ $package->quantity }} pieza{{ $package->quantity === 1 ? '' : 's' }} &middot; ${{ number_format((float) $package->unit_public_price, 2) }} c/u</small>
+                                        <strong>${{ number_format((float) $package->public_price, 0) }}</strong>
+                                        <small>{{ $package->quantity }} pieza{{ $package->quantity === 1 ? '' : 's' }} &middot; ${{ number_format((float) $package->unit_public_price, 0) }} c/u</small>
                                     </button>
                                 @endforeach
                             </div>
                         @endif
                         @if (($initialPackage?->public_price ?? $product->public_price) > 0)
-                            <div class="package-price package-price-final" data-price-label>${{ number_format((float) ($initialPackage?->public_price ?? $product->public_price), 2) }}</div>
+                            <div class="package-price package-price-final" data-price-label>${{ number_format((float) ($initialPackage?->public_price ?? $product->public_price), 0) }}</div>
                         @endif
                         <a class="btn btn-dark btn-lg" href="https://wa.me/?text={{ rawurlencode('Hola, quiero cotizar '.$product->name.($initialPackage ? ' en '.$initialPackage->name : '')) }}" target="_blank" rel="noopener" data-whatsapp-link data-product-name="{{ $product->name }}">
                             <i class="bi bi-whatsapp me-2"></i>Cotizar
@@ -86,8 +89,8 @@
                             <div class="catalog-media"><i class="bi bi-box-seam"></i><span>Foto pendiente</span></div>
                         @endif
 
-                        @if ($initialDesign?->image_url)
-                            <img class="dynamic-product-design" src="{{ $initialDesign->image_url }}" alt="" data-design-preview>
+                        @if ($initialDesignImage)
+                            <img class="dynamic-product-design" src="{{ $initialDesignImage }}" alt="" data-design-preview>
                         @else
                             <img class="dynamic-product-design" alt="" data-design-preview hidden>
                         @endif
@@ -114,7 +117,7 @@
                             <div class="design-options-panel">
                                 <div class="design-strip mb-4">
                                     @foreach ($designOptions as $index => $option)
-                                        <figure class="{{ $index === 0 ? 'active' : '' }}" data-design-option="{{ $option->image_url }}" data-design-name="{{ $option->name }}">
+                                        <figure class="{{ ! $startsWithCover && $index === 0 ? 'active' : '' }}" data-design-option="{{ $option->image_url }}" data-design-name="{{ $option->name }}">
                                             @if ($option->image_url)
                                                 <img src="{{ $option->image_url }}" alt="{{ $option->name }}">
                                             @else
@@ -130,7 +133,7 @@
                         @if ($baseOptions->isNotEmpty())
                             <div class="finish-list mb-3" role="group" aria-label="Opciones de tipo o color">
                                 @foreach ($baseOptions as $index => $option)
-                                    <button class="{{ $index === 0 ? 'active' : '' }}" type="button" data-base-option="{{ $option->image_url ?: $product->image_url }}" data-base-name="{{ $option->name }}" data-base-stock="{{ $option->group === 'color' ? $option->stock : $product->stock }}">
+                                    <button class="{{ ! $startsWithCover && $index === 0 ? 'active' : '' }}" type="button" data-base-option="{{ $option->image_url ?: $product->image_url }}" data-base-name="{{ $option->name }}" data-base-stock="{{ $option->group === 'color' ? $option->stock : $product->stock }}">
                                         {{ $option->name }}
                                     </button>
                                 @endforeach
@@ -140,21 +143,21 @@
                         @if ($product->salePackages->isNotEmpty())
                             <div class="sale-package-list sale-package-picker mb-4" role="group" aria-label="Paquetes disponibles">
                                 @foreach ($product->salePackages as $package)
-                                    <button class="{{ $package->is_default ? 'active' : '' }}" type="button" data-package-option data-package-name="{{ $package->name }}" data-package-price="{{ number_format((float) $package->public_price, 2, '.', '') }}">
+                                    <button class="{{ $package->is_default ? 'active' : '' }}" type="button" data-package-option data-package-name="{{ $package->name }}" data-package-price="{{ number_format((float) $package->public_price, 0, '.', '') }}">
                                         <span>{{ $package->name }}</span>
-                                        <strong>${{ number_format((float) $package->public_price, 2) }}</strong>
-                                        <small>{{ $package->quantity }} pieza{{ $package->quantity === 1 ? '' : 's' }} &middot; ${{ number_format((float) $package->unit_public_price, 2) }} c/u &middot; empaque incluido</small>
+                                        <strong>${{ number_format((float) $package->public_price, 0) }}</strong>
+                                        <small>{{ $package->quantity }} pieza{{ $package->quantity === 1 ? '' : 's' }} &middot; ${{ number_format((float) $package->unit_public_price, 0) }} c/u &middot; empaque incluido</small>
                                     </button>
                                 @endforeach
                             </div>
                         @endif
 
                         <p class="tequila-selection" data-product-selection>
-                            Vista: {{ $initialBase?->name ?: 'Base' }}{{ $initialDesign ? ' con diseno '.$initialDesign->name : '' }}{{ $initialPackage ? ' - '.$initialPackage->name : '' }}
+                            Vista: {{ $startsWithCover ? 'Portada' : ($initialBase?->name ?: 'Base') }}{{ ! $startsWithCover && $initialDesign ? ' con diseno '.$initialDesign->name : '' }}{{ $initialPackage ? ' - '.$initialPackage->name : '' }}
                         </p>
 
                         @if (($initialPackage?->public_price ?? $product->public_price) > 0)
-                            <div class="package-price package-price-final" data-price-label>${{ number_format((float) ($initialPackage?->public_price ?? $product->public_price), 2) }}</div>
+                            <div class="package-price package-price-final" data-price-label>${{ number_format((float) ($initialPackage?->public_price ?? $product->public_price), 0) }}</div>
                         @endif
 
                         <a class="btn btn-dark btn-lg" href="https://wa.me/?text={{ rawurlencode('Hola, quiero cotizar '.$product->name.($initialPackage ? ' en '.$initialPackage->name : '')) }}" target="_blank" rel="noopener" data-whatsapp-link data-product-name="{{ $product->name }}">
@@ -195,7 +198,7 @@
                         packageName = button.dataset.packageName || '';
                         if (priceLabel && button.dataset.packagePrice) {
                             const amount = Number.parseFloat(button.dataset.packagePrice) || 0;
-                            priceLabel.textContent = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
+                            priceLabel.textContent = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(amount);
                         }
                         updateWhatsapp();
                     });
@@ -209,7 +212,7 @@
                 const stockLabel = product.querySelector('[data-stock-label]');
                 const priceLabel = product.querySelector('[data-price-label]');
                 const whatsappLink = product.querySelector('[data-whatsapp-link]');
-                let baseName = product.querySelector('[data-base-option].active')?.dataset.baseName || 'Base';
+                let baseName = product.querySelector('[data-base-option].active')?.dataset.baseName || 'Portada';
                 let designName = product.querySelector('[data-design-option].active')?.dataset.designName || '';
                 let packageName = product.querySelector('[data-package-option].active')?.dataset.packageName || '';
 
@@ -257,7 +260,7 @@
                         packageName = button.dataset.packageName || '';
                         if (priceLabel && button.dataset.packagePrice) {
                             const amount = Number.parseFloat(button.dataset.packagePrice) || 0;
-                            priceLabel.textContent = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
+                            priceLabel.textContent = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(amount);
                         }
                         updateSelection();
                     });

@@ -19,7 +19,7 @@
             <h3>{{ $product->name }}</h3>
             <p>{{ $product->description }}</p>
             @if ($product->public_price > 0)
-                <div class="package-price">${{ number_format((float) $product->public_price, 2) }}</div>
+                <div class="package-price">${{ number_format((float) $product->public_price, 0) }}</div>
             @endif
             <div class="d-flex flex-wrap gap-2 mt-3">
                 <a class="btn btn-dark" href="{{ $href }}" @if($isExternal) target="_blank" rel="noopener" @endif>
@@ -64,7 +64,7 @@
             <h3>{{ $product->name }}</h3>
             <p>{{ $product->description }}</p>
             @if ($product->public_price > 0)
-                <strong class="catalog-price">${{ number_format((float) $product->public_price, 2) }}</strong>
+                <strong class="catalog-price">${{ number_format((float) $product->public_price, 0) }}</strong>
             @endif
             <span class="catalog-action">{{ $product->action_label }} <i class="bi bi-arrow-right"></i></span>
         </div>

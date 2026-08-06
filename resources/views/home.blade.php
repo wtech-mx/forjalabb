@@ -63,7 +63,7 @@
                                     </div>
                                     <div class="bundle-home-bottom">
                                         @if ($bundle->public_price > 0)
-                                            <strong>${{ number_format((float) $bundle->public_price, 2) }}</strong>
+                                            <strong>${{ number_format((float) $bundle->public_price, 0) }}</strong>
                                         @endif
                                         <a class="btn btn-dark" href="{{ route('catalog.bundle.show', $bundle) }}">
                                             <i class="bi bi-arrow-right me-2"></i>Ver paquete

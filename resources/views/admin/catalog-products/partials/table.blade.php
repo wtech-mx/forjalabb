@@ -18,7 +18,7 @@
                         <div class="small text-secondary">{{ $product->slug }}</div>
                     </td>
                     <td>
-                        <div class="fw-semibold">${{ number_format((float) $product->public_price, 2) }}</div>
+                        <div class="fw-semibold">${{ number_format((float) $product->public_price, 0) }}</div>
                         <div class="small text-secondary">Costo ${{ number_format((float) $product->cost_subtotal, 2) }}</div>
                     </td>
                     <td>
