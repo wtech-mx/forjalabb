@@ -24,8 +24,6 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#textil">Textil</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('services.laser') }}">Laser</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#valor">Valor</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#lanzamiento">Lanzamiento</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Panel</a></li>
                     @auth
                         <li class="nav-item">
                             <form method="POST" action="{{ route('logout') }}">

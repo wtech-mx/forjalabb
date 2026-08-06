@@ -103,7 +103,7 @@
             <div class="row g-3 value-grid">
                 @foreach ([
                     ['icon' => 'boxes', 'title' => 'Produccion hibrida', 'text' => 'Laser, 3D, sublimacion, DTF, QR, NFC y desarrollo web en un mismo flujo.'],
-                    ['icon' => 'person-check', 'title' => 'Sin minimos elevados', 'text' => 'Atencion desde una pieza hasta campanas empresariales completas.'],
+                    ['icon' => 'person-check', 'title' => 'Sin minimos elevados', 'text' => 'Atencion desde una pieza hasta campañas empresariales completas.'],
                     ['icon' => 'arrow-repeat', 'title' => 'Ingresos recurrentes', 'text' => 'Hosting, renovaciones, menus, soporte, dominios y reposiciones.'],
                     ['icon' => 'cpu', 'title' => 'Automatizacion interna', 'text' => 'Cotizacion, QR, archivos por lote, listas de nombres y seguimiento.'],
                 ] as $item)
