@@ -2576,6 +2576,59 @@ a {
     box-shadow: 0 .9rem 1.8rem rgba(248, 117, 31, .2);
 }
 
+.garment-icon {
+    display: inline-block;
+    flex: 0 0 auto;
+    position: relative;
+    width: 1.15rem;
+    height: 1.15rem;
+}
+
+.garment-icon-cap::before {
+    position: absolute;
+    left: .12rem;
+    top: .18rem;
+    width: .72rem;
+    height: .46rem;
+    border: .12rem solid currentColor;
+    border-bottom: 0;
+    border-radius: .55rem .55rem .08rem .08rem;
+    content: "";
+}
+
+.garment-icon-cap::after {
+    position: absolute;
+    left: .48rem;
+    top: .55rem;
+    width: .58rem;
+    height: .2rem;
+    border: .11rem solid currentColor;
+    border-left: 0;
+    border-radius: 0 .7rem .7rem 0;
+    content: "";
+}
+
+.garment-icon-shirt::before {
+    position: absolute;
+    inset: .18rem .28rem .08rem;
+    border: .12rem solid currentColor;
+    border-radius: .08rem .08rem .14rem .14rem;
+    content: "";
+}
+
+.garment-icon-shirt::after {
+    position: absolute;
+    left: .08rem;
+    top: .22rem;
+    width: .99rem;
+    height: .42rem;
+    border: .12rem solid currentColor;
+    border-bottom: 0;
+    border-radius: .18rem .18rem 0 0;
+    clip-path: polygon(0 0, 34% 0, 42% 28%, 58% 28%, 66% 0, 100% 0, 100% 100%, 0 100%);
+    content: "";
+}
+
 .mockup-stage {
     position: relative;
     overflow: hidden;
@@ -2686,6 +2739,13 @@ a {
 .launch-band .eyebrow,
 .launch-band .text-secondary {
     color: #c5e38f !important;
+}
+
+.launch-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-top: 1.25rem;
 }
 
 .timeline {
@@ -4366,6 +4426,209 @@ a {
 
 /* Final catalog mobile layout overrides. */
 @media (width <= 767.98px) {
+    .value-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .75rem;
+    }
+
+    .value-grid-item {
+        width: 100%;
+        padding: 0;
+    }
+
+    .value-grid .feature-card {
+        min-height: 100%;
+        padding: .85rem;
+        border-radius: .75rem;
+    }
+
+    .value-grid .feature-card i {
+        width: 2.45rem;
+        height: 2.45rem;
+        margin-bottom: .8rem;
+        font-size: 1rem;
+    }
+
+    .value-grid .feature-card h3 {
+        font-size: .92rem;
+        line-height: 1.12;
+    }
+
+    .value-grid .feature-card p {
+        font-size: .78rem;
+        line-height: 1.35;
+    }
+
+    .independent-products-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .75rem;
+    }
+
+    .independent-products-item {
+        width: 100%;
+        padding: 0;
+    }
+
+    .independent-products-grid .product-card {
+        min-height: 12.75rem;
+        padding: .8rem;
+        border-radius: .75rem;
+    }
+
+    .independent-products-grid .product-card .badge {
+        width: 100%;
+        padding: .28rem .35rem;
+        font-size: .64rem;
+        line-height: 1;
+    }
+
+    .independent-products-grid .product-card h3 {
+        margin-top: .55rem;
+        font-size: clamp(1rem, 7vw, 1.35rem);
+        line-height: .95;
+    }
+
+    .independent-products-grid .product-card p {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        margin-bottom: .55rem;
+        font-size: .72rem;
+        line-height: 1.25;
+    }
+
+    .independent-products-grid .product-card .card-action {
+        margin-top: auto;
+        font-size: .72rem;
+    }
+
+    .embroidery-steps {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .75rem;
+    }
+
+    .embroidery-steps div {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: .6rem;
+        min-height: 8rem;
+        padding: .8rem;
+    }
+
+    .embroidery-steps div:nth-child(3) {
+        grid-column: 1 / -1;
+        min-height: auto;
+    }
+
+    .embroidery-steps i {
+        width: 2.35rem;
+        height: 2.35rem;
+        margin-bottom: 0;
+    }
+
+    .embroidery-steps span {
+        font-size: .82rem;
+        line-height: 1.3;
+    }
+
+    .embroidery-toolbar {
+        grid-template-columns: 1fr;
+        gap: .75rem;
+    }
+
+    .garment-picker {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: .65rem;
+    }
+
+    .garment-option {
+        min-height: 3.25rem;
+        padding: .6rem .45rem;
+        font-size: .85rem;
+    }
+
+    .garment-option[data-garment="shirt"] {
+        grid-column: 1 / -1;
+    }
+
+    .upload-tile {
+        min-height: 3.7rem;
+    }
+
+    .embroidery-controls {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: .75rem;
+    }
+
+    .embroidery-controls .btn {
+        grid-column: 1 / -1;
+        min-height: 2.8rem;
+    }
+
+    .audience-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .75rem;
+    }
+
+    .audience-grid-item {
+        width: 100%;
+        padding: 0;
+    }
+
+    .audience-grid .line-card {
+        min-height: 100%;
+        padding: .85rem;
+        border-radius: .75rem;
+    }
+
+    .audience-grid .line-card h3 {
+        font-size: .92rem;
+        line-height: 1.12;
+    }
+
+    .audience-grid .line-card p {
+        font-size: .78rem;
+        line-height: 1.35;
+    }
+
+    .launch-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .65rem;
+    }
+
+    .launch-actions .btn {
+        width: 100%;
+        min-height: 2.75rem;
+        padding: .55rem .35rem;
+        font-size: .82rem;
+    }
+
+    .timeline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .75rem;
+    }
+
+    .timeline div {
+        grid-template-columns: 1fr;
+        gap: .55rem;
+        min-height: 8.25rem;
+        padding: .85rem;
+    }
+
+    .timeline div strong {
+        font-size: .88rem;
+    }
+
+    .timeline div span {
+        font-size: .76rem;
+        line-height: 1.35;
+    }
+
     .catalog-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         gap: .75rem;

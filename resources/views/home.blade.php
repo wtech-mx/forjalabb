@@ -97,18 +97,17 @@
             <div class="row g-4 align-items-end mb-4">
                 <div class="col-lg-7">
                     <div class="eyebrow">Propuesta de valor</div>
-                    <h2 class="fw-bold mt-2">No vendemos solo objetos: forjamos producto mas sistema.</h2>
+                    <h2 class="fw-bold mt-2">No vendemos solo objetos: forjamos producto mas tecnologia.</h2>
                 </div>
-                <div class="col-lg-5 text-secondary">Placa mas perfil, menu mas panel, credencial mas tarjeta virtual, uniforme mas portal de reposiciones.</div>
             </div>
-            <div class="row g-3">
+            <div class="row g-3 value-grid">
                 @foreach ([
                     ['icon' => 'boxes', 'title' => 'Produccion hibrida', 'text' => 'Laser, 3D, sublimacion, DTF, QR, NFC y desarrollo web en un mismo flujo.'],
                     ['icon' => 'person-check', 'title' => 'Sin minimos elevados', 'text' => 'Atencion desde una pieza hasta campanas empresariales completas.'],
                     ['icon' => 'arrow-repeat', 'title' => 'Ingresos recurrentes', 'text' => 'Hosting, renovaciones, menus, soporte, dominios y reposiciones.'],
                     ['icon' => 'cpu', 'title' => 'Automatizacion interna', 'text' => 'Cotizacion, QR, archivos por lote, listas de nombres y seguimiento.'],
                 ] as $item)
-                    <div class="col-md-6 col-xl-3">
+                    <div class="col-md-6 col-xl-3 value-grid-item">
                         <article class="feature-card h-100">
                             <i class="bi bi-{{ $item['icon'] }}"></i>
                             <h3>{{ $item['title'] }}</h3>
@@ -124,13 +123,13 @@
         <div class="container">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
                 <div>
-                    <div class="eyebrow">Landings iniciales</div>
-                    <h2 class="fw-bold mt-2 mb-0">Mini productos independientes</h2>
+                    <div class="eyebrow">Personalizacion</div>
+                    <h2 class="fw-bold mt-2 mb-0">Productos independientes</h2>
                 </div>
-                <p class="text-secondary mb-0 max-copy">Empezamos con ofertas claras para validar rapido: seguridad para bikers, placas inteligentes para mascotas y personalizacion textil con sublimacion y DTF.</p>
+                <p class="text-secondary mb-0 max-copy">Seguridad para bikers, placas inteligentes para mascotas y personalizacion textil con sublimacion y DTF.</p>
             </div>
-            <div class="row g-4">
-                <div class="col-md-6 col-xl-3">
+            <div class="row g-4 independent-products-grid">
+                <div class="col-md-6 col-xl-3 independent-products-item">
                     <a class="product-card product-card-dark product-card-biker" href="{{ route('services.show', 'biker-tag') }}">
                         <span class="badge text-bg-warning">Emergencia</span>
                         <h3>Biker Tag QR</h3>
@@ -138,7 +137,7 @@
                         <span class="card-action">Ver landing <i class="bi bi-arrow-right"></i></span>
                     </a>
                 </div>
-                <div class="col-md-6 col-xl-3">
+                <div class="col-md-6 col-xl-3 independent-products-item">
                     <a class="product-card product-card-light product-card-dog" href="{{ route('services.show', 'dog-tags') }}">
                         <span class="badge text-bg-success">Mascotas</span>
                         <h3>Dog Tags QR</h3>
@@ -146,15 +145,15 @@
                         <span class="card-action">Ver landing <i class="bi bi-arrow-right"></i></span>
                     </a>
                 </div>
-                <div class="col-md-6 col-xl-3">
+                <div class="col-md-6 col-xl-3 independent-products-item">
                     <a class="product-card product-card-light product-card-embroidery" href="#textil">
                         <span class="badge text-bg-light">Interactivo</span>
                         <h3>Sublimacion & DTF</h3>
-                        <p>Sube tu logo, elige gorra, chamarra o playera y acomoda el diseno antes de cotizar.</p>
+                        <p>Sube tu logo, elige gorra, chamarra o playera y acomoda el diseño antes de cotizar.</p>
                         <span class="card-action">Abrir simulador <i class="bi bi-arrow-down-right"></i></span>
                     </a>
                 </div>
-                <div class="col-md-6 col-xl-3">
+                <div class="col-md-6 col-xl-3 independent-products-item">
                     <a class="product-card product-card-light product-card-laser" href="{{ route('services.laser') }}">
                         <span class="badge text-bg-danger">Laser</span>
                         <h3>Laser personalizado</h3>
@@ -173,10 +172,10 @@
                     <div class="sticky-copy glass-copy">
                         <div class="eyebrow">Sublimacion y DTF</div>
                         <h2 class="fw-bold mt-2">Carga tu logo y arma un mockup rapido antes de cotizar.</h2>
-                        <p class="text-secondary">Aplicamos sublimacion para prendas claras de poliester y DTF para textiles de algodon, mezclas o colores intensos. Preparamos tu archivo, revisamos tamano, posicion y acabado para producir piezas limpias y listas para entrega.</p>
+                        <p class="text-secondary">Aplicamos sublimacion para prendas claras de poliester y DTF para textiles de algodon, mezclas o colores intensos. Preparamos tu archivo, revisamos tamaño, posicion y acabado para producir piezas limpias y listas para entrega.</p>
                         <div class="embroidery-steps">
                             <div><i class="bi bi-upload"></i><span>Sube tu logo o imagen.</span></div>
-                            <div><i class="bi bi-bounding-box"></i><span>Elige prenda y acomoda el diseno.</span></div>
+                            <div><i class="bi bi-bounding-box"></i><span>Elige prenda y acomoda el diseño.</span></div>
                             <div><i class="bi bi-fire"></i><span>Cotizamos sublimacion, DTF, muestra y produccion.</span></div>
                         </div>
                     </div>
@@ -195,13 +194,13 @@
 
                             <div class="garment-picker" role="group" aria-label="Elegir prenda">
                                 <button class="garment-option active" type="button" data-garment="cap">
-                                    <i class="bi bi-circle-square"></i><span>Gorra</span>
+                                    <span class="garment-icon garment-icon-cap" aria-hidden="true"></span><span>Gorra</span>
                                 </button>
                                 <button class="garment-option" type="button" data-garment="jacket">
                                     <i class="bi bi-gem"></i><span>Chamarra</span>
                                 </button>
                                 <button class="garment-option" type="button" data-garment="shirt">
-                                    <i class="bi bi-square"></i><span>Playera</span>
+                                    <span class="garment-icon garment-icon-shirt" aria-hidden="true"></span><span>Playera</span>
                                 </button>
                             </div>
                         </div>
@@ -237,14 +236,14 @@
 
     <section class="section-pad">
         <div class="container">
-            <div class="row g-4">
+            <div class="row g-4 audience-grid">
                 @foreach ([
                     'Restaurantes' => 'Bases QR, menu editable, WhatsApp, estadisticas y panel por sucursal.',
                     'Corporativo' => 'Kits, credenciales NFC, uniformes personalizados, portal interno y reposiciones por sede.',
                     'Eventos' => 'Invitaciones hibridas, RSVP, mapas, seating charts y recuerdos personalizados.',
-                    'Maquila' => 'Produccion sin marca para agencias, imprentas, wedding planners y disenadores.',
+                    'Maquila' => 'Produccion sin marca para agencias, imprentas, wedding planners y diseñadores.',
                 ] as $title => $text)
-                    <div class="col-md-6">
+                    <div class="col-md-6 audience-grid-item">
                         <div class="line-card">
                             <h3>{{ $title }}</h3>
                             <p>{{ $text }}</p>
@@ -259,14 +258,19 @@
         <div class="container">
             <div class="row g-4 align-items-center">
                 <div class="col-lg-5">
-                    <div class="eyebrow">Ruta de 90 dias</div>
-                    <h2 class="fw-bold mt-2">Lanzar simple, medir rapido y convertir en recurrencia.</h2>
+                    <div class="eyebrow">Cotiza sin vueltas</div>
+                    <h2 class="fw-bold mt-2">Dinos que quieres fabricar y armamos una propuesta clara.</h2>
+                    <div class="launch-actions">
+                        <a class="btn btn-light" href="#catalogo"><i class="bi bi-bag-heart me-2"></i>Ver catalogo</a>
+                        <a class="btn btn-outline-light" href="https://wa.me/?text={{ rawurlencode('Hola, quiero cotizar un producto personalizado con ForjaLab.') }}" target="_blank" rel="noopener"><i class="bi bi-whatsapp me-2"></i>Cotizar</a>
+                    </div>
                 </div>
                 <div class="col-lg-7">
                     <div class="timeline">
-                        <div><strong>Dias 1-15</strong><span>Marca, 3 productos, 10 muestras, MVP QR, costos reales.</span></div>
-                        <div><strong>Dias 16-30</strong><span>Redes, catalogo, WhatsApp, veterinarias, negocios y motoclubes.</span></div>
-                        <div><strong>Meses 2-3</strong><span>Ajuste de precios, paquetes, alianzas, NFC y renovaciones.</span></div>
+                        <div><strong>Producto</strong><span>Elige una pieza, paquete o idea especial.</span></div>
+                        <div><strong>Cantidad</strong><span>Define si sera individual, set o pedido por volumen.</span></div>
+                        <div><strong>Diseño</strong><span>Mandanos logo, texto, foto o referencia visual.</span></div>
+                        <div><strong>Entrega</strong><span>Confirmamos costo, tiempo y detalles de produccion.</span></div>
                     </div>
                 </div>
             </div>
