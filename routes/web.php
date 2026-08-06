@@ -85,30 +85,6 @@ Route::get('/servicios/laser', function () {
     return view('laser');
 })->name('services.laser');
 
-Route::get('/catalogo/tequileros', function () {
-    return view('catalog.tequileros');
-})->name('catalog.tequileros');
-
-Route::get('/catalogo/paquete-15-septiembre', function () {
-    return view('catalog.paquete-15-septiembre');
-})->name('catalog.package');
-
-Route::get('/catalogo/porta-vasos', function () {
-    return view('catalog.porta-vasos');
-})->name('catalog.coasters');
-
-Route::get('/catalogo/tazas', function () {
-    return view('catalog.tazas');
-})->name('catalog.mugs');
-
-Route::get('/catalogo/vaso-cafe-ceramica', function () {
-    return view('catalog.vaso-cafe-ceramica');
-})->name('catalog.ceramic-cup');
-
-Route::get('/catalogo/termo-color-mate', function () {
-    return view('catalog.termo-color-mate');
-})->name('catalog.matte-thermo');
-
 Route::get('/catalogo/paquetes/{bundle:slug}', function (CatalogBundle $bundle) {
     abort_unless($bundle->is_active, 404);
 
