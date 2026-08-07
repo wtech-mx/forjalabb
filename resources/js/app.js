@@ -147,7 +147,7 @@ document.querySelectorAll('[data-tequila-configurator]').forEach((configurator) 
         selectionText.textContent = `Vista: ${finishLabel} con diseno ${activeDesign}`;
 
         const message = `Hola, quiero cotizar tequileros personalizados de 3 o 6 piezas. Me interesa acabado ${finishLabel} con diseno ${activeDesign}.`;
-        quoteLink.href = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        quoteLink.href = `https://wa.me/525564442949?text=${encodeURIComponent(message)}`;
     };
 
     finishButtons.forEach((button) => {
@@ -187,7 +187,7 @@ document.querySelectorAll('[data-coaster-configurator]').forEach((configurator) 
         selectionText.textContent = `Vista: Porta vasos con diseno ${activeDesign}`;
 
         const message = `Hola, quiero cotizar un set de 4 porta vasos del 15 de septiembre. Me interesa el diseno ${activeDesign}.`;
-        quoteLink.href = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        quoteLink.href = `https://wa.me/525564442949?text=${encodeURIComponent(message)}`;
     };
 
     designOptions.forEach((option) => {
@@ -227,7 +227,7 @@ document.querySelectorAll('[data-drinkware-configurator]').forEach((configurator
         selectionText.textContent = `Vista: ${productLabel} ${activeColorName.toLowerCase()} con diseno ${activeDesign}`;
 
         const message = `Hola, quiero cotizar ${quoteSubject}. Me interesa color ${activeColorName} con diseno ${activeDesign}.`;
-        quoteLink.href = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        quoteLink.href = `https://wa.me/525564442949?text=${encodeURIComponent(message)}`;
     };
 
     colorButtons.forEach((button) => {
@@ -273,7 +273,7 @@ document.querySelectorAll('[data-color-product-configurator]').forEach((configur
         selectionText.textContent = `Vista: ${productLabel} ${activeColorName.toLowerCase()}`;
 
         const message = `Hola, quiero cotizar ${product}. Me interesa color ${activeColorName}.`;
-        quoteLink.href = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        quoteLink.href = `https://wa.me/525564442949?text=${encodeURIComponent(message)}`;
     };
 
     colorButtons.forEach((button) => {

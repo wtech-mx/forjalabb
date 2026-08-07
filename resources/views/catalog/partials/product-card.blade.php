@@ -25,7 +25,7 @@
                 <a class="btn btn-dark" href="{{ $href }}" @if($isExternal) target="_blank" rel="noopener" @endif>
                     <i class="bi bi-arrow-right me-2"></i>{{ $product->action_label }}
                 </a>
-                <a class="btn btn-outline-light" href="https://wa.me/?text={{ rawurlencode('Hola, quiero cotizar '.$product->name) }}" target="_blank" rel="noopener">
+                <a class="btn btn-outline-light" href="https://wa.me/525564442949?text={{ rawurlencode('Hola, quiero cotizar '.$product->name) }}" target="_blank" rel="noopener">
                     <i class="bi bi-whatsapp me-2"></i>Cotizar
                 </a>
             </div>

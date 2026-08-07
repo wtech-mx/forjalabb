@@ -169,18 +169,30 @@
             <div class="row g-4 align-items-start">
                 <div class="col-lg-5">
                     <div class="sticky-copy glass-copy">
-                        <div class="eyebrow">Sublimacion y DTF</div>
-                        <h2 class="fw-bold mt-2">Carga tu logo y arma un mockup rapido antes de cotizar.</h2>
-                        <p class="text-secondary">Aplicamos sublimacion para prendas claras de poliester y DTF para textiles de algodon, mezclas o colores intensos. Preparamos tu archivo, revisamos tamaño, posicion y acabado para producir piezas limpias y listas para entrega.</p>
+                        <div class="eyebrow">Textil y objetos personalizados</div>
+                        <h2 class="fw-bold mt-2">Tu idea en prendas, termos, gorras y mas.</h2>
+                        <p class="text-secondary">Puedes mandar a personalizar casi cualquier prenda u objeto. Si no sabes si conviene sublimacion, DTF, laser u otra tecnica, nosotros te ayudamos a elegir la mejor opcion segun material, color, cantidad y uso.</p>
                         <div class="embroidery-steps">
-                            <div><i class="bi bi-upload"></i><span>Sube tu logo o imagen.</span></div>
-                            <div><i class="bi bi-bounding-box"></i><span>Elige prenda y acomoda el diseño.</span></div>
-                            <div><i class="bi bi-fire"></i><span>Cotizamos sublimacion, DTF, muestra y produccion.</span></div>
+                            <div><i class="bi bi-upload"></i><span>Mandanos logo, texto, foto o referencia.</span></div>
+                            <div><i class="bi bi-stars"></i><span>Revisamos material, color y acabado ideal.</span></div>
+                            <div><i class="bi bi-whatsapp"></i><span>Te cotizamos la mejor tecnica antes de producir.</span></div>
+                        </div>
+                        <div class="textile-actions">
+                            <a class="btn btn-dark" href="https://wa.me/525564442949?text={{ rawurlencode('Hola, quiero cotizar una prenda u objeto personalizado. Necesito ayuda para elegir entre sublimacion, DTF u otra tecnica.') }}" target="_blank" rel="noopener">
+                                <i class="bi bi-whatsapp me-2"></i>Cotizar personalizacion
+                            </a>
+                            <a class="btn btn-outline-dark" href="#textil-preview">
+                                <i class="bi bi-image me-2"></i>Probar mockup
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-7">
-                    <div class="embroidery-tool" data-embroidery-tool>
+                    <div class="embroidery-tool" id="textil-preview" data-embroidery-tool>
+                        <div class="textile-tool-note">
+                            <strong>Vista rapida</strong>
+                            <span>Usa este mockup como guia. La cotizacion final se confirma por WhatsApp segun material, tamaño, cantidad y tecnica.</span>
+                        </div>
                         <div class="embroidery-toolbar">
                             <label class="upload-tile" for="embroideryLogoInput">
                                 <i class="bi bi-image"></i>
@@ -216,7 +228,7 @@
 
                         <div class="embroidery-controls">
                             <label>
-                                <span>Tamano</span>
+                                <span>Tamaño</span>
                                 <input type="range" min="12" max="42" value="24" data-logo-size>
                             </label>
                             <label>
@@ -261,7 +273,7 @@
                     <h2 class="fw-bold mt-2">Dinos que quieres fabricar y armamos una propuesta clara.</h2>
                     <div class="launch-actions">
                         <a class="btn btn-light" href="#catalogo"><i class="bi bi-bag-heart me-2"></i>Ver catalogo</a>
-                        <a class="btn btn-outline-light" href="https://wa.me/?text={{ rawurlencode('Hola, quiero cotizar un producto personalizado con ForjaLab.') }}" target="_blank" rel="noopener"><i class="bi bi-whatsapp me-2"></i>Cotizar</a>
+                        <a class="btn btn-outline-light" href="https://wa.me/525564442949?text={{ rawurlencode('Hola, quiero cotizar un producto personalizado con ForjaLab.') }}" target="_blank" rel="noopener"><i class="bi bi-whatsapp me-2"></i>Cotizar</a>
                     </div>
                 </div>
                 <div class="col-lg-7">

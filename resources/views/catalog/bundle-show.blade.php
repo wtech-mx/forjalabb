@@ -64,7 +64,7 @@
                         @endif
                     </div>
 
-                    <a class="btn btn-dark btn-lg" href="https://wa.me/?text={{ rawurlencode('Hola, quiero cotizar el paquete '.$bundle->name) }}" target="_blank" rel="noopener">
+                    <a class="btn btn-dark btn-lg" href="https://wa.me/525564442949?text={{ rawurlencode('Hola, quiero cotizar el paquete '.$bundle->name) }}" target="_blank" rel="noopener">
                         <i class="bi bi-whatsapp me-2"></i>Cotizar paquete
                     </a>
                 </div>

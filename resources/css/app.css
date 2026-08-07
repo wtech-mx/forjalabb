@@ -2501,6 +2501,18 @@ a {
     background: linear-gradient(135deg, var(--forge-orange), var(--forge-green));
 }
 
+.textile-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .65rem;
+    margin-top: 1rem;
+}
+
+.textile-actions .btn {
+    min-height: 2.85rem;
+    font-weight: 850;
+}
+
 .embroidery-tool {
     padding: clamp(1rem, 2.5vw, 1.35rem);
     border: 1px solid rgba(255, 255, 255, .6);
@@ -2508,6 +2520,26 @@ a {
     background: rgba(255, 255, 255, .54);
     box-shadow: 0 1.5rem 3.5rem rgba(90, 53, 29, .14);
     backdrop-filter: blur(20px) saturate(1.2);
+}
+
+.textile-tool-note {
+    display: grid;
+    gap: .2rem;
+    margin-bottom: .85rem;
+    padding: .85rem;
+    border: 1px solid rgba(90, 53, 29, .1);
+    border-radius: .8rem;
+    background: rgba(255, 248, 234, .72);
+}
+
+.textile-tool-note strong {
+    font-weight: 900;
+}
+
+.textile-tool-note span {
+    color: var(--muted);
+    font-size: .88rem;
+    line-height: 1.45;
 }
 
 .embroidery-toolbar,
@@ -4534,6 +4566,27 @@ a {
         line-height: 1.3;
     }
 
+    .textile-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .65rem;
+    }
+
+    .textile-actions .btn {
+        width: 100%;
+        min-height: 2.75rem;
+        padding: .5rem .35rem;
+        font-size: .78rem;
+    }
+
+    .textile-tool-note {
+        padding: .75rem;
+    }
+
+    .textile-tool-note span {
+        font-size: .78rem;
+    }
+
     .embroidery-toolbar {
         grid-template-columns: 1fr;
         gap: .75rem;
@@ -4626,6 +4679,54 @@ a {
 
     .timeline div span {
         font-size: .76rem;
+        line-height: 1.35;
+    }
+
+    .service-feature-grid,
+    .service-package-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .75rem;
+    }
+
+    .service-feature-item,
+    .service-package-item {
+        width: 100%;
+        padding: 0;
+    }
+
+    .service-feature-grid .check-item {
+        flex-direction: column;
+        gap: .55rem;
+        min-height: 8.75rem;
+        padding: .8rem;
+        font-size: .8rem;
+        line-height: 1.3;
+    }
+
+    .service-feature-grid .check-item i {
+        font-size: 1.1rem;
+    }
+
+    .service-package-grid .package-card {
+        min-height: 100%;
+        padding: .85rem;
+        border-radius: .75rem;
+    }
+
+    .service-package-grid .package-card h3 {
+        font-size: .95rem;
+        line-height: 1.1;
+    }
+
+    .service-package-grid .package-price {
+        margin: .55rem 0;
+        font-size: 1rem;
+        line-height: 1.05;
+    }
+
+    .service-package-grid .package-card p {
+        font-size: .78rem;
         line-height: 1.35;
     }
 
@@ -4728,5 +4829,79 @@ a {
         min-height: 2.25rem;
         padding: .35rem .45rem;
         font-size: .72rem;
+    }
+}
+
+/* Final mobile typography and laser layout pass. */
+@media (width <= 575.98px) {
+    .hero-section h1,
+    .service-hero h1,
+    .laser-hero h1 {
+        margin-bottom: 1rem !important;
+        font-size: clamp(2rem, 11vw, 1rem);
+    }
+
+    .laser-hero-actions {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .65rem !important;
+    }
+
+    .laser-hero-actions .btn {
+        width: 100%;
+        min-height: 2.75rem;
+        padding: .5rem .35rem;
+        font-size: .78rem;
+    }
+
+    .laser-feature-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .75rem;
+    }
+
+    .laser-feature-item {
+        width: 100%;
+        padding: 0;
+    }
+
+    .laser-feature-grid .feature-card {
+        min-height: 100%;
+        padding: .85rem;
+        border-radius: .75rem;
+    }
+
+    .laser-feature-grid .feature-card i {
+        width: 2.35rem;
+        height: 2.35rem;
+        margin-bottom: .75rem;
+        font-size: 1rem;
+    }
+
+    .laser-feature-grid .feature-card h3 {
+        font-size: .92rem;
+        line-height: 1.12;
+    }
+
+    .laser-feature-grid .feature-card p {
+        font-size: .78rem;
+        line-height: 1.35;
+    }
+
+    .laser-material-picker,
+    .laser-controls {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: .65rem;
+    }
+
+    .laser-option {
+        min-height: 3.25rem;
+        padding: .55rem .35rem;
+        font-size: .82rem;
+    }
+
+    .laser-option[data-laser-surface="patch"],
+    .laser-controls .btn {
+        grid-column: 1 / -1;
     }
 }

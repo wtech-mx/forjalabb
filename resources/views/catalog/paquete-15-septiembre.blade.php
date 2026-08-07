@@ -11,7 +11,7 @@
                     <h1 class="fw-bold mt-2">Tabla + 2 tequileros + botella</h1>
                     <p class="lead text-secondary">Un set listo para celebrar el 15 de septiembre: tabla grabada, dos tequileros personalizados y botella licorera para armar una presentacion completa.</p>
                     <div class="d-flex flex-wrap gap-2">
-                        <a class="btn btn-dark" href="https://wa.me/?text=Hola%2C%20quiero%20cotizar%20el%20paquete%2015%20de%20septiembre%20con%20tabla%2C%202%20tequileros%20y%20botella" target="_blank" rel="noopener">
+                        <a class="btn btn-dark" href="https://wa.me/525564442949?text=Hola%2C%20quiero%20cotizar%20el%20paquete%2015%20de%20septiembre%20con%20tabla%2C%202%20tequileros%20y%20botella" target="_blank" rel="noopener">
                             <i class="bi bi-whatsapp me-2"></i>Cotizar paquete
                         </a>
                         <a class="btn btn-outline-dark" href="{{ route('home') }}#catalogo">

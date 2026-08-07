@@ -8,12 +8,12 @@
             <div class="row align-items-center g-5">
                 <div class="col-lg-6">
                     <div class="glass-copy">
-                        <div class="eyebrow">Grabado y corte laser</div>
-                        <h1 class="display-5 fw-bold mt-3 mb-3">Personaliza termos, carcasas, playeras y piezas especiales.</h1>
-                        <p class="lead text-secondary mb-4">Grabamos logos, nombres, frases y patrones sobre metal, madera, piel, acrilico y algunos recubrimientos. Ideal para regalos, marca interna, eventos y piezas de venta.</p>
-                        <div class="d-flex flex-wrap gap-2">
-                            <a class="btn btn-dark btn-lg" href="#laser-configurador"><i class="bi bi-magic me-2"></i>Probar configurador</a>
-                            <a class="btn btn-outline-dark btn-lg" href="https://wa.me/?text=Hola%2C%20quiero%20cotizar%20grabado%20laser%20personalizado" target="_blank" rel="noopener"><i class="bi bi-whatsapp me-2"></i>Cotizar</a>
+                        <div class="eyebrow">Laser y personalizacion a medida</div>
+                        <h1 class="display-5 fw-bold mt-3 mb-3">Cada pieza se cotiza segun tu idea, material y acabado.</h1>
+                        <p class="lead text-secondary mb-4">Grabamos y cortamos piezas personalizadas para regalos, marcas, eventos y productos de venta. Si no sabes si conviene laser, DTF, sublimacion u otra tecnica, mandanos tu idea y te guiamos con la mejor opcion.</p>
+                        <div class="d-flex flex-wrap gap-2 laser-hero-actions">
+                            <a class="btn btn-dark btn-lg" href="https://wa.me/525564442949?text=Hola%2C%20quiero%20cotizar%20un%20grabado%20o%20corte%20laser%20personalizado.%20Necesito%20ayuda%20para%20elegir%20la%20mejor%20opcion." target="_blank" rel="noopener"><i class="bi bi-whatsapp me-2"></i>Cotizar por WhatsApp</a>
+                            <a class="btn btn-outline-dark btn-lg" href="#laser-configurador"><i class="bi bi-magic me-2"></i>Probar vista rapida</a>
                         </div>
                     </div>
                 </div>
@@ -26,14 +26,14 @@
 
     <section class="section-pad">
         <div class="container">
-            <div class="row g-3">
+            <div class="row g-3 laser-feature-grid">
                 @foreach ([
-                    ['icon' => 'cup-hot', 'title' => 'Termos y tumblers', 'text' => 'Nombres, logos, frases o patrones en acero y recubrimientos compatibles.'],
-                    ['icon' => 'phone', 'title' => 'Carcasas', 'text' => 'Grabado fino para fundas rigidas o superficies mate con acabado personalizado.'],
-                    ['icon' => 'tag', 'title' => 'Playeras y parches', 'text' => 'Parches de piel o sinteticos grabados para coser, pegar o integrar a prendas.'],
-                    ['icon' => 'layers', 'title' => 'Madera y acrilico', 'text' => 'Corte, marcado y piezas decorativas para regalos, eventos y displays.'],
+                    ['icon' => 'cup-hot', 'title' => 'Termos y tumblers', 'text' => 'Nombres, logos, frases o patrones en piezas compatibles. Revisamos tu termo antes de confirmar.'],
+                    ['icon' => 'phone', 'title' => 'Carcasas y accesorios', 'text' => 'Grabado fino en superficies rigidas, mate o piezas especiales segun el material.'],
+                    ['icon' => 'tag', 'title' => 'Parches y detalles', 'text' => 'Piel, sinteticos o aplicaciones para prendas, gorras, bolsas y productos personalizados.'],
+                    ['icon' => 'layers', 'title' => 'Madera y acrilico', 'text' => 'Corte, marcado, placas, letreros, displays y detalles para regalos o eventos.'],
                 ] as $item)
-                    <div class="col-md-6 col-xl-3">
+                    <div class="col-md-6 col-xl-3 laser-feature-item">
                         <article class="feature-card h-100">
                             <i class="bi bi-{{ $item['icon'] }}"></i>
                             <h3>{{ $item['title'] }}</h3>
@@ -50,18 +50,25 @@
             <div class="row g-4 align-items-start">
                 <div class="col-lg-5">
                     <div class="sticky-copy glass-copy">
-                        <div class="eyebrow">Simulador laser</div>
-                        <h2 class="fw-bold mt-2">Carga tu logo o escribe una frase y prueba superficies.</h2>
-                        <p class="text-secondary">Este preview ayuda a decidir posicion, tamano y tipo de producto. El acabado final depende del material, potencia, velocidad y preparacion del archivo.</p>
+                        <div class="eyebrow">Vista previa y asesoria</div>
+                        <h2 class="fw-bold mt-2">Prueba una idea y despues la aterrizamos contigo.</h2>
+                        <p class="text-secondary">El mockup es una referencia visual. Para cotizar bien necesitamos saber que objeto quieres personalizar, material, medidas aproximadas, cantidad y si ya tienes logo o diseño. Con eso te decimos si laser es la mejor tecnica o si conviene otra opcion.</p>
                         <div class="laser-notes">
-                            <div><strong>Logo</strong><span>PNG, JPG o SVG para simular grabado.</span></div>
-                            <div><strong>Texto</strong><span>Nombre, frase corta o iniciales.</span></div>
-                            <div><strong>Material</strong><span>Termo, carcasa o parche sobre playera.</span></div>
+                            <div><strong>1. Idea</strong><span>Logo, nombre, frase, foto o referencia.</span></div>
+                            <div><strong>2. Objeto</strong><span>Termo, placa, carcasa, madera, acrilico u otra pieza.</span></div>
+                            <div><strong>3. Cotizacion</strong><span>Te recomendamos tecnica, acabado y precio antes de producir.</span></div>
                         </div>
+                        <a class="btn btn-dark w-100 mt-3" href="https://wa.me/525564442949?text={{ rawurlencode('Hola, quiero cotizar una pieza personalizada. Tengo dudas si conviene laser u otra tecnica.') }}" target="_blank" rel="noopener">
+                            <i class="bi bi-whatsapp me-2"></i>Mandar mi idea para cotizar
+                        </a>
                     </div>
                 </div>
                 <div class="col-lg-7">
                     <div class="laser-tool" data-laser-tool>
+                        <div class="textile-tool-note">
+                            <strong>Personalizado, no generico</strong>
+                            <span>Cada producto se revisa antes de producir. Te ayudamos a elegir material, tecnica y acabado para que el resultado se vea limpio y dure.</span>
+                        </div>
                         <div class="laser-toolbar">
                             <label class="upload-tile" for="laserLogoInput">
                                 <i class="bi bi-image"></i>

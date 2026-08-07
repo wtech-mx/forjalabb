@@ -43,7 +43,7 @@
 
                     <p class="tequila-selection" data-coaster-selection>Vista: Porta vasos con diseno Viva Mexico</p>
                     <div class="d-flex flex-wrap gap-2">
-                        <a class="btn btn-dark" data-coaster-quote href="https://wa.me/?text=Hola%2C%20quiero%20cotizar%20un%20set%20de%204%20porta%20vasos%20del%2015%20de%20septiembre.%20Me%20interesa%20el%20diseno%20Viva%20Mexico." target="_blank" rel="noopener">
+                        <a class="btn btn-dark" data-coaster-quote href="https://wa.me/525564442949?text=Hola%2C%20quiero%20cotizar%20un%20set%20de%204%20porta%20vasos%20del%2015%20de%20septiembre.%20Me%20interesa%20el%20diseno%20Viva%20Mexico." target="_blank" rel="noopener">
                             <i class="bi bi-whatsapp me-2"></i>Cotizar set
                         </a>
                         <a class="btn btn-outline-dark" href="{{ route('home') }}#catalogo">

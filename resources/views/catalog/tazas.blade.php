@@ -59,7 +59,7 @@
 
                     <p class="tequila-selection" data-drinkware-selection>Vista: Taza verde con diseno Aguacate</p>
                     <div class="d-flex flex-wrap gap-2">
-                        <a class="btn btn-dark" data-drinkware-quote href="https://wa.me/?text=Hola%2C%20quiero%20cotizar%20tazas%20personalizadas.%20Me%20interesa%20color%20Verde%20con%20diseno%20Aguacate." target="_blank" rel="noopener">
+                        <a class="btn btn-dark" data-drinkware-quote href="https://wa.me/525564442949?text=Hola%2C%20quiero%20cotizar%20tazas%20personalizadas.%20Me%20interesa%20color%20Verde%20con%20diseno%20Aguacate." target="_blank" rel="noopener">
                             <i class="bi bi-whatsapp me-2"></i>Cotizar tazas
                         </a>
                         <a class="btn btn-outline-dark" href="{{ route('home') }}#catalogo">

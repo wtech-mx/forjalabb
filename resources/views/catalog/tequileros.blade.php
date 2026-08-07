@@ -51,7 +51,7 @@
 
                     <p class="tequila-selection" data-tequila-selection>Vista: Blanco con diseno Aguacate</p>
                     <div class="d-flex flex-wrap gap-2">
-                        <a class="btn btn-dark" href="https://wa.me/?text=Hola%2C%20quiero%20cotizar%20tequileros%20personalizados%20de%203%20o%206%20piezas" target="_blank" rel="noopener">
+                        <a class="btn btn-dark" href="https://wa.me/525564442949?text=Hola%2C%20quiero%20cotizar%20tequileros%20personalizados%20de%203%20o%206%20piezas" target="_blank" rel="noopener">
                             <i class="bi bi-whatsapp me-2"></i>Cotizar tequileros
                         </a>
                         <a class="btn btn-outline-dark" href="{{ route('home') }}#catalogo">

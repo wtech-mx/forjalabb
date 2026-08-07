@@ -42,7 +42,7 @@
 
                     <p class="tequila-selection" data-color-product-selection>Vista: Termo color mate blanco</p>
                     <div class="d-flex flex-wrap gap-2">
-                        <a class="btn btn-dark" data-color-product-quote href="https://wa.me/?text=Hola%2C%20quiero%20cotizar%20termo%20color%20mate.%20Me%20interesa%20color%20Blanco." target="_blank" rel="noopener">
+                        <a class="btn btn-dark" data-color-product-quote href="https://wa.me/525564442949?text=Hola%2C%20quiero%20cotizar%20termo%20color%20mate.%20Me%20interesa%20color%20Blanco." target="_blank" rel="noopener">
                             <i class="bi bi-whatsapp me-2"></i>Cotizar termo
                         </a>
                         <a class="btn btn-outline-dark" href="{{ route('home') }}#catalogo">

@@ -71,7 +71,7 @@
                         @if (($initialPackage?->public_price ?? $product->public_price) > 0)
                             <div class="package-price package-price-final" data-price-label>${{ number_format((float) ($initialPackage?->public_price ?? $product->public_price), 0) }}</div>
                         @endif
-                        <a class="btn btn-dark btn-lg" href="https://wa.me/?text={{ rawurlencode('Hola, quiero cotizar '.$product->name.($initialPackage ? ' en '.$initialPackage->name : '')) }}" target="_blank" rel="noopener" data-whatsapp-link data-product-name="{{ $product->name }}">
+                        <a class="btn btn-dark btn-lg" href="https://wa.me/525564442949?text={{ rawurlencode('Hola, quiero cotizar '.$product->name.($initialPackage ? ' en '.$initialPackage->name : '')) }}" target="_blank" rel="noopener" data-whatsapp-link data-product-name="{{ $product->name }}">
                             <i class="bi bi-whatsapp me-2"></i>Cotizar
                         </a>
                     </div>
@@ -160,7 +160,7 @@
                             <div class="package-price package-price-final" data-price-label>${{ number_format((float) ($initialPackage?->public_price ?? $product->public_price), 0) }}</div>
                         @endif
 
-                        <a class="btn btn-dark btn-lg" href="https://wa.me/?text={{ rawurlencode('Hola, quiero cotizar '.$product->name.($initialPackage ? ' en '.$initialPackage->name : '')) }}" target="_blank" rel="noopener" data-whatsapp-link data-product-name="{{ $product->name }}">
+                        <a class="btn btn-dark btn-lg" href="https://wa.me/525564442949?text={{ rawurlencode('Hola, quiero cotizar '.$product->name.($initialPackage ? ' en '.$initialPackage->name : '')) }}" target="_blank" rel="noopener" data-whatsapp-link data-product-name="{{ $product->name }}">
                             <i class="bi bi-whatsapp me-2"></i>Cotizar
                         </a>
                     </div>
@@ -180,7 +180,7 @@
                 const updateWhatsapp = () => {
                     if (!whatsappLink) return;
                     const productName = whatsappLink.dataset.productName || '';
-                    whatsappLink.href = `https://wa.me/?text=${encodeURIComponent(`Hola, quiero cotizar ${productName}${packageName ? ` en ${packageName}` : ''}`)}`;
+                    whatsappLink.href = `https://wa.me/525564442949?text=${encodeURIComponent(`Hola, quiero cotizar ${productName}${packageName ? ` en ${packageName}` : ''}`)}`;
                 };
 
                 product.querySelectorAll('[data-gallery-thumb]').forEach((button) => {
@@ -224,7 +224,7 @@
                     if (whatsappLink) {
                         const productName = whatsappLink.dataset.productName || '';
                         const text = `Hola, quiero cotizar ${productName}${packageName ? ` en ${packageName}` : ''}${baseName ? `, ${baseName}` : ''}${designName ? ` con diseno ${designName}` : ''}`;
-                        whatsappLink.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
+                        whatsappLink.href = `https://wa.me/525564442949?text=${encodeURIComponent(text)}`;
                     }
                 };
 

@@ -35,7 +35,7 @@
                         </li>
                     @endauth
                     <li class="nav-item">
-                        <a class="btn btn-dark btn-sm px-3" href="https://wa.me/?text=Hola%2C%20quiero%20cotizar%20un%20producto%20personalizado%20con%20QR%20o%20NFC" target="_blank" rel="noopener">
+                        <a class="btn btn-dark btn-sm px-3" href="https://wa.me/525564442949?text=Hola%2C%20quiero%20cotizar%20un%20producto%20personalizado%20con%20QR%20o%20NFC" target="_blank" rel="noopener">
                             <i class="bi bi-whatsapp me-1"></i>Cotizar
                         </a>
                     </li>
@@ -70,7 +70,7 @@
         <div class="container d-flex flex-column flex-lg-row justify-content-between gap-3">
             <div>
                 <div class="fw-bold fs-5">ForjaLab</div>
-                <p class="mb-0 text-secondary">Tu idea, fabricada y conectada en CDMX.</p>
+                <p class="mb-0 text-secondary">Personalización con diseño, oficio y tecnología.</p>
             </div>
             <div class="d-flex flex-wrap gap-2">
                 <span class="badge text-bg-light">Laser</span>
