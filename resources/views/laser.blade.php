@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('title', 'Laser personalizado | ForjaLab')
+@section('meta_description', 'Corte y grabado laser personalizado en CDMX para termos, textiles, accesorios y regalos. Cotiza materiales, diseño y acabado con ForjaLab.')
+@section('seo_image', asset('images/laser-hero.png'))
 
 @section('content')
     <section class="laser-hero">
@@ -18,7 +20,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <img class="hero-image" src="{{ asset('images/laser-hero.png') }}" alt="Grabado laser personalizado en termo, carcasa y parche">
+                    <img class="hero-image" src="{{ asset('images/laser-hero.png') }}" alt="Grabado laser personalizado en termo, carcasa y parche" loading="eager" fetchpriority="high" decoding="async">
                 </div>
             </div>
         </div>
@@ -92,7 +94,7 @@
                         </div>
 
                         <div class="laser-stage" data-laser-stage>
-                            <img class="laser-surface-preview" src="{{ asset('images/laser-thermo.png') }}" alt="Mockup de termo para grabado laser" data-laser-preview>
+                            <img class="laser-surface-preview" src="{{ asset('images/laser-thermo.png') }}" alt="Mockup de termo para grabado laser" loading="lazy" decoding="async" data-laser-preview>
                             <div class="laser-mark" data-laser-mark>
                                 <img alt="Logo cargado para simular grabado laser" data-laser-logo-preview hidden>
                                 <span data-laser-text-preview>FORJALAB</span>

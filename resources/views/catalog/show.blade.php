@@ -18,6 +18,18 @@
 @endphp
 
 @section('title', $product->name.' | ForjaLab')
+@section('meta_description', \Illuminate\Support\Str::limit(strip_tags($product->description ?: 'Producto personalizado por ForjaLab en CDMX. Consulta opciones, presentaciones, disponibilidad y precio.'), 155))
+@if ($product->image_url)
+    @section('seo_image', $product->image_url)
+@endif
+@section('seo_type', 'product')
+@section('structured_data')
+    <script type="application/ld+json">{!! json_encode(array_filter([
+        '@context' => 'https://schema.org', '@type' => 'Product', 'name' => $product->name, 'description' => $product->description,
+        'image' => $product->image_url, 'sku' => 'FL-PROD-'.$product->id, 'brand' => ['@type' => 'Brand', 'name' => 'ForjaLab'],
+        'offers' => $product->public_price ? ['@type' => 'Offer', 'priceCurrency' => 'MXN', 'price' => $product->public_price, 'availability' => $product->stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock', 'url' => route('catalog.show', $product)] : null,
+    ]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+@endsection
 
 @section('content')
     <section class="section-pad package-page">
@@ -29,7 +41,7 @@
                     </div>
                     <div class="product-gallery-media">
                         @if ($galleryImages->isNotEmpty())
-                            <img src="{{ $galleryImages->first() }}" alt="{{ $product->name }}" data-gallery-preview>
+                            <img src="{{ $galleryImages->first() }}" alt="{{ $product->name }}" loading="eager" fetchpriority="high" decoding="async" data-gallery-preview>
                         @else
                             <div class="catalog-media"><i class="bi bi-box-seam"></i><span>Foto pendiente</span></div>
                         @endif
@@ -45,7 +57,7 @@
                             <div class="product-gallery-strip">
                                 @foreach ($galleryImages as $index => $image)
                                     <button class="{{ $index === 0 ? 'active' : '' }}" type="button" data-gallery-thumb="{{ $image }}">
-                                        <img src="{{ $image }}" alt="{{ $product->name }}">
+                                        <img src="{{ $image }}" alt="{{ $product->name }}" loading="lazy" decoding="async">
                                     </button>
                                 @endforeach
                             </div>
@@ -84,13 +96,13 @@
 
                     <div class="tequila-photo">
                         @if ($baseImage)
-                            <img class="dynamic-product-base" src="{{ $baseImage }}" alt="{{ $product->name }}" data-base-preview>
+                            <img class="dynamic-product-base" src="{{ $baseImage }}" alt="{{ $product->name }}" loading="eager" fetchpriority="high" decoding="async" data-base-preview>
                         @else
                             <div class="catalog-media"><i class="bi bi-box-seam"></i><span>Foto pendiente</span></div>
                         @endif
 
                         @if ($initialDesignImage)
-                            <img class="dynamic-product-design" src="{{ $initialDesignImage }}" alt="" data-design-preview>
+                            <img class="dynamic-product-design" src="{{ $initialDesignImage }}" alt="" decoding="async" data-design-preview>
                         @else
                             <img class="dynamic-product-design" alt="" data-design-preview hidden>
                         @endif
@@ -119,7 +131,7 @@
                                     @foreach ($designOptions as $index => $option)
                                         <figure class="{{ ! $startsWithCover && $index === 0 ? 'active' : '' }}" data-design-option="{{ $option->image_url }}" data-design-name="{{ $option->name }}">
                                             @if ($option->image_url)
-                                                <img src="{{ $option->image_url }}" alt="{{ $option->name }}">
+                                                <img src="{{ $option->image_url }}" alt="{{ $option->name }}" loading="lazy" decoding="async">
                                             @else
                                                 <i class="bi bi-palette-fill"></i>
                                             @endif

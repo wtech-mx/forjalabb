@@ -2,6 +2,16 @@
 
 @section('title', 'Biker Tag QR de emergencia | ForjaLab')
 @section('meta_description', 'Identificacion QR para motociclistas con contactos, datos medicos, seguro vehicular y servicio de salud. Sin mensualidades.')
+@section('seo_image', asset('images/biker-tag-hero.png'))
+@section('seo_type', 'product')
+@section('structured_data')
+    <script type="application/ld+json">{!! json_encode([
+        '@context' => 'https://schema.org', '@type' => 'Product', 'name' => 'Kit Biker Tag QR de emergencia',
+        'description' => 'Kit de dos placas militares QR para motociclista y llavero de la moto, conectado a un perfil de emergencia sin mensualidades.',
+        'image' => [asset('images/biker-tag-hero.png'), asset('images/biker-tag-detail.png')], 'brand' => ['@type' => 'Brand', 'name' => 'ForjaLab'],
+        'offers' => ['@type' => 'Offer', 'priceCurrency' => 'MXN', 'price' => '250', 'availability' => 'https://schema.org/InStock', 'url' => route('services.show', 'biker-tag')],
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+@endsection
 
 @section('content')
     @php($whatsapp = 'https://wa.me/525564442949?text='.urlencode('Hola, quiero cotizar mi Biker Tag QR'))
@@ -25,7 +35,7 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="biker-hero-media">
-                            <img src="{{ asset('images/biker-tag-hero.png') }}" alt="Biker Tag personalizado con codigo QR y perfil digital de emergencia" fetchpriority="high">
+                            <img src="{{ asset('images/biker-tag-hero.png') }}" alt="Biker Tag personalizado con codigo QR y perfil digital de emergencia" loading="eager" fetchpriority="high" decoding="async">
                             <div class="biker-price-float"><small>Kit completo</small><strong>$250 MXN</strong><span>pago unico</span></div>
                         </div>
                     </div>
@@ -106,7 +116,7 @@
         </section>
 
         <section class="biker-ride-break" aria-label="Proteccion durante cada rodada">
-            <img src="{{ asset('images/biker-tag-ride.png') }}" alt="Motociclistas equipados rodando por una carretera de montana" loading="lazy">
+            <img src="{{ asset('images/biker-tag-ride.png') }}" alt="Motociclistas equipados rodando por una carretera de montana" loading="lazy" decoding="async">
             <div class="container">
                 <div class="biker-ride-message">
                     <span><i class="bi bi-shield-fill-check"></i> Prevencion en ruta</span>
@@ -119,7 +129,7 @@
         <section class="biker-story section-pad" id="como-funciona">
             <div class="container">
                 <div class="row align-items-center g-5">
-                    <div class="col-lg-6"><img src="{{ asset('images/biker-tag-scan.png') }}" alt="Motociclista consultando un Biker Tag QR con su celular" loading="lazy"></div>
+                    <div class="col-lg-6"><img src="{{ asset('images/biker-tag-scan.png') }}" alt="Motociclista consultando un Biker Tag QR con su celular" loading="lazy" decoding="async"></div>
                     <div class="col-lg-6">
                         <span class="biker-overline dark">Simple y rapido</span>
                         <h2>Escanear. Consultar. Actuar.</h2>
@@ -161,7 +171,7 @@
                 <div class="row align-items-center g-5">
                     <div class="col-lg-5">
                         <figure class="biker-responder-photo">
-                            <img src="{{ asset('images/biker-tag-responder.png') }}" alt="Respondiente consultando la informacion medica de un Biker Tag" loading="lazy">
+                            <img src="{{ asset('images/biker-tag-responder.png') }}" alt="Respondiente consultando la informacion medica de un Biker Tag" loading="lazy" decoding="async">
                             <figcaption><i class="bi bi-qr-code-scan"></i> Acceso inmediato desde cualquier celular</figcaption>
                         </figure>
                         <div class="emergency-symbol"><i class="bi bi-star-of-life"></i><span>ICE</span></div>
@@ -196,7 +206,7 @@
                             <li><i class="bi bi-check-circle-fill"></i> Precio final confirmado antes de producir</li>
                         </ul>
                     </div>
-                    <div class="col-lg-7 order-1 order-lg-2"><img src="{{ asset('images/biker-tag-detail.png') }}" alt="Detalle de placa metalica Biker Tag con codigo QR" loading="lazy"></div>
+                    <div class="col-lg-7 order-1 order-lg-2"><img src="{{ asset('images/biker-tag-detail.png') }}" alt="Detalle de placa metalica Biker Tag con codigo QR" loading="lazy" decoding="async"></div>
                 </div>
             </div>
         </section>

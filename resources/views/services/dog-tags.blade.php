@@ -2,6 +2,16 @@
 
 @section('title', 'Dog Tag QR para mascotas | ForjaLab')
 @section('meta_description', 'Placa QR personalizada para perros con datos de contacto, veterinaria y cuidados. Perfil activo de por vida y sin mensualidades.')
+@section('seo_image', asset('images/dog-tag-walk.png'))
+@section('seo_type', 'product')
+@section('structured_data')
+    <script type="application/ld+json">{!! json_encode([
+        '@context' => 'https://schema.org', '@type' => 'Product', 'name' => 'Dog Tag QR para mascotas',
+        'description' => 'Placa QR personalizada para perros con perfil de contacto, cuidados y veterinaria, activa de por vida y sin mensualidades.',
+        'image' => [asset('images/dog-tag-walk.png'), asset('images/dog-tag-options.png')], 'brand' => ['@type' => 'Brand', 'name' => 'ForjaLab'],
+        'offers' => ['@type' => 'AggregateOffer', 'priceCurrency' => 'MXN', 'lowPrice' => '150', 'highPrice' => '180', 'offerCount' => '2', 'availability' => 'https://schema.org/InStock', 'url' => route('services.show', 'dog-tags')],
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+@endsection
 
 @section('content')
     @php($whatsapp = 'https://wa.me/525564442949?text='.urlencode('Hola, quiero cotizar un Dog Tag QR para mi mascota'))
@@ -26,7 +36,7 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="dog-hero-photo">
-                            <img src="{{ asset('images/dog-tag-walk.png') }}" alt="Perro paseando con una placa Dog Tag QR" fetchpriority="high">
+                            <img src="{{ asset('images/dog-tag-walk.png') }}" alt="Perro paseando con una placa Dog Tag QR" loading="eager" fetchpriority="high" decoding="async">
                             <div class="dog-price-badge"><small>Desde</small><strong>$150 MXN</strong><span>pago unico</span></div>
                             <div class="dog-home-badge"><i class="bi bi-house-heart-fill"></i><span>Su camino<br><b>de regreso</b></span></div>
                         </div>
@@ -46,7 +56,7 @@
 
         <section class="dog-product section-pad">
             <div class="container"><div class="row align-items-center g-5">
-                <div class="col-lg-6"><img src="{{ asset('images/dog-tag-options.png') }}" alt="Opciones de placas QR personalizadas para perros" loading="lazy"></div>
+                <div class="col-lg-6"><img src="{{ asset('images/dog-tag-options.png') }}" alt="Opciones de placas QR personalizadas para perros" loading="lazy" decoding="async"></div>
                 <div class="col-lg-6">
                     <span class="dog-overline dark">Una placa tan unica como tu mascota</span>
                     <h2>Personalizada, bonita y realmente util.</h2>
@@ -61,7 +71,7 @@
         </section>
 
         <section class="dog-visual-break">
-            <img src="{{ asset('images/dog-tags-hero.png') }}" alt="Perro con placa personalizada y perfil digital" loading="lazy">
+            <img src="{{ asset('images/dog-tags-hero.png') }}" alt="Perro con placa personalizada y perfil digital" loading="lazy" decoding="async">
             <div class="container"><div><span><i class="bi bi-paw-fill"></i> Siempre identificado</span><h2>Una pequeña placa.<br>Una gran tranquilidad.</h2></div></div>
         </section>
 
@@ -78,7 +88,7 @@
                         <li><span>04</span><div><b>Comparte la ubicacion</b><small>Ayuda a indicar donde fue encontrado.</small></div></li>
                     </ol>
                 </div>
-                <div class="col-lg-6 order-1 order-lg-2"><img src="{{ asset('images/dog-tag-scan.png') }}" alt="Persona escaneando el Dog Tag QR de un perro" loading="lazy"></div>
+                <div class="col-lg-6 order-1 order-lg-2"><img src="{{ asset('images/dog-tag-scan.png') }}" alt="Persona escaneando el Dog Tag QR de un perro" loading="lazy" decoding="async"></div>
             </div></div>
         </section>
 

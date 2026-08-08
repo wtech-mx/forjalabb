@@ -5,6 +5,11 @@
 @endphp
 
 @section('title', $bundle->name.' | ForjaLab')
+@section('meta_description', \Illuminate\Support\Str::limit(strip_tags($bundle->description ?: 'Paquete de productos personalizados por ForjaLab. Consulta lo que incluye, precio y disponibilidad.'), 155))
+@if ($bundle->image_url)
+    @section('seo_image', $bundle->image_url)
+@endif
+@section('seo_type', 'product')
 
 @section('content')
     <section class="section-pad package-page">
@@ -12,7 +17,7 @@
             <article class="bundle-single" data-bundle-single>
                 <div class="bundle-single-media">
                     @if ($initialImage)
-                        <img src="{{ $initialImage }}" alt="{{ $bundle->name }}" data-bundle-preview>
+                        <img src="{{ $initialImage }}" alt="{{ $bundle->name }}" loading="eager" fetchpriority="high" decoding="async" data-bundle-preview>
                     @else
                         <div class="catalog-media"><i class="bi bi-box-seam"></i><span>Foto pendiente</span></div>
                     @endif
@@ -51,7 +56,7 @@
                         <div class="bundle-single-gallery">
                             @foreach ($bundle->photos as $photo)
                                 <button type="button" data-bundle-item-option data-image="{{ $photo->image_url }}" data-name="{{ $bundle->name }}">
-                                    <img src="{{ $photo->image_url }}" alt="{{ $bundle->name }}">
+                                    <img src="{{ $photo->image_url }}" alt="{{ $bundle->name }}" loading="lazy" decoding="async">
                                 </button>
                             @endforeach
                         </div>

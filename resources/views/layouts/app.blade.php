@@ -1,10 +1,51 @@
 <!doctype html>
 <html lang="es">
 <head>
+    @php
+        $isPrivatePage = request()->routeIs('admin.*', 'login');
+        $seoTitle = trim($__env->yieldContent('title', 'ForjaLab | Productos personalizados en CDMX'));
+        $seoDescription = trim($__env->yieldContent('meta_description', 'ForjaLab crea productos personalizados en CDMX: placas QR para mascotas y motociclistas, corte laser, impresion 3D, sublimacion y DTF.'));
+        $seoCanonical = trim($__env->yieldContent('canonical', url()->current()));
+        $seoImage = trim($__env->yieldContent('seo_image', asset('images/forjalab-hero.png')));
+        $seoType = trim($__env->yieldContent('seo_type', 'website'));
+    @endphp
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="ForjaLab en CDMX: corte laser, impresion 3D, sublimacion, DTF, QR, NFC y software conectado.">
-    <title>@yield('title', 'ForjaLab | Productos fabricados y conectados')</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ asset('site.webmanifest') }}">
+    <meta name="theme-color" content="#1b120b">
+    <title>{{ $seoTitle }}</title>
+    <meta name="description" content="{{ $seoDescription }}">
+    <meta name="robots" content="{{ $isPrivatePage ? 'noindex, nofollow, noarchive' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' }}">
+    @unless ($isPrivatePage)
+        <link rel="canonical" href="{{ $seoCanonical }}">
+        <meta property="og:locale" content="es_MX">
+        <meta property="og:type" content="{{ $seoType }}">
+        <meta property="og:site_name" content="ForjaLab">
+        <meta property="og:title" content="{{ $seoTitle }}">
+        <meta property="og:description" content="{{ $seoDescription }}">
+        <meta property="og:url" content="{{ $seoCanonical }}">
+        <meta property="og:image" content="{{ $seoImage }}">
+        <meta property="og:image:alt" content="{{ $seoTitle }}">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ $seoTitle }}">
+        <meta name="twitter:description" content="{{ $seoDescription }}">
+        <meta name="twitter:image" content="{{ $seoImage }}">
+        <script type="application/ld+json">{!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            '@id' => url('/').'#organization',
+            'name' => 'ForjaLab',
+            'url' => url('/'),
+            'logo' => asset('images/logo.png'),
+            'image' => $seoImage,
+            'telephone' => '+52 55 6444 2949',
+            'areaServed' => ['@type' => 'City', 'name' => 'Ciudad de Mexico'],
+            'contactPoint' => ['@type' => 'ContactPoint', 'telephone' => '+52 55 6444 2949', 'contactType' => 'sales', 'availableLanguage' => 'Spanish'],
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+        @yield('structured_data')
+    @endunless
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>

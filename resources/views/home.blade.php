@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('title', 'ForjaLab | Taller de productos fisicos conectados')
+@section('meta_description', 'Productos personalizados en CDMX: Biker Tags y Dog Tags con QR, corte laser, impresion 3D, sublimacion, DTF y soluciones conectadas.')
+@section('seo_image', asset('images/forjalab-hero.png'))
 
 @section('content')
     <section class="hero-section">
@@ -45,7 +47,7 @@
                             <article class="bundle-home-card {{ $bundle->is_featured ? 'featured' : '' }}">
                                 <div class="bundle-home-media">
                                     @if ($bundle->image_url)
-                                        <img src="{{ $bundle->image_url }}" alt="{{ $bundle->name }}">
+                                        <img src="{{ $bundle->image_url }}" alt="{{ $bundle->name }}" loading="lazy" decoding="async">
                                     @else
                                         <i class="bi bi-box-seam-fill"></i>
                                     @endif
@@ -217,7 +219,7 @@
                         </div>
 
                         <div class="mockup-stage" data-mockup-stage>
-                            <img class="garment-preview" src="{{ asset('images/embroidery-cap.png') }}" alt="Mockup de gorra para sublimacion o DTF" data-garment-preview>
+                            <img class="garment-preview" src="{{ asset('images/embroidery-cap.png') }}" alt="Mockup de gorra para sublimacion o DTF" loading="lazy" decoding="async" data-garment-preview>
                             <div class="embroidery-placeholder" data-logo-placeholder>
                                 <i class="bi bi-cloud-arrow-up-fill"></i>
                                 <span>Tu logo aqui</span>

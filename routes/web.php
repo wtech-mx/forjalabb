@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CatalogBundleController;
 use App\Http\Controllers\Admin\CatalogProductController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SmartTagController;
 use App\Http\Controllers\Admin\UserController;
@@ -94,6 +94,35 @@ Route::get('/', function () {
             ->get(),
     ]);
 })->name('home');
+
+Route::get('/sitemap.xml', function () {
+    $urls = collect([
+        ['loc' => route('home'), 'lastmod' => null],
+        ['loc' => route('services.show', 'biker-tag'), 'lastmod' => null],
+        ['loc' => route('services.show', 'dog-tags'), 'lastmod' => null],
+        ['loc' => route('services.laser'), 'lastmod' => null],
+    ])->concat(
+        CatalogProduct::active()->get(['slug', 'updated_at'])->map(fn (CatalogProduct $product) => [
+            'loc' => route('catalog.show', $product),
+            'lastmod' => $product->updated_at?->toAtomString(),
+        ])
+    )->concat(
+        CatalogBundle::active()->get(['slug', 'updated_at'])->map(fn (CatalogBundle $bundle) => [
+            'loc' => route('catalog.bundle.show', $bundle),
+            'lastmod' => $bundle->updated_at?->toAtomString(),
+        ])
+    );
+
+    return response()
+        ->view('sitemap', compact('urls'))
+        ->header('Content-Type', 'application/xml; charset=UTF-8');
+})->name('sitemap');
+
+Route::get('/robots.txt', fn () => response(
+    "User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /t/\nSitemap: ".route('sitemap')."\n",
+    200,
+    ['Content-Type' => 'text/plain; charset=UTF-8']
+))->name('robots');
 
 Route::get('/servicios/laser', function () {
     return view('laser');
