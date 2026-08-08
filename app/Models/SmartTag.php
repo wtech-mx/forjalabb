@@ -25,6 +25,12 @@ use Illuminate\Support\Str;
     'public_notes',
     'vehicle',
     'motorcycle_plate',
+    'has_vehicle_insurance',
+    'vehicle_insurance_policy',
+    'vehicle_insurance_expires_at',
+    'has_public_health_insurance',
+    'public_health_provider',
+    'public_health_number',
     'club_name',
     'pet_species',
     'pet_breed',
@@ -39,6 +45,7 @@ class SmartTag extends Model
     use HasFactory;
 
     public const TYPE_BIKER = 'biker';
+
     public const TYPE_DOG = 'dog';
 
     protected static function booted(): void
@@ -64,6 +71,9 @@ class SmartTag extends Model
         return [
             'is_active' => 'boolean',
             'is_blood_donor' => 'boolean',
+            'has_vehicle_insurance' => 'boolean',
+            'vehicle_insurance_expires_at' => 'date',
+            'has_public_health_insurance' => 'boolean',
             'activated_at' => 'datetime',
             'expires_at' => 'datetime',
         ];
@@ -75,6 +85,28 @@ class SmartTag extends Model
     public static function bloodTypes(): array
     {
         return ['O-', 'O+', 'A-', 'A+', 'B-', 'B+', 'AB-', 'AB+'];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function publicHealthProviders(): array
+    {
+        return [
+            'imss' => 'IMSS',
+            'issste' => 'ISSSTE',
+            'pemex' => 'PEMEX',
+            'sedena' => 'SEDENA (servicio militar)',
+            'semar' => 'SEMAR (servicio naval)',
+            'imss_bienestar' => 'IMSS-Bienestar',
+            'estatal' => 'Servicio estatal de salud',
+            'otro' => 'Otro',
+        ];
+    }
+
+    public function getPublicHealthProviderLabelAttribute(): ?string
+    {
+        return self::publicHealthProviders()[$this->public_health_provider] ?? $this->public_health_provider;
     }
 
     public function buildAutoCode(): string

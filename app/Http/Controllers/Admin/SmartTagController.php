@@ -74,7 +74,7 @@ class SmartTagController extends Controller
     {
         $renderer = new ImageRenderer(
             new RendererStyle(420),
-            new SvgImageBackEnd()
+            new SvgImageBackEnd
         );
 
         $svg = (new Writer($renderer))->writeString($tag->public_url);
@@ -104,6 +104,12 @@ class SmartTagController extends Controller
             'public_notes' => ['nullable', 'string', 'max:1000'],
             'vehicle' => ['nullable', 'string', 'max:120'],
             'motorcycle_plate' => ['nullable', 'string', 'max:30'],
+            'has_vehicle_insurance' => ['nullable', 'boolean'],
+            'vehicle_insurance_policy' => ['nullable', 'required_if:has_vehicle_insurance,1', 'string', 'max:120'],
+            'vehicle_insurance_expires_at' => ['nullable', 'required_if:has_vehicle_insurance,1', 'date'],
+            'has_public_health_insurance' => ['nullable', 'boolean'],
+            'public_health_provider' => ['nullable', 'required_if:has_public_health_insurance,1', Rule::in(array_keys(SmartTag::publicHealthProviders()))],
+            'public_health_number' => ['nullable', 'required_if:has_public_health_insurance,1', 'string', 'max:120'],
             'club_name' => ['nullable', 'string', 'max:120'],
             'pet_species' => ['nullable', 'string', 'max:80'],
             'pet_breed' => ['nullable', 'string', 'max:120'],
@@ -115,6 +121,20 @@ class SmartTagController extends Controller
 
         $data['is_active'] = $request->boolean('is_active');
         $data['is_blood_donor'] = $request->boolean('is_blood_donor');
+        $data['has_vehicle_insurance'] = $request->boolean('has_vehicle_insurance');
+        $data['has_public_health_insurance'] = $request->boolean('has_public_health_insurance');
+
+        if ($data['type'] !== SmartTag::TYPE_BIKER || ! $data['has_vehicle_insurance']) {
+            $data['has_vehicle_insurance'] = false;
+            $data['vehicle_insurance_policy'] = null;
+            $data['vehicle_insurance_expires_at'] = null;
+        }
+
+        if ($data['type'] !== SmartTag::TYPE_BIKER || ! $data['has_public_health_insurance']) {
+            $data['has_public_health_insurance'] = false;
+            $data['public_health_provider'] = null;
+            $data['public_health_number'] = null;
+        }
 
         return $data;
     }

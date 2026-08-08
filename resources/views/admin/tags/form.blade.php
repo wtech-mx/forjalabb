@@ -5,6 +5,7 @@
     $selectedType = old('type', $type);
     $isBiker = $selectedType === 'biker';
     $bloodTypes = \App\Models\SmartTag::bloodTypes();
+    $publicHealthProviders = \App\Models\SmartTag::publicHealthProviders();
 @endphp
 
 @section('title', ($isEdit ? 'Editar tag' : 'Nuevo tag').' | ForjaLab')
@@ -199,6 +200,57 @@
                                         <input class="form-control" id="club_name" name="club_name" value="{{ old('club_name', $tag->club_name) }}">
                                     </div>
                                 </div>
+                                <div class="col-12"><hr class="my-2"></div>
+                                <div class="col-md-6">
+                                    <label class="form-label d-block">Seguro del vehiculo</label>
+                                    <div class="switch-card">
+                                        <i class="bi bi-shield-check"></i>
+                                        <div class="form-check form-switch mb-0">
+                                            <input class="form-check-input" id="has_vehicle_insurance" name="has_vehicle_insurance" type="checkbox" value="1" data-toggle-fields="vehicle-insurance-fields" @checked(old('has_vehicle_insurance', $tag->has_vehicle_insurance))>
+                                            <label class="form-check-label" for="has_vehicle_insurance">Si, tiene seguro</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row g-3 mt-0" id="vehicle-insurance-fields">
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="vehicle_insurance_policy">Numero de poliza</label>
+                                        <input class="form-control @error('vehicle_insurance_policy') is-invalid @enderror" id="vehicle_insurance_policy" name="vehicle_insurance_policy" value="{{ old('vehicle_insurance_policy', $tag->vehicle_insurance_policy) }}">
+                                        @error('vehicle_insurance_policy')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="vehicle_insurance_expires_at">Fin de vigencia</label>
+                                        <input class="form-control @error('vehicle_insurance_expires_at') is-invalid @enderror" id="vehicle_insurance_expires_at" name="vehicle_insurance_expires_at" type="date" value="{{ old('vehicle_insurance_expires_at', optional($tag->vehicle_insurance_expires_at)->format('Y-m-d')) }}">
+                                        @error('vehicle_insurance_expires_at')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    </div>
+                                </div>
+                                <div class="col-12"><hr class="my-2"></div>
+                                <div class="col-md-6">
+                                    <label class="form-label d-block">Servicio publico de salud</label>
+                                    <div class="switch-card">
+                                        <i class="bi bi-hospital"></i>
+                                        <div class="form-check form-switch mb-0">
+                                            <input class="form-check-input" id="has_public_health_insurance" name="has_public_health_insurance" type="checkbox" value="1" data-toggle-fields="public-health-fields" @checked(old('has_public_health_insurance', $tag->has_public_health_insurance))>
+                                            <label class="form-check-label" for="has_public_health_insurance">Si, cuenta con servicio</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row g-3 mt-0" id="public-health-fields">
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="public_health_provider">Institucion</label>
+                                        <select class="form-select @error('public_health_provider') is-invalid @enderror" id="public_health_provider" name="public_health_provider">
+                                            <option value="">Selecciona una institucion</option>
+                                            @foreach ($publicHealthProviders as $providerValue => $providerLabel)
+                                                <option value="{{ $providerValue }}" @selected(old('public_health_provider', $tag->public_health_provider) === $providerValue)>{{ $providerLabel }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('public_health_provider')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="public_health_number">Numero de afiliacion / seguridad social</label>
+                                        <input class="form-control @error('public_health_number') is-invalid @enderror" id="public_health_number" name="public_health_number" value="{{ old('public_health_number', $tag->public_health_number) }}">
+                                        @error('public_health_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -282,6 +334,18 @@
             const sections = document.querySelectorAll('[data-product-section]');
             const labelTargets = document.querySelectorAll('[data-biker-label][data-dog-label]');
             const icon = document.querySelector('[data-product-icon]');
+            const conditionalToggles = document.querySelectorAll('[data-toggle-fields]');
+
+            const updateConditionalFields = (toggle) => {
+                const fields = document.getElementById(toggle.dataset.toggleFields);
+                if (!fields) return;
+
+                fields.hidden = !toggle.checked;
+                fields.querySelectorAll('input, select').forEach((field) => {
+                    field.disabled = !toggle.checked;
+                    field.required = toggle.checked;
+                });
+            };
 
             const updateProductFields = () => {
                 const product = select?.value || 'biker';
@@ -297,6 +361,10 @@
             };
 
             select?.addEventListener('change', updateProductFields);
+            conditionalToggles.forEach((toggle) => {
+                toggle.addEventListener('change', () => updateConditionalFields(toggle));
+                updateConditionalFields(toggle);
+            });
             updateProductFields();
         })();
     </script>

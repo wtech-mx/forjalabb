@@ -53,4 +53,28 @@ class SmartTagTest extends TestCase
 
         Mail::assertSent(EmergencyScanAlert::class);
     }
+
+    public function test_biker_insurance_information_is_saved_and_displayed(): void
+    {
+        $tag = SmartTag::create([
+            'type' => SmartTag::TYPE_BIKER,
+            'display_name' => 'Rider asegurado',
+            'has_vehicle_insurance' => true,
+            'vehicle_insurance_policy' => 'POL-12345',
+            'vehicle_insurance_expires_at' => '2027-08-07',
+            'has_public_health_insurance' => true,
+            'public_health_provider' => 'imss',
+            'public_health_number' => 'NSS-987654',
+        ]);
+
+        $this->assertTrue($tag->has_vehicle_insurance);
+        $this->assertSame('IMSS', $tag->public_health_provider_label);
+
+        $this->get(route('tags.public', $tag->token))
+            ->assertOk()
+            ->assertSee('POL-12345')
+            ->assertSee('07/08/2027')
+            ->assertSee('IMSS')
+            ->assertSee('NSS-987654');
+    }
 }

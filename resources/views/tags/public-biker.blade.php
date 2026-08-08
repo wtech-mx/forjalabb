@@ -62,6 +62,34 @@
                     </div>
                 </div>
 
+                <div class="qr-glass-panel">
+                    <h2><i class="bi bi-shield-check"></i> Seguros y atencion</h2>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="qr-note">
+                                <span>Seguro del vehiculo</span>
+                                @if ($tag->has_vehicle_insurance)
+                                    <strong>Poliza: {{ $tag->vehicle_insurance_policy }}</strong>
+                                    <small>Vigente hasta: {{ optional($tag->vehicle_insurance_expires_at)->format('d/m/Y') ?: 'No capturado' }}</small>
+                                @else
+                                    <strong>No registrado</strong>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="qr-note">
+                                <span>Servicio publico de salud</span>
+                                @if ($tag->has_public_health_insurance)
+                                    <strong>{{ $tag->public_health_provider_label }}</strong>
+                                    <small>Numero: {{ $tag->public_health_number }}</small>
+                                @else
+                                    <strong>No registrado</strong>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 @if ($tag->public_notes)
                     <div class="qr-message">{{ $tag->public_notes }}</div>
                 @endif
