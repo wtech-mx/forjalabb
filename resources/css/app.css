@@ -17,6 +17,292 @@
     --orange: #f8751f;
 }
 
+/* Biker Tag campaign landing */
+.biker-sales-page { background: #f4f1eb; color: #171717; overflow: hidden; }
+.biker-sales-hero { position: relative; padding: clamp(5rem, 9vw, 8.5rem) 0 5rem; color: #fff; background: radial-gradient(circle at 80% 20%, #4b3411 0, #17130d 28%, #090909 67%); }
+.biker-sales-hero::before { content: ""; position: absolute; inset: 0; opacity: .18; background-image: linear-gradient(120deg, transparent 45%, rgba(255,181,45,.22) 45.2%, transparent 45.5%); pointer-events: none; }
+.biker-overline { display: inline-flex; align-items: center; gap: .55rem; color: #ffbd3d; font-size: .78rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+.biker-overline.dark { color: #9b6300; }
+.biker-sales-hero h1 { max-width: 720px; margin: 1.25rem 0; font-size: clamp(2.65rem, 5.6vw, 5.6rem); font-weight: 850; letter-spacing: -.055em; line-height: .96; }
+.biker-hero-copy { max-width: 650px; color: #c7c4bd; font-size: clamp(1.05rem, 1.5vw, 1.25rem); line-height: 1.65; }
+.biker-hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 1.3rem; margin: 2rem 0; }
+.biker-sales-page .btn-warning { border: 0; padding: .95rem 1.4rem; color: #16110a; font-weight: 800; background: #ffb52d; box-shadow: 0 14px 35px rgba(255,181,45,.2); }
+.biker-sales-page .btn-warning:hover { color: #080808; background: #ffc65e; transform: translateY(-2px); }
+.biker-text-link { color: #fff; font-weight: 700; text-decoration: none; }
+.biker-trust-row { display: flex; flex-wrap: wrap; gap: 1.5rem; color: #aaa69e; font-size: .88rem; }
+.biker-trust-row span { display: flex; align-items: center; gap: .6rem; }
+.biker-trust-row i { color: #ffb52d; font-size: 1.25rem; }
+.biker-trust-row strong { display: block; color: #fff; }
+.biker-hero-media { position: relative; }
+.biker-hero-media img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border: 1px solid rgba(255,255,255,.12); border-radius: 2rem; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+.biker-price-float { position: absolute; right: -1rem; bottom: -1.25rem; display: grid; min-width: 150px; padding: 1rem 1.25rem; color: #17110a; background: #ffb52d; border-radius: 1rem; box-shadow: 0 18px 45px rgba(0,0,0,.35); transform: rotate(-2deg); }
+.biker-price-float small, .biker-price-float span { font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.biker-price-float strong { font-size: 1.45rem; }
+.biker-quick-benefits { color: #fff; background: #151515; border-top: 1px solid #333; }
+.biker-quick-benefits .col-6 > div { display: flex; align-items: center; justify-content: center; gap: .85rem; min-height: 112px; padding: 1rem; border-right: 1px solid #353535; }
+.biker-quick-benefits i { color: #ffb52d; font-size: 1.65rem; }
+.biker-quick-benefits span { color: #a9a9a9; font-size: .78rem; line-height: 1.4; text-transform: uppercase; }
+.biker-quick-benefits strong { color: #fff; font-size: .9rem; }
+.biker-ride-break { position: relative; min-height: clamp(430px, 58vw, 720px); color: #fff; background: #111; overflow: hidden; }
+.biker-ride-break::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(4,4,4,.84), rgba(4,4,4,.3) 52%, rgba(4,4,4,.04) 78%); }
+.biker-ride-break > img { position: absolute; inset: -3%; width: 106%; height: 106%; object-fit: cover; animation: biker-cinematic-zoom 16s ease-in-out infinite alternate; }
+.biker-ride-break .container { position: relative; z-index: 1; display: flex; align-items: center; min-height: inherit; }
+.biker-ride-message { max-width: 650px; }
+.biker-ride-message > span { color: #ffbd3d; font-size: .75rem; font-weight: 850; letter-spacing: .14em; text-transform: uppercase; }
+.biker-ride-message h2 { margin: 1rem 0 1.5rem; font-size: clamp(2.7rem, 6vw, 5.8rem); font-weight: 900; letter-spacing: -.06em; line-height: .93; }
+.biker-ride-message a { display: inline-flex; align-items: center; gap: .5rem; color: #fff; font-weight: 800; text-decoration: none; border-bottom: 2px solid #ffb52d; }
+.biker-story img, .biker-craft img { width: 100%; border-radius: 1.5rem; box-shadow: 0 24px 60px rgba(30,23,12,.16); }
+.biker-story h2, .biker-craft h2, .biker-section-heading h2, .biker-offer-card h2 { margin: .8rem 0 1rem; font-size: clamp(2.1rem, 4vw, 3.6rem); font-weight: 850; letter-spacing: -.045em; line-height: 1; }
+.biker-story p, .biker-craft p, .biker-section-heading p { color: #67635d; font-size: 1.06rem; line-height: 1.7; }
+.biker-steps { display: grid; gap: 1rem; margin: 1.8rem 0 0; padding: 0; list-style: none; }
+.biker-steps li { display: flex; align-items: center; gap: 1rem; padding: .9rem; background: rgba(255,255,255,.65); border: 1px solid #dfd9ce; border-radius: 1rem; }
+.biker-steps li > span { display: grid; place-items: center; flex: 0 0 48px; height: 48px; color: #171717; font-weight: 900; background: #ffb52d; border-radius: 50%; }
+.biker-steps strong, .biker-steps small { display: block; }
+.biker-steps small { margin-top: .15rem; color: #77716a; }
+.biker-profile-section { color: #fff; background: #111; }
+.biker-section-heading { max-width: 760px; margin: 0 auto 3rem; }
+.biker-section-heading p { color: #aaa; }
+.biker-data-grid article { height: 100%; padding: 1.6rem; background: #1c1c1c; border: 1px solid #333; border-radius: 1.2rem; transition: transform .2s, border-color .2s; }
+.biker-data-grid article:hover { border-color: #8d6825; transform: translateY(-4px); }
+.biker-data-grid article > i { display: grid; place-items: center; width: 48px; height: 48px; color: #ffbd3d; font-size: 1.4rem; background: #332813; border-radius: .8rem; }
+.biker-data-grid h3 { margin: 1.1rem 0 .55rem; font-size: 1.1rem; font-weight: 800; }
+.biker-data-grid p { margin: 0; color: #a9a9a9; font-size: .92rem; line-height: 1.6; }
+.biker-craft { background: #fff; }
+.biker-craft ul { display: grid; gap: .7rem; margin: 1.5rem 0 0; padding: 0; list-style: none; font-weight: 700; }
+.biker-craft li i { margin-right: .55rem; color: #d18d10; }
+.biker-price-section { background: #e9e3d8; }
+.biker-offer-card { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(230px, .8fr) auto; align-items: center; gap: 2rem; padding: clamp(1.7rem, 4vw, 3.5rem); color: #fff; background: linear-gradient(125deg, #0d0d0d, #292114); border-radius: 1.6rem; box-shadow: 0 25px 70px rgba(30,23,12,.2); }
+.biker-offer-card h2 { font-size: clamp(2rem, 3.5vw, 3rem); }
+.biker-offer-card h2 strong { color: #ffb52d; }
+.biker-offer-card p { max-width: 680px; margin: 0; color: #aaa; }
+.biker-offer-points { display: grid; gap: .55rem; color: #d6d2cb; font-size: .9rem; }
+.biker-offer-points i { margin-right: .35rem; color: #ffb52d; }
+.biker-mobile-cta { display: none; }
+.biker-kit { position: relative; background: linear-gradient(180deg, #ebe5da, #f7f4ee); }
+.biker-kit h2, .biker-emergency-band h2 { margin: .8rem 0 1rem; font-size: clamp(2.2rem, 4.5vw, 4rem); font-weight: 850; letter-spacing: -.05em; line-height: .98; }
+.biker-kit p { color: #68625a; font-size: 1.06rem; line-height: 1.7; }
+.biker-kit-price { display: grid; width: fit-content; margin-top: 1.5rem; padding: 1rem 1.4rem; background: #fff; border-left: 5px solid #e29a18; box-shadow: 0 12px 35px rgba(38,29,14,.1); }
+.biker-kit-price small { color: #8a6930; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.biker-kit-price strong { font-size: 2.2rem; line-height: 1.15; }
+.biker-kit-price em { font-size: .8rem; font-style: normal; }
+.biker-kit-price span { color: #716b62; font-size: .8rem; }
+.biker-tag-pair { display: flex; align-items: center; justify-content: center; gap: clamp(.8rem, 3vw, 2rem); min-height: 390px; padding: 2rem; background: radial-gradient(circle, #3b3326, #121212 68%); border-radius: 1.8rem; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 25px 60px rgba(24,18,9,.22); }
+.biker-dogtag { position: relative; display: grid; place-items: center; width: min(190px, 35vw); aspect-ratio: .65; padding: 2.1rem 1rem 1rem; color: #171717; text-align: center; background: linear-gradient(130deg, #f1eee7, #8c8a84 50%, #e8e4dc); border: 3px solid #4c4c49; border-radius: 32px 32px 24px 24px; box-shadow: inset 0 0 0 3px #cac7bf, 12px 18px 24px rgba(0,0,0,.35); transform: rotate(-5deg); }
+.biker-dogtag.rider-tag { color: #f6f6f4; background: linear-gradient(130deg, #555, #161616 55%, #494949); border-color: #777; transform: rotate(5deg); }
+.dogtag-hole { position: absolute; top: 13px; width: 24px; height: 24px; background: #171717; border: 4px solid #777; border-radius: 50%; }
+.biker-dogtag > i { font-size: 2rem; }
+.biker-dogtag > strong { letter-spacing: .18em; }
+.biker-dogtag > span { font-size: 4rem; line-height: 1; }
+.biker-dogtag p { margin: 0; color: inherit; font-size: .72rem; font-weight: 800; line-height: 1.25; text-transform: uppercase; }
+.biker-pair-link { display: grid; justify-items: center; color: #ffb52d; text-align: center; }
+.biker-pair-link i { font-size: 2.4rem; }
+.biker-pair-link span { color: #bbb; font-size: .7rem; font-weight: 800; text-transform: uppercase; }
+.dogtag-flip { width: min(205px, 36vw); padding: 0; color: inherit; background: none; border: 0; perspective: 1100px; cursor: pointer; }
+.dogtag-3d { position: relative; display: block; width: 100%; aspect-ratio: .65; transform-style: preserve-3d; transition: transform .75s cubic-bezier(.2,.7,.2,1); }
+.dogtag-flip:hover .dogtag-3d { transform: rotateY(12deg) translateY(-4px); }
+.dogtag-flip.is-flipped .dogtag-3d { transform: rotateY(180deg); }
+.dogtag-flip.is-flipped:hover .dogtag-3d { transform: rotateY(168deg) translateY(-4px); }
+.dogtag-flip .biker-dogtag { position: absolute; inset: 0; width: 100%; height: 100%; transform: none; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.dogtag-flip.rider-tag .biker-dogtag { color: #f6f6f4; background: linear-gradient(130deg, #555, #161616 55%, #494949); border-color: #777; transform: none; }
+.dogtag-flip .dogtag-back { align-content: center; justify-content: stretch; gap: .45rem; padding: 2.35rem .65rem .7rem; transform: rotateY(180deg); }
+.dogtag-flip.rider-tag .dogtag-back { transform: rotateY(180deg); }
+.dogtag-front > small { font-size: .58rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.dogtag-qr { font-size: 4.2rem; line-height: .9; }
+.dogtag-ice { padding: .3rem .45rem; color: #fff; font-size: .56rem; font-weight: 900; letter-spacing: .08em; background: #a51e20; border-radius: .25rem; }
+.dogtag-back > strong { font-size: .82rem; letter-spacing: .04em; }
+.dogtag-info { display: grid; width: 100%; gap: .16rem; padding: .42rem; font-size: 1rem; text-align: left; background: rgba(255,255,255,.22); border: 1px solid rgba(0,0,0,.25); border-radius: .5rem; }
+.rider-tag .dogtag-info { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.2); }
+.dogtag-info > span { display: grid; grid-template-columns: 14px 48px minmax(0, 1fr); align-items: center; gap: .2rem; min-width: 0; padding: .12rem .18rem; font-size: 1rem; border-bottom: 1px solid rgba(0,0,0,.15); }
+.rider-tag .dogtag-info > span { border-color: rgba(255,255,255,.12); }
+.dogtag-info > span:last-child { border-bottom: 0; }
+.dogtag-info i { color: #8a1719; font-size: .58rem; text-align: center; }
+.rider-tag .dogtag-info i { color: #ff6b6d; }
+.dogtag-info b { font-size: .46rem; letter-spacing: .025em; text-transform: uppercase; }
+.dogtag-info em { overflow: hidden; font-size: .52rem; font-style: normal; font-weight: 850; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+.dogtag-info .dogtag-contact { margin-top: .15rem; padding: .27rem .18rem; color: #fff; background: #a51e20; border-radius: .25rem; }
+.dogtag-info .dogtag-contact i { color: #fff; }
+.dogtag-caption { display: block; margin-top: .8rem; color: #d5d0c8; font-size: .68rem; font-weight: 800; text-transform: uppercase; }
+.dogtag-caption i { margin-right: .3rem; color: #ffb52d; }
+.dogtag-flip:focus-visible { outline: 3px solid #ffb52d; outline-offset: 8px; border-radius: 1rem; }
+.dogtag-demo-note { margin: 1rem 0 0; color: #736c63; font-size: .78rem; text-align: center; }
+.dogtag-demo-note i { color: #a56b09; }
+.biker-emergency-band { position: relative; color: #fff; background: linear-gradient(120deg, #500d0d, #190909 48%, #101010); }
+.biker-emergency-band::before { content: "+"; position: absolute; right: 2%; bottom: -18%; color: rgba(255,255,255,.025); font-size: 34rem; font-weight: 900; line-height: 1; }
+.biker-emergency-band p { color: #c0acab; font-size: 1.05rem; line-height: 1.7; }
+.biker-responder-photo { position: relative; margin: 0 0 2rem; }
+.biker-responder-photo img { width: 100%; max-height: 430px; object-fit: cover; object-position: center 52%; border: 1px solid rgba(255,255,255,.15); border-radius: 1.25rem; box-shadow: 0 24px 55px rgba(0,0,0,.3); }
+.biker-responder-photo figcaption { position: absolute; right: .7rem; bottom: .7rem; left: .7rem; padding: .65rem .8rem; color: #fff; font-size: .72rem; font-weight: 750; text-align: center; background: rgba(15,8,8,.78); border: 1px solid rgba(255,255,255,.16); border-radius: .65rem; backdrop-filter: blur(12px); }
+.biker-responder-photo figcaption i { margin-right: .35rem; color: #ff6568; }
+.emergency-symbol { display: inline-flex; align-items: center; gap: .5rem; margin-bottom: 1.2rem; padding: .55rem .8rem; color: #fff; font-weight: 900; letter-spacing: .16em; background: #b51f22; border-radius: .5rem; box-shadow: 0 0 0 5px rgba(181,31,34,.18); }
+.emergency-action-grid { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.emergency-action-grid article { display: flex; align-items: center; gap: .9rem; min-height: 92px; padding: 1rem; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.13); border-radius: 1rem; backdrop-filter: blur(10px); }
+.emergency-action-grid article > i { display: grid; place-items: center; flex: 0 0 44px; height: 44px; color: #fff; font-size: 1.2rem; background: #a51e20; border-radius: 50%; }
+.emergency-action-grid strong, .emergency-action-grid span { display: block; }
+.emergency-action-grid span { margin-top: .18rem; color: #b9acaa; font-size: .78rem; }
+[data-reveal] { opacity: 0; transform: translateY(34px) scale(.985); transition: opacity .7s ease var(--reveal-delay, 0ms), transform .7s cubic-bezier(.2,.75,.25,1) var(--reveal-delay, 0ms); }
+[data-reveal].is-visible { opacity: 1; transform: none; }
+.biker-data-grid article > i, .emergency-action-grid article > i { animation: biker-icon-breathe 2.8s ease-in-out infinite; }
+.biker-data-grid > div:nth-child(2n) article > i, .emergency-action-grid article:nth-child(2n) > i { animation-delay: .8s; }
+.biker-hero-media { animation: biker-hero-float 6s ease-in-out infinite; }
+.biker-price-float { animation: biker-price-pulse 3s ease-in-out infinite; }
+@keyframes biker-cinematic-zoom { from { transform: scale(1); } to { transform: scale(1.06); } }
+@keyframes biker-icon-breathe { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,181,45,0); } 50% { transform: scale(1.08); box-shadow: 0 0 0 7px rgba(255,181,45,.08); } }
+@keyframes biker-hero-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes biker-price-pulse { 0%, 100% { box-shadow: 0 18px 45px rgba(0,0,0,.35); } 50% { box-shadow: 0 18px 50px rgba(255,181,45,.28); } }
+
+@media (max-width: 991.98px) {
+    .biker-sales-hero { padding-top: 4rem; }
+    .biker-offer-card { grid-template-columns: 1fr; }
+    .biker-quick-benefits .col-6:nth-child(2n) > div { border-right: 0; }
+}
+
+@media (max-width: 575.98px) {
+    .biker-sales-page { padding-bottom: 66px; }
+    .biker-sales-hero { padding: 3.5rem 0 3rem; }
+    .biker-sales-hero h1 { font-size: 2.75rem; }
+    .biker-hero-actions .btn { width: 100%; }
+    .biker-price-float { right: .5rem; bottom: -.75rem; }
+    .biker-quick-benefits .col-6 > div { min-height: 100px; justify-content: flex-start; border-bottom: 1px solid #353535; }
+    .biker-mobile-cta { position: fixed; z-index: 1040; right: 12px; bottom: 10px; left: 12px; display: block; padding: .9rem; color: #17110a; font-weight: 850; text-align: center; text-decoration: none; background: #ffb52d; border-radius: .8rem; box-shadow: 0 10px 35px rgba(0,0,0,.35); }
+    .biker-tag-pair { min-height: 300px; padding: 1rem .5rem; }
+    .biker-dogtag { width: 34vw; border-radius: 24px 24px 18px 18px; }
+    .biker-dogtag > span { font-size: 2.9rem; }
+    .dogtag-flip { width: 36vw; }
+    .dogtag-flip .biker-dogtag { width: 100%; }
+    .dogtag-flip .dogtag-info { font-size: 1rem; }
+    .biker-pair-link span { display: none; }
+    .emergency-action-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
+    .emergency-action-grid article { align-items: flex-start; flex-direction: column; min-height: 150px; gap: .55rem; padding: .8rem; }
+    .emergency-action-grid article > i { flex-basis: 36px; width: 36px; height: 36px; font-size: 1rem; }
+    .emergency-action-grid strong { font-size: .82rem; line-height: 1.15; }
+    .emergency-action-grid span { font-size: .68rem; line-height: 1.35; }
+    .biker-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
+    .biker-steps li { align-items: flex-start; flex-direction: column; min-height: 178px; gap: .7rem; padding: .8rem; }
+    .biker-steps li > span { flex-basis: 38px; width: 38px; height: 38px; font-size: .78rem; }
+    .biker-steps strong { font-size: .84rem; line-height: 1.15; }
+    .biker-steps small { font-size: .7rem; line-height: 1.4; }
+    .biker-data-grid { --bs-gutter-x: .65rem; --bs-gutter-y: .65rem; }
+    .biker-data-grid > [class*="col-"] { flex: 0 0 auto; width: 50%; }
+    .biker-data-grid article { padding: .9rem; border-radius: .85rem; }
+    .biker-data-grid article > i { width: 38px; height: 38px; font-size: 1rem; }
+    .biker-data-grid h3 { margin: .75rem 0 .35rem; font-size: .88rem; line-height: 1.15; }
+    .biker-data-grid p { font-size: .72rem; line-height: 1.4; }
+    .biker-ride-break { min-height: 540px; }
+    .biker-ride-break::after { background: linear-gradient(0deg, rgba(4,4,4,.9), rgba(4,4,4,.05) 76%); }
+    .biker-ride-break .container { align-items: flex-end; padding-bottom: 3rem; }
+    .biker-ride-message h2 { font-size: 2.8rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .biker-sales-page *, .biker-sales-page *::before, .biker-sales-page *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    [data-reveal] { opacity: 1; transform: none; }
+}
+
+/* Dog Tag campaign landing */
+.dog-sales-page { color: #253026; background: #f8f3e9; overflow: hidden; }
+.dog-sales-hero { padding: clamp(4.5rem, 8vw, 8rem) 0 5rem; background: radial-gradient(circle at 15% 15%, #fffdf7, #f3ead8 55%, #e5d9c1); }
+.dog-overline { display: inline-flex; align-items: center; gap: .5rem; color: #49794b; font-size: .76rem; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
+.dog-overline.dark { color: #72522c; }
+.dog-sales-hero h1 { max-width: 720px; margin: 1rem 0 1.25rem; font-size: clamp(2.8rem, 5.8vw, 5.8rem); font-weight: 900; letter-spacing: -.06em; line-height: .94; }
+.dog-sales-hero p { max-width: 650px; color: #687066; font-size: 1.1rem; line-height: 1.7; }
+.dog-hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 1.2rem; margin: 2rem 0; }
+.dog-hero-actions > a:not(.btn) { color: #344b35; font-weight: 800; text-decoration: none; }
+.dog-sales-page .btn-success { border: 0; padding: .95rem 1.4rem; font-weight: 850; background: #467c4b; box-shadow: 0 15px 35px rgba(70,124,75,.22); }
+.dog-sales-page .btn-success:hover { background: #38683d; transform: translateY(-2px); }
+.dog-trust { display: flex; flex-wrap: wrap; gap: 1rem; }
+.dog-trust span { display: flex; align-items: center; gap: .4rem; color: #61705f; font-size: .8rem; }
+.dog-trust i { color: #d17842; font-size: 1.05rem; }
+.dog-hero-photo { position: relative; animation: dog-photo-float 6s ease-in-out infinite; }
+.dog-hero-photo > img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 48% 48% 1.6rem 1.6rem; box-shadow: 0 28px 65px rgba(77,60,33,.2); }
+.dog-price-badge, .dog-home-badge { position: absolute; display: grid; padding: .85rem 1rem; border-radius: 1rem; box-shadow: 0 14px 35px rgba(50,38,20,.2); }
+.dog-price-badge { right: -.8rem; bottom: 1rem; color: #fff; background: #d67842; transform: rotate(2deg); }
+.dog-price-badge small, .dog-price-badge span { font-size: .62rem; font-weight: 800; text-transform: uppercase; }
+.dog-price-badge strong { font-size: 1.35rem; }
+.dog-home-badge { top: 1.2rem; left: -1rem; grid-template-columns: auto auto; align-items: center; gap: .6rem; color: #315d37; background: rgba(255,255,255,.92); }
+.dog-home-badge i { font-size: 1.6rem; }
+.dog-home-badge span { font-size: .72rem; line-height: 1.2; }
+.dog-benefit-strip { background: #315b3a; color: #fff; }
+.dog-benefit-strip .col-6 > div { display: flex; align-items: center; justify-content: center; gap: .75rem; min-height: 108px; padding: .9rem; border-right: 1px solid rgba(255,255,255,.15); }
+.dog-benefit-strip i { color: #f1b574; font-size: 1.5rem; }
+.dog-benefit-strip span { color: #c9d7cb; font-size: .72rem; text-transform: uppercase; }
+.dog-benefit-strip b { color: #fff; font-size: .86rem; }
+.dog-product { background: #fff; }
+.dog-product img, .dog-how img { width: 100%; border-radius: 1.5rem; box-shadow: 0 24px 60px rgba(62,50,31,.16); }
+.dog-product h2, .dog-how h2, .dog-section-heading h2, .dog-lost h2, .dog-offer h2 { margin: .8rem 0 1rem; font-size: clamp(2.15rem, 4.5vw, 4rem); font-weight: 900; letter-spacing: -.05em; line-height: .98; }
+.dog-product p, .dog-how p, .dog-section-heading p, .dog-lost p { color: #697066; line-height: 1.7; }
+.dog-product-points { display: grid; gap: .7rem; margin-top: 1.5rem; }
+.dog-product-points > span { display: grid; grid-template-columns: 45px 1fr; align-items: center; padding: .8rem; background: #f6f1e7; border-radius: .9rem; }
+.dog-product-points i { grid-row: 1/3; color: #c46e3f; font-size: 1.4rem; }
+.dog-product-points b, .dog-product-points small { display: block; }
+.dog-product-points small { color: #7c7d76; }
+.dog-visual-break { position: relative; min-height: clamp(430px, 58vw, 700px); color: #fff; background: #273a2b; overflow: hidden; }
+.dog-visual-break::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(24,43,28,.85), rgba(24,43,28,.18) 65%); }
+.dog-visual-break > img { position: absolute; inset: -3%; width: 106%; height: 106%; object-fit: cover; animation: dog-cinematic-zoom 16s ease-in-out infinite alternate; }
+.dog-visual-break .container { position: relative; z-index: 1; display: flex; align-items: center; min-height: inherit; }
+.dog-visual-break h2 { margin: .8rem 0; font-size: clamp(2.8rem, 6vw, 6rem); font-weight: 900; letter-spacing: -.06em; line-height: .92; }
+.dog-visual-break span { color: #ffd3a3; font-weight: 850; text-transform: uppercase; }
+.dog-how { background: #f7f0e4; }
+.dog-steps { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin: 1.5rem 0 0; padding: 0; list-style: none; }
+.dog-steps li { display: flex; gap: .7rem; min-height: 105px; padding: .8rem; background: #fff; border: 1px solid #e4d8c4; border-radius: .9rem; }
+.dog-steps li > span { display: grid; place-items: center; flex: 0 0 38px; height: 38px; color: #fff; font-size: .72rem; font-weight: 900; background: #4f8053; border-radius: 50%; }
+.dog-steps b, .dog-steps small { display: block; }
+.dog-steps small { margin-top: .25rem; color: #747970; font-size: .75rem; }
+.dog-profile { color: #fff; background: #2f5436; }
+.dog-section-heading { max-width: 760px; margin: 0 auto 3rem; }
+.dog-section-heading .dog-overline { color: #ffc384; }
+.dog-section-heading p { color: #c4d1c4; }
+.dog-data-grid article { height: 100%; padding: 1.5rem; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); border-radius: 1.1rem; }
+.dog-data-grid article > i { display: grid; place-items: center; width: 46px; height: 46px; color: #fff; font-size: 1.2rem; background: #cf7441; border-radius: 50% 50% 50% 15%; animation: dog-icon-breathe 3s ease-in-out infinite; }
+.dog-data-grid h3 { margin: 1rem 0 .45rem; font-size: 1.05rem; font-weight: 850; }
+.dog-data-grid p { margin: 0; color: #c4d1c4; font-size: .86rem; line-height: 1.55; }
+.dog-lost { background: #fff; }
+.dog-lost-panel { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 2rem; padding: clamp(1.5rem, 4vw, 3rem); background: #f2e8d8; border-radius: 1.6rem; }
+.dog-lost-icon { display: grid; place-items: center; width: 90px; height: 90px; color: #fff; font-size: 2.5rem; background: #4b7b50; border-radius: 50%; }
+.dog-contact-preview { display: grid; gap: .55rem; }
+.dog-contact-preview span { padding: .65rem .85rem; color: #fff; font-size: .8rem; font-weight: 800; background: #365f3b; border-radius: .6rem; }
+.dog-contact-preview i { margin-right: .35rem; color: #ffc181; }
+.dog-offer { background: #e7dcc9; }
+.dog-offer-card { display: grid; grid-template-columns: 1.4fr .8fr auto; align-items: center; gap: 2rem; padding: clamp(1.8rem, 4vw, 3.5rem); color: #fff; background: linear-gradient(125deg, #284b30, #162d1c); border-radius: 1.6rem; box-shadow: 0 24px 60px rgba(35,56,37,.2); }
+.dog-offer-card h2 strong { color: #ffc07b; }
+.dog-offer-card p { margin: 0; color: #bfcdbf; }
+.dog-offer-card > div:nth-child(2) { display: grid; gap: .5rem; color: #dce7dc; font-size: .85rem; }
+.dog-offer-card > div:nth-child(2) i { color: #ffbd78; }
+.dog-mobile-cta { display: none; }
+@keyframes dog-photo-float { 0%, 100% { transform: translateY(0) rotate(-.4deg); } 50% { transform: translateY(-8px) rotate(.4deg); } }
+@keyframes dog-cinematic-zoom { from { transform: scale(1); } to { transform: scale(1.06); } }
+@keyframes dog-icon-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.09); box-shadow: 0 0 0 8px rgba(255,193,129,.1); } }
+
+@media (max-width: 991.98px) {
+    .dog-offer-card, .dog-lost-panel { grid-template-columns: 1fr; }
+    .dog-benefit-strip .col-6:nth-child(2n) > div { border-right: 0; }
+    .dog-contact-preview { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 575.98px) {
+    .dog-sales-page { padding-bottom: 66px; }
+    .dog-sales-hero { padding: 3.5rem 0 3rem; }
+    .dog-sales-hero h1 { font-size: 2.8rem; }
+    .dog-hero-actions .btn { width: 100%; }
+    .dog-home-badge { left: .4rem; }
+    .dog-price-badge { right: .3rem; }
+    .dog-benefit-strip .col-6 > div { justify-content: flex-start; min-height: 96px; border-bottom: 1px solid rgba(255,255,255,.14); }
+    .dog-visual-break { min-height: 520px; }
+    .dog-visual-break::after { background: linear-gradient(0deg, rgba(24,43,28,.9), rgba(24,43,28,.06) 76%); }
+    .dog-visual-break .container { align-items: flex-end; padding-bottom: 3rem; }
+    .dog-visual-break h2 { font-size: 2.9rem; }
+    .dog-steps { gap: .6rem; }
+    .dog-steps li { flex-direction: column; min-height: 155px; padding: .75rem; }
+    .dog-data-grid { --bs-gutter-x: .65rem; --bs-gutter-y: .65rem; }
+    .dog-data-grid > [class*="col-"] { flex: 0 0 auto; width: 50%; }
+    .dog-data-grid article { padding: .85rem; }
+    .dog-data-grid article > i { width: 38px; height: 38px; font-size: .95rem; }
+    .dog-data-grid h3 { margin: .7rem 0 .35rem; font-size: .86rem; }
+    .dog-data-grid p { font-size: .7rem; line-height: 1.4; }
+    .dog-lost-icon { width: 65px; height: 65px; font-size: 1.8rem; }
+    .dog-contact-preview { grid-template-columns: 1fr; }
+    .dog-mobile-cta { position: fixed; z-index: 1040; right: 12px; bottom: 10px; left: 12px; display: block; padding: .9rem; color: #fff; font-weight: 850; text-align: center; text-decoration: none; background: #467c4b; border-radius: .8rem; box-shadow: 0 10px 35px rgba(0,0,0,.28); }
+}
+
 @media (width <= 767.98px) {
     .hero-section h1,
     .service-hero h1,

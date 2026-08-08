@@ -16,9 +16,9 @@ $services = [
     'biker-tag' => [
         'eyebrow' => 'Identificacion QR para bikers',
         'title' => 'Biker Tag QR de emergencia',
-        'short' => 'Cadena personalizada con QR que abre una landing privada con los datos importantes del motociclista.',
+        'short' => 'Kit de dos placas militares personalizadas con QR: una para las llaves de la moto y otra para el motociclista.',
         'price_label' => 'Pago unico',
-        'price' => '$150 a $180',
+        'price' => '$250',
         'secondary_label' => 'Cambio de datos',
         'renewal' => '$50',
         'hero_image' => 'biker-tag-hero.png',
@@ -30,7 +30,7 @@ $services = [
         'cta_text' => 'Mandanos la idea de diseno, nombre o estilo que quieres para la cadena y te confirmamos precio final antes de producir.',
         'cta_label' => 'Cotizar mi Biker Tag',
         'features' => [
-            'Cadena personalizada con diseno elegido por el cliente',
+            'Dos placas militares personalizadas: moto y portador',
             'QR vinculado a una landing individual',
             'Datos de contacto y emergencia segun lo que proporcione el cliente',
             'Pago unico de por vida, sin mensualidad',
@@ -38,7 +38,7 @@ $services = [
             'Cambios de informacion posteriores por $50',
         ],
         'packages' => [
-            ['name' => 'Cadena QR', 'range' => '$150-$180', 'items' => 'Precio segun diseno, acabado y complejidad de la cadena.'],
+            ['name' => 'Kit Biker Tag', 'range' => '$250', 'items' => 'Dos placas militares QR: una para el llavero de la moto y otra para el portador.'],
             ['name' => 'Landing incluida', 'range' => 'De por vida', 'items' => 'Pagina individual conectada al QR con los datos proporcionados.'],
             ['name' => 'Cambio de datos', 'range' => '$50', 'items' => 'Actualizacion posterior de telefono, contacto, datos o informacion visible.'],
         ],
@@ -118,7 +118,11 @@ Route::get('/catalogo/{catalogProduct:slug}', function (CatalogProduct $catalogP
 Route::get('/servicios/{service}', function (string $service) use ($services) {
     abort_unless(isset($services[$service]), 404);
 
-    return view('service', [
+    return view(match ($service) {
+        'biker-tag' => 'services.biker-tag',
+        'dog-tags' => 'services.dog-tags',
+        default => 'service',
+    }, [
         'service' => $services[$service],
         'slug' => $service,
     ]);
