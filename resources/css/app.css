@@ -198,6 +198,32 @@
     [data-reveal] { opacity: 1; transform: none; }
 }
 
+/* Home page motion */
+.home-motion .hero-section .glass-copy { animation: home-copy-in .8s cubic-bezier(.2,.75,.25,1) both; }
+.home-motion .hero-section .hero-image { animation: home-image-in 1s cubic-bezier(.2,.75,.25,1) .12s both, home-image-float 7s ease-in-out 1.2s infinite; }
+.home-motion .hero-metrics > div { animation: home-metric-in .55s ease both; }
+.home-motion .hero-metrics > div:nth-child(1) { animation-delay: .45s; }
+.home-motion .hero-metrics > div:nth-child(2) { animation-delay: .56s; }
+.home-motion .hero-metrics > div:nth-child(3) { animation-delay: .67s; }
+.home-motion .feature-card, .home-motion .product-card, .home-motion .bundle-home-card, .home-motion .catalog-card, .home-motion .line-card { transition: transform .3s cubic-bezier(.2,.75,.25,1), box-shadow .3s ease, border-color .3s ease; }
+.home-motion .feature-card:hover, .home-motion .bundle-home-card:hover, .home-motion .catalog-card:hover, .home-motion .line-card:hover { transform: translateY(-7px); box-shadow: 0 22px 48px rgba(67,45,27,.14); }
+.home-motion .product-card:hover { transform: translateY(-7px) scale(1.012); }
+.home-motion .feature-card > i { animation: home-icon-drift 3.2s ease-in-out infinite; }
+.home-motion .value-grid-item:nth-child(2n) .feature-card > i { animation-delay: .8s; }
+.home-motion .embroidery-tool { transition: box-shadow .4s ease, transform .4s ease; }
+.home-motion .embroidery-tool.is-visible { box-shadow: 0 28px 70px rgba(76,48,27,.16); }
+.home-motion .launch-band .timeline > div:hover { transform: translateX(6px); }
+.home-motion .launch-band .timeline > div { transition: transform .25s ease; }
+@keyframes home-copy-in { from { opacity: 0; transform: translateX(-34px); } to { opacity: 1; transform: none; } }
+@keyframes home-image-in { from { opacity: 0; transform: translateX(38px) scale(.96) rotate(1.5deg); } to { opacity: 1; transform: none; } }
+@keyframes home-image-float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-9px) rotate(.35deg); } }
+@keyframes home-metric-in { from { opacity: 0; transform: translateY(16px) scale(.94); } to { opacity: 1; transform: none; } }
+@keyframes home-icon-drift { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-4px) rotate(3deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+    .home-motion *, .home-motion *::before, .home-motion *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
 /* Dog Tag campaign landing */
 .dog-sales-page { color: #253026; background: #f8f3e9; overflow: hidden; }
 .dog-sales-hero { padding: clamp(4.5rem, 8vw, 8rem) 0 5rem; background: radial-gradient(circle at 15% 15%, #fffdf7, #f3ead8 55%, #e5d9c1); }
@@ -809,6 +835,16 @@ a {
     font-size: .78rem;
     letter-spacing: 0;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 .5rem 1.2rem rgba(248, 117, 31, .28);
+}
+
+.brand-mark-image {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: .08rem;
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid rgba(90, 53, 29, .12);
+    border-radius: 50%;
 }
 
 .hero-section,

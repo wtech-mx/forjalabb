@@ -52,7 +52,7 @@
     <nav class="navbar navbar-expand-lg fixed-top navbar-glass">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-                <span class="brand-mark" aria-hidden="true">FL</span>
+                <img class="brand-mark brand-mark-image" src="{{ asset('icon-192.png') }}" alt="" width="40" height="40" aria-hidden="true" decoding="async">
                 ForjaLab
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menu">

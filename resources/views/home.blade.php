@@ -5,6 +5,7 @@
 @section('seo_image', asset('images/forjalab-hero.png'))
 
 @section('content')
+    <div class="home-motion">
     <section class="hero-section">
         <div class="container">
             <div class="row align-items-center g-5">
@@ -289,4 +290,38 @@
             </div>
         </div>
     </section>
+    </div>
+
+    <script>
+        const homeRevealTargets = document.querySelectorAll([
+            '.home-motion section:not(.hero-section) h2',
+            '.home-motion .bundle-home-card',
+            '.home-motion .catalog-card',
+            '.home-motion .value-grid-item',
+            '.home-motion .independent-products-item',
+            '.home-motion .embroidery-steps > div',
+            '.home-motion .embroidery-tool',
+            '.home-motion .audience-grid-item',
+            '.home-motion .timeline > div'
+        ].join(','));
+
+        homeRevealTargets.forEach((element, index) => {
+            element.dataset.reveal = '';
+            element.style.setProperty('--reveal-delay', `${(index % 4) * 80}ms`);
+        });
+
+        if ('IntersectionObserver' in window) {
+            const homeObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -35px' });
+
+            homeRevealTargets.forEach((element) => homeObserver.observe(element));
+        } else {
+            homeRevealTargets.forEach((element) => element.classList.add('is-visible'));
+        }
+    </script>
 @endsection
