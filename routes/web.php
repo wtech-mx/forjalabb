@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SmartTagController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PublicTagController;
 use App\Models\CatalogBundle;
@@ -162,12 +163,16 @@ Route::middleware('guest')->group(function () {
     Route::post('/admin/login', [AuthController::class, 'login'])->name('login.store');
 });
 
+Route::post('/analytics/events', [AnalyticsController::class, 'store'])
+    ->middleware('throttle:120,1')
+    ->name('analytics.events');
+
 Route::post('/admin/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', DashboardController::class)->middleware('can:dashboard.view')->name('dashboard');
+    Route::get('/', DashboardController::class)->name('dashboard');
 
     Route::get('/tags/{tag}/qr', [SmartTagController::class, 'qr'])->name('tags.qr');
     Route::resource('tags', SmartTagController::class)->except('destroy');

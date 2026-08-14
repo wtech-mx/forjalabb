@@ -11,6 +11,10 @@
     @endphp
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    @unless ($isPrivatePage)
+        <meta name="analytics-endpoint" content="{{ route('analytics.events') }}">
+    @endunless
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
     <link rel="manifest" href="{{ asset('site.webmanifest') }}">
@@ -48,7 +52,7 @@
     @endunless
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
+<body class="{{ request()->routeIs('admin.*') ? 'admin-page' : '' }}">
     <nav class="navbar navbar-expand-lg fixed-top navbar-glass">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ route('home') }}">
@@ -66,6 +70,7 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('services.laser') }}">Laser</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#valor">Valor</a></li>
                     @auth
+                        <li class="nav-item"><a class="nav-link admin-panel-link" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2 me-1"></i>Panel</a></li>
                         <li class="nav-item">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf

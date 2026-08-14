@@ -1,5 +1,69 @@
 import 'bootstrap';
 
+const analyticsEndpoint = document.querySelector('meta[name="analytics-endpoint"]')?.content;
+
+if (analyticsEndpoint) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    const query = new URLSearchParams(window.location.search);
+    let analyticsSession = localStorage.getItem('forjalab_analytics_session');
+
+    if (!analyticsSession) {
+        analyticsSession = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        localStorage.setItem('forjalab_analytics_session', analyticsSession);
+    }
+
+    const trackEvent = (eventType, label = null) => {
+        fetch(analyticsEndpoint, {
+            method: 'POST',
+            keepalive: true,
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: JSON.stringify({
+                event_type: eventType,
+                path: window.location.pathname,
+                label,
+                session_id: analyticsSession,
+                referrer: document.referrer || null,
+                utm_source: query.get('utm_source'),
+                utm_medium: query.get('utm_medium'),
+                utm_campaign: query.get('utm_campaign'),
+            }),
+        }).catch(() => {});
+    };
+
+    trackEvent('page_view', document.title);
+
+    const viewedSections = new Set();
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            const sectionLabel = entry.target.id || entry.target.querySelector('h2')?.textContent.trim() || entry.target.className.split(' ')[0] || 'seccion';
+            if (!entry.isIntersecting || viewedSections.has(sectionLabel)) return;
+            viewedSections.add(sectionLabel);
+            trackEvent('section_view', sectionLabel.slice(0, 160));
+            sectionObserver.unobserve(entry.target);
+        });
+    }, { threshold: 0.35 });
+
+    document.querySelectorAll('main section').forEach((section) => sectionObserver.observe(section));
+
+    document.addEventListener('click', (event) => {
+        const link = event.target.closest('a[href]');
+        if (!link) return;
+
+        const href = link.getAttribute('href') || '';
+        const label = link.textContent.trim().replace(/\s+/g, ' ').slice(0, 160);
+
+        if (href.includes('wa.me/')) {
+            trackEvent('whatsapp_click', label || 'WhatsApp');
+        } else if (href.includes('/catalogo/') || href.includes('/servicios/')) {
+            trackEvent('product_click', label || href);
+        }
+    });
+}
+
 const garmentAssets = {
     cap: {
         src: '/images/embroidery-cap.png',
