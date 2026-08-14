@@ -1,5 +1,25 @@
 import 'bootstrap';
 
+document.querySelectorAll('[data-social-chat]').forEach((chat) => {
+    const trigger = chat.querySelector('[data-social-chat-trigger]');
+    const menu = chat.querySelector('.social-chat-menu');
+
+    const setOpen = (open) => {
+        chat.classList.toggle('is-open', open);
+        trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        trigger.setAttribute('aria-label', open ? 'Cerrar redes sociales' : 'Abrir redes sociales');
+        menu.setAttribute('aria-hidden', open ? 'false' : 'true');
+    };
+
+    trigger?.addEventListener('click', () => setOpen(!chat.classList.contains('is-open')));
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') setOpen(false);
+    });
+    document.addEventListener('click', (event) => {
+        if (!chat.contains(event.target)) setOpen(false);
+    });
+});
+
 const analyticsEndpoint = document.querySelector('meta[name="analytics-endpoint"]')?.content;
 
 if (analyticsEndpoint) {

@@ -126,7 +126,25 @@
                 <span class="badge text-bg-light">QR/NFC</span>
                 <span class="badge text-bg-light">Software</span>
             </div>
+            <div class="footer-socials" aria-label="Redes sociales de ForjaLab">
+                <a href="https://www.facebook.com/share/19UaksSXGK/" target="_blank" rel="noopener noreferrer" aria-label="ForjaLab en Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="https://www.instagram.com/forjalabby?igsh=ZDdnMGEzcWNpbndr" target="_blank" rel="noopener noreferrer" aria-label="ForjaLab en Instagram"><i class="bi bi-instagram"></i></a>
+                <a href="https://www.tiktok.com/@forjalab3?_r=1&amp;_t=ZS-98spMLEz1FN" target="_blank" rel="noopener noreferrer" aria-label="ForjaLab en TikTok"><i class="bi bi-tiktok"></i></a>
+            </div>
         </div>
     </footer>
+
+    @unless (request()->routeIs('admin.*'))
+        <div class="social-chat" data-social-chat>
+            <div class="social-chat-menu" id="socialChatMenu" aria-hidden="true">
+                <div class="social-chat-heading"><span><strong>¿Hablamos?</strong><small>Encuentra a ForjaLab</small></span></div>
+                <a class="facebook" href="https://www.facebook.com/share/19UaksSXGK/" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook"></i><span>Facebook</span></a>
+                <a class="instagram" href="https://www.instagram.com/forjalabby?igsh=ZDdnMGEzcWNpbndr" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i><span>Instagram</span></a>
+                <a class="tiktok" href="https://www.tiktok.com/@forjalab3?_r=1&amp;_t=ZS-98spMLEz1FN" target="_blank" rel="noopener noreferrer"><i class="bi bi-tiktok"></i><span>TikTok</span></a>
+                <a class="whatsapp" href="https://wa.me/525564442949?text=Hola%2C%20quiero%20informacion%20sobre%20ForjaLab" target="_blank" rel="noopener noreferrer"><i class="bi bi-whatsapp"></i><span>WhatsApp</span></a>
+            </div>
+            <button class="social-chat-trigger" type="button" aria-label="Abrir redes sociales" aria-expanded="false" aria-controls="socialChatMenu" data-social-chat-trigger><i class="bi bi-chat-heart-fill"></i><span>Contactanos</span></button>
+        </div>
+    @endunless
 </body>
 </html>
