@@ -268,6 +268,23 @@
         </div>
     </section>
 
+    <section class="section-pad instagram-section" id="redes">
+        <div class="container">
+            <div class="instagram-heading">
+                <div>
+                    <div class="eyebrow"><i class="bi bi-facebook me-2"></i>ForjaLab en comunidad</div>
+                    <h2>Lo más reciente del taller.</h2>
+                    <p>Novedades, procesos y productos publicados directamente desde Facebook.</p>
+                </div>
+                <div class="d-flex gap-2 flex-wrap"><a class="btn btn-dark" href="https://www.facebook.com/people/ForjaLab/61593399118406/" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook me-2"></i>Seguir en Facebook</a><a class="btn btn-outline-dark" href="https://www.instagram.com/forjalabby/" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram me-2"></i>Instagram</a></div>
+            </div>
+            <div class="facebook-feed-shell">
+                <iframe title="Publicaciones recientes de ForjaLab en Facebook" src="https://www.facebook.com/plugins/page.php?href={{ rawurlencode('https://www.facebook.com/people/ForjaLab/61593399118406/') }}&amp;tabs=timeline&amp;width=500&amp;height=680&amp;small_header=false&amp;adapt_container_width=true&amp;hide_cover=false&amp;show_facepile=true&amp;appId" width="500" height="680" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" loading="lazy"></iframe>
+                <div class="facebook-feed-copy"><span class="social-proof-icon"><i class="bi bi-facebook"></i></span><h3>Ideas recién salidas del taller</h3><p>Este muro se actualiza automáticamente cuando publicamos algo nuevo. No necesitas salir de ForjaLab para descubrirlo.</p><ul><li><i class="bi bi-check-circle-fill"></i> Publicaciones recientes</li><li><i class="bi bi-check-circle-fill"></i> Fotos y novedades</li><li><i class="bi bi-check-circle-fill"></i> Sin registros ni aplicaciones</li></ul><a href="https://www.facebook.com/people/ForjaLab/61593399118406/" target="_blank" rel="noopener noreferrer">Abrir página completa <i class="bi bi-arrow-up-right"></i></a></div>
+            </div>
+        </div>
+    </section>
+
     <section class="section-pad launch-band" id="lanzamiento">
         <div class="container">
             <div class="row g-4 align-items-center">
@@ -302,7 +319,8 @@
             '.home-motion .embroidery-steps > div',
             '.home-motion .embroidery-tool',
             '.home-motion .audience-grid-item',
-            '.home-motion .timeline > div'
+            '.home-motion .timeline > div',
+            '.home-motion .facebook-feed-shell'
         ].join(','));
 
         homeRevealTargets.forEach((element, index) => {

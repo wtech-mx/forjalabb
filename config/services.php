@@ -45,4 +45,5 @@ return [
         'from_name' => env('TAG_MAIL_FROM_NAME', 'ForjaLab Emergencias'),
     ],
 
+
 ];
