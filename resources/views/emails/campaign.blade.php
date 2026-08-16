@@ -1,11 +1,19 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{ $campaign->subject }}</title></head>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{ $campaign->subject }}</title><style>
+@media only screen and (max-width:600px){
+body,table,td,a{-webkit-text-size-adjust:100%!important}.fl-header,.fl-featured,.fl-related-grid,.fl-footer{width:100%!important}.fl-header-logo,.fl-header-brand,.fl-header-info,.fl-featured-media,.fl-featured-copy,.fl-related-cell{display:block!important;width:100%!important;box-sizing:border-box!important}.fl-header-logo{padding:20px 0 5px!important}.fl-header-logo img{margin:0 auto!important}.fl-header-brand,.fl-header-info{text-align:center!important;padding:4px 12px!important}.fl-header-info{padding-bottom:18px!important}.fl-featured-media>img{height:auto!important;max-height:380px!important}.fl-featured-copy{padding:24px 12px!important;text-align:center!important}.fl-featured-copy h2{font-size:25px!important}.fl-product-button,.fl-whatsapp-button{display:block!important;width:auto!important;margin:0 auto!important;text-align:center!important;white-space:normal!important}.fl-related-cell{padding:0 0 12px!important}.fl-related-empty,.fl-related-spacer{display:none!important}.fl-related-image{width:38%!important}.fl-related-copy{padding:14px!important}.fl-related-copy strong{font-size:14px!important}.fl-footer td{padding:28px 16px!important}.fl-socials a{display:inline-block!important;margin:5px 7px!important}
+}
+</style></head>
 <body style="margin:0;background:#f3eee7;color:#2b1d15;font-family:Arial,sans-serif">
 @php
     $personalizedContent = str_replace('{{nombre}}', e($recipientName ?: 'cliente'), $campaign->content_html ?: '');
     $imagesRoot = rtrim(url('/images'), '/').'/';
     $personalizedContent = preg_replace('~(["\'])(?:https?://[^/"\']+)?/admin/images/~i', '$1'.$imagesRoot, $personalizedContent);
     $personalizedContent = preg_replace('~(src=["\'])(?:\.\./)*images/~i', '$1'.$imagesRoot, $personalizedContent);
+    $personalizedContent = preg_replace('~<table(?![^>]*class=)([^>]*data-forjalab-header="1")~i', '<table class="fl-header"$1', $personalizedContent);
+    $personalizedContent = preg_replace('~<table(?![^>]*class=)([^>]*data-forjalab-footer="1")~i', '<table class="fl-footer"$1', $personalizedContent);
+    $personalizedContent = preg_replace('~<table(?![^>]*class=)([^>]*data-forjalab-product="1"[^>]*margin:30px)~i', '<table class="fl-featured"$1', $personalizedContent);
+    $personalizedContent = preg_replace('~<table(?![^>]*class=)([^>]*data-forjalab-product="1"[^>]*margin:15px)~i', '<table class="fl-related-grid"$1', $personalizedContent);
     $featuredUrl = $featured instanceof \App\Models\CatalogProduct ? route('catalog.show',$featured) : ($featured instanceof \App\Models\CatalogBundle ? route('catalog.bundle.show',$featured) : null);
     $contentIncludesProducts = str_contains($campaign->content_html ?: '', 'data-forjalab-product');
     $contentIncludesHeader = str_contains($campaign->content_html ?: '', 'data-forjalab-header');
