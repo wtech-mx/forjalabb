@@ -11,7 +11,7 @@
             <div class="row align-items-center g-5">
                 <div class="col-lg-6">
                     <div class="glass-copy">
-                    <div class="eyebrow mb-3">Personalizamos · creamos · conectamos</div>
+                    <div class="eyebrow mb-3"><i class="bi bi-stars me-2"></i>Personalizamos · creamos · conectamos</div>
                     <h1 class="display-4 fw-bold mb-4">Productos personalizados que conectan lo fisico con lo digital.</h1>
                     <p class="lead text-secondary mb-4">ForjaLab convierte ideas en productos reales: placas QR, Biker Tags, tarjetas NFC, piezas 3D, sublimacion, DTF y soluciones web desde una pieza hasta volumen.</p>
                     <div class="hero-actions d-flex flex-wrap gap-2 mb-4">
@@ -19,9 +19,9 @@
                         <a class="btn btn-outline-dark btn-lg" href="#servicios"><i class="bi bi-grid-1x2-fill me-2"></i>Servicios</a>
                     </div>
                     <div class="hero-metrics">
-                        <div><strong>1+</strong><span>pieza inicial</span></div>
-                        <div><strong>QR/NFC</strong><span>perfiles y paneles</span></div>
-                        <div><strong>CDMX</strong><span>produccion local</span></div>
+                        <div><i class="bi bi-box-seam-fill"></i><span><strong>1+</strong><small>pieza inicial</small></span></div>
+                        <div><i class="bi bi-qr-code-scan"></i><span><strong>QR/NFC</strong><small>perfiles y paneles</small></span></div>
+                        <div><i class="bi bi-geo-alt-fill"></i><span><strong>CDMX</strong><small>producción local</small></span></div>
                     </div>
                     </div>
                 </div>
@@ -34,7 +34,10 @@
 
     <section class="section-pad catalog-section catalog-section-priority" id="catalogo">
         <div class="container">
-
+            <div class="home-section-heading">
+                <div><span class="home-heading-icon"><i class="bi bi-bag-heart-fill"></i></span><div><div class="eyebrow">Catálogo ForjaLab</div><h2>Encuentra tu próxima idea.</h2><p>Productos listos para personalizar desde una pieza.</p></div></div>
+                <a href="#servicios">Explorar servicios <i class="bi bi-arrow-down-right"></i></a>
+            </div>
 
             @if ($catalogBundles->isNotEmpty())
                 <div class="bundle-showcase">
@@ -98,7 +101,7 @@
         <div class="container">
             <div class="row g-4 align-items-end mb-4">
                 <div class="col-lg-7">
-                    <div class="eyebrow">Propuesta de valor</div>
+                    <div class="eyebrow"><i class="bi bi-gem me-2"></i>Propuesta de valor</div>
                     <h2 class="fw-bold mt-2">No vendemos solo objetos: forjamos producto mas tecnologia.</h2>
                 </div>
             </div>
@@ -125,7 +128,7 @@
         <div class="container">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
                 <div>
-                    <div class="eyebrow">Personalizacion</div>
+                    <div class="eyebrow"><i class="bi bi-magic me-2"></i>Personalización</div>
                     <h2 class="fw-bold mt-2 mb-0">Productos independientes</h2>
                 </div>
                 <p class="text-secondary mb-0 max-copy">Seguridad para bikers, placas inteligentes para mascotas y personalizacion textil con sublimacion y DTF.</p>
@@ -133,6 +136,7 @@
             <div class="row g-4 independent-products-grid">
                 <div class="col-md-6 col-xl-3 independent-products-item">
                     <a class="product-card product-card-dark product-card-biker" href="{{ route('services.show', 'biker-tag') }}">
+                        <i class="bi bi-shield-fill-plus service-card-icon"></i>
                         <span class="badge text-bg-warning">Emergencia</span>
                         <h3>Biker Tag QR</h3>
                         <p>Dog tag para motociclistas con perfil medico, contactos y opcion para motoclubes.</p>
@@ -141,6 +145,7 @@
                 </div>
                 <div class="col-md-6 col-xl-3 independent-products-item">
                     <a class="product-card product-card-light product-card-dog" href="{{ route('services.show', 'dog-tags') }}">
+                        <i class="bi bi-heart-pulse-fill service-card-icon"></i>
                         <span class="badge text-bg-success">Mascotas</span>
                         <h3>Dog Tags QR</h3>
                         <p>Placas para mascota con perfil editable, WhatsApp y control de privacidad.</p>
@@ -148,7 +153,8 @@
                     </a>
                 </div>
                 <div class="col-md-6 col-xl-3 independent-products-item">
-                    <a class="product-card product-card-light product-card-embroidery" href="#textil">
+                    <a class="product-card product-card-light product-card-embroidery" href="{{ route('services.sublimation') }}">
+                        <i class="bi bi-palette-fill service-card-icon"></i>
                         <span class="badge text-bg-light">Interactivo</span>
                         <h3>Sublimacion & DTF</h3>
                         <p>Sube tu logo, elige gorra, chamarra o playera y acomoda el diseño antes de cotizar.</p>
@@ -157,6 +163,7 @@
                 </div>
                 <div class="col-md-6 col-xl-3 independent-products-item">
                     <a class="product-card product-card-light product-card-laser" href="{{ route('services.laser') }}">
+                        <i class="bi bi-lightning-charge-fill service-card-icon"></i>
                         <span class="badge text-bg-danger">Laser</span>
                         <h3>Laser personalizado</h3>
                         <p>Logo o escritura en termos, carcasas, parches para playera, madera y acrilico.</p>
@@ -167,100 +174,20 @@
         </div>
     </section>
 
-    <section class="section-pad embroidery-section" id="textil">
-        <div class="container">
-            <div class="row g-4 align-items-start">
-                <div class="col-lg-5">
-                    <div class="sticky-copy glass-copy">
-                        <div class="eyebrow">Textil y objetos personalizados</div>
-                        <h2 class="fw-bold mt-2">Tu idea en prendas, termos, gorras y mas.</h2>
-                        <p class="text-secondary">Puedes mandar a personalizar casi cualquier prenda u objeto. Si no sabes si conviene sublimacion, DTF, laser u otra tecnica, nosotros te ayudamos a elegir la mejor opcion segun material, color, cantidad y uso.</p>
-                        <div class="embroidery-steps">
-                            <div><i class="bi bi-upload"></i><span>Mandanos logo, texto, foto o referencia.</span></div>
-                            <div><i class="bi bi-stars"></i><span>Revisamos material, color y acabado ideal.</span></div>
-                            <div><i class="bi bi-whatsapp"></i><span>Te cotizamos la mejor tecnica antes de producir.</span></div>
-                        </div>
-                        <div class="textile-actions">
-                            <a class="btn btn-dark" href="https://wa.me/525564442949?text={{ rawurlencode('Hola, quiero cotizar una prenda u objeto personalizado. Necesito ayuda para elegir entre sublimacion, DTF u otra tecnica.') }}" target="_blank" rel="noopener">
-                                <i class="bi bi-whatsapp me-2"></i>Cotizar personalizacion
-                            </a>
-                            <a class="btn btn-outline-dark" href="#textil-preview">
-                                <i class="bi bi-image me-2"></i>Probar mockup
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-7">
-                    <div class="embroidery-tool" id="textil-preview" data-embroidery-tool>
-                        <div class="textile-tool-note">
-                            <strong>Vista rapida</strong>
-                            <span>Usa este mockup como guia. La cotizacion final se confirma por WhatsApp segun material, tamaño, cantidad y tecnica.</span>
-                        </div>
-                        <div class="embroidery-toolbar">
-                            <label class="upload-tile" for="embroideryLogoInput">
-                                <i class="bi bi-image"></i>
-                                <span>
-                                    <strong>Cargar logo</strong>
-                                    <small>PNG, JPG o SVG</small>
-                                </span>
-                            </label>
-                            <input class="visually-hidden" id="embroideryLogoInput" type="file" accept="image/*" data-logo-input>
-
-                            <div class="garment-picker" role="group" aria-label="Elegir prenda">
-                                <button class="garment-option active" type="button" data-garment="cap">
-                                    <span class="garment-icon garment-icon-cap" aria-hidden="true"></span><span>Gorra</span>
-                                </button>
-                                <button class="garment-option" type="button" data-garment="jacket">
-                                    <i class="bi bi-gem"></i><span>Chamarra</span>
-                                </button>
-                                <button class="garment-option" type="button" data-garment="shirt">
-                                    <span class="garment-icon garment-icon-shirt" aria-hidden="true"></span><span>Playera</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="mockup-stage" data-mockup-stage>
-                            <img class="garment-preview" src="{{ asset('images/embroidery-cap.png') }}" alt="Mockup de gorra para sublimacion o DTF" loading="lazy" decoding="async" data-garment-preview>
-                            <div class="embroidery-placeholder" data-logo-placeholder>
-                                <i class="bi bi-cloud-arrow-up-fill"></i>
-                                <span>Tu logo aqui</span>
-                            </div>
-                            <img class="logo-overlay" alt="Logo cargado para simular sublimacion o DTF" data-logo-preview hidden>
-                            <div class="stitch-frame" aria-hidden="true"></div>
-                        </div>
-
-                        <div class="embroidery-controls">
-                            <label>
-                                <span>Tamaño</span>
-                                <input type="range" min="12" max="42" value="24" data-logo-size>
-                            </label>
-                            <label>
-                                <span>Rotacion</span>
-                                <input type="range" min="-25" max="25" value="0" data-logo-rotate>
-                            </label>
-                            <button class="btn btn-dark" type="button" data-reset-logo>
-                                <i class="bi bi-arrow-counterclockwise me-2"></i>Centrar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <section class="section-pad">
         <div class="container">
             <div class="row g-4 audience-grid">
                 @foreach ([
-                    'Restaurantes' => 'Bases QR, menu editable, WhatsApp, estadisticas y panel por sucursal.',
-                    'Corporativo' => 'Kits, credenciales NFC, uniformes personalizados, portal interno y reposiciones por sede.',
-                    'Eventos' => 'Invitaciones hibridas, RSVP, mapas, seating charts y recuerdos personalizados.',
-                    'Maquila' => 'Produccion sin marca para agencias, imprentas, wedding planners y diseñadores.',
-                ] as $title => $text)
+                    ['shop-window', 'Restaurantes', 'Bases QR, menú editable, WhatsApp, estadísticas y panel por sucursal.'],
+                    ['buildings-fill', 'Corporativo', 'Kits, credenciales NFC, uniformes personalizados, portal interno y reposiciones por sede.'],
+                    ['calendar2-heart-fill', 'Eventos', 'Invitaciones híbridas, RSVP, mapas, seating charts y recuerdos personalizados.'],
+                    ['gear-wide-connected', 'Maquila', 'Producción sin marca para agencias, imprentas, wedding planners y diseñadores.'],
+                ] as [$icon, $title, $text])
                     <div class="col-md-6 audience-grid-item">
                         <div class="line-card">
-                            <h3>{{ $title }}</h3>
+                            <span class="audience-icon"><i class="bi bi-{{ $icon }}"></i></span><div><h3>{{ $title }}</h3>
                             <p>{{ $text }}</p>
+                            <small>Conocer soluciones <i class="bi bi-arrow-right"></i></small></div>
                         </div>
                     </div>
                 @endforeach
@@ -279,7 +206,7 @@
                 <div class="d-flex gap-2 flex-wrap"><a class="btn btn-dark" href="https://www.facebook.com/people/ForjaLab/61593399118406/" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook me-2"></i>Seguir en Facebook</a><a class="btn btn-outline-dark" href="https://www.instagram.com/forjalabby/" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram me-2"></i>Instagram</a></div>
             </div>
             <div class="facebook-feed-shell">
-                <iframe title="Publicaciones recientes de ForjaLab en Facebook" src="https://www.facebook.com/plugins/page.php?href={{ rawurlencode('https://www.facebook.com/people/ForjaLab/61593399118406/') }}&amp;tabs=timeline&amp;width=500&amp;height=680&amp;small_header=false&amp;adapt_container_width=true&amp;hide_cover=false&amp;show_facepile=true&amp;appId" width="500" height="680" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" loading="lazy"></iframe>
+                <iframe title="Publicaciones recientes de ForjaLab en Facebook" src="https://www.facebook.com/plugins/page.php?href={{ rawurlencode('https://www.facebook.com/61593399118406') }}&amp;tabs=timeline&amp;width=500&amp;height=680&amp;small_header=false&amp;adapt_container_width=true&amp;hide_cover=false&amp;show_facepile=true" width="500" height="680" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" loading="lazy"></iframe>
                 <div class="facebook-feed-copy"><span class="social-proof-icon"><i class="bi bi-facebook"></i></span><h3>Ideas recién salidas del taller</h3><p>Este muro se actualiza automáticamente cuando publicamos algo nuevo. No necesitas salir de ForjaLab para descubrirlo.</p><ul><li><i class="bi bi-check-circle-fill"></i> Publicaciones recientes</li><li><i class="bi bi-check-circle-fill"></i> Fotos y novedades</li><li><i class="bi bi-check-circle-fill"></i> Sin registros ni aplicaciones</li></ul><a href="https://www.facebook.com/people/ForjaLab/61593399118406/" target="_blank" rel="noopener noreferrer">Abrir página completa <i class="bi bi-arrow-up-right"></i></a></div>
             </div>
         </div>
@@ -289,7 +216,7 @@
         <div class="container">
             <div class="row g-4 align-items-center">
                 <div class="col-lg-5">
-                    <div class="eyebrow">Cotiza sin vueltas</div>
+                    <div class="eyebrow"><i class="bi bi-chat-dots-fill me-2"></i>Cotiza sin vueltas</div>
                     <h2 class="fw-bold mt-2">Dinos que quieres fabricar y armamos una propuesta clara.</h2>
                     <div class="launch-actions">
                         <a class="btn btn-light" href="#catalogo"><i class="bi bi-bag-heart me-2"></i>Ver catalogo</a>
@@ -298,10 +225,10 @@
                 </div>
                 <div class="col-lg-7">
                     <div class="timeline">
-                        <div><strong>Producto</strong><span>Elige una pieza, paquete o idea especial.</span></div>
-                        <div><strong>Cantidad</strong><span>Define si sera individual, set o pedido por volumen.</span></div>
-                        <div><strong>Diseño</strong><span>Mandanos logo, texto, foto o referencia visual.</span></div>
-                        <div><strong>Entrega</strong><span>Confirmamos costo, tiempo y detalles de produccion.</span></div>
+                        <div><i class="bi bi-bag-check-fill"></i><strong>Producto</strong><span>Elige una pieza, paquete o idea especial.</span></div>
+                        <div><i class="bi bi-123"></i><strong>Cantidad</strong><span>Define si será individual, set o pedido por volumen.</span></div>
+                        <div><i class="bi bi-vector-pen"></i><strong>Diseño</strong><span>Mándanos logo, texto, foto o referencia visual.</span></div>
+                        <div><i class="bi bi-truck"></i><strong>Entrega</strong><span>Confirmamos costo, tiempo y detalles de producción.</span></div>
                     </div>
                 </div>
             </div>

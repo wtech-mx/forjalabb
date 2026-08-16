@@ -1,5 +1,54 @@
 import 'bootstrap';
 
+const leadPopup = document.querySelector('[data-lead-popup]');
+if (leadPopup) {
+    const form = leadPopup.querySelector('[data-lead-form]');
+    const status = leadPopup.querySelector('[data-lead-status]');
+    const submit = leadPopup.querySelector('[data-lead-submit]');
+    const completedKey = 'forjalab-lead-completed';
+    const dismissedKey = 'forjalab-lead-dismissed';
+    const dismissedRecently = () => {
+        const value = Number(localStorage.getItem(dismissedKey) || 0);
+        return value && Date.now() - value < 3 * 24 * 60 * 60 * 1000;
+    };
+    const openPopup = () => {
+        leadPopup.classList.add('is-open');
+        leadPopup.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('lead-popup-open');
+        window.setTimeout(() => form?.querySelector('input')?.focus(), 250);
+    };
+    const closePopup = (remember = true) => {
+        leadPopup.classList.remove('is-open');
+        leadPopup.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('lead-popup-open');
+        if (remember && !localStorage.getItem(completedKey)) localStorage.setItem(dismissedKey, Date.now().toString());
+    };
+    leadPopup.querySelectorAll('[data-lead-close]').forEach((button) => button.addEventListener('click', () => closePopup()));
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && leadPopup.classList.contains('is-open')) closePopup(); });
+
+    if (!localStorage.getItem(completedKey) && !dismissedRecently()) window.setTimeout(openPopup, 1000);
+
+    form?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        status.textContent = '';
+        submit.disabled = true;
+        submit.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Registrando beneficio...';
+        const payload = Object.fromEntries(new FormData(form).entries());
+        try {
+            const response = await fetch(leadPopup.dataset.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' }, body: JSON.stringify(payload) });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(data.message || Object.values(data.errors || {})[0]?.[0] || 'No pudimos registrar tus datos.');
+            localStorage.setItem(completedKey, '1');
+            leadPopup.querySelector('[data-lead-form-wrap]').hidden = true;
+            leadPopup.querySelector('[data-lead-success]').hidden = false;
+        } catch (error) {
+            status.textContent = error.message;
+            submit.disabled = false;
+            submit.innerHTML = '<i class="bi bi-ticket-perforated-fill me-2"></i>Quiero mi 10% de descuento';
+        }
+    });
+}
+
 const orderForm = document.querySelector('[data-order-form]');
 if (orderForm) {
     const itemsContainer = orderForm.querySelector('[data-order-items]');

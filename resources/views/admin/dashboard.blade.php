@@ -5,32 +5,6 @@
 @section('content')
     <section class="admin-section">
         <div class="container">
-            <div class="admin-header">
-                <div>
-                    <div class="eyebrow">Operacion</div>
-                    <h1 class="fw-bold mt-2 mb-0">Panel administrativo</h1>
-                </div>
-                <div class="d-flex flex-wrap gap-2">
-                    <a class="btn btn-dark" href="{{ route('admin.tags.create', ['type' => 'biker']) }}"><i class="bi bi-plus-circle me-2"></i>Biker Tag</a>
-                    <a class="btn btn-outline-dark" href="{{ route('admin.tags.create', ['type' => 'dog']) }}"><i class="bi bi-plus-circle me-2"></i>Dog Tag</a>
-                </div>
-            </div>
-
-            <div class="row g-3 mb-4">
-                @foreach ([
-                    ['label' => 'Productos', 'value' => $totalProducts],
-                    ['label' => 'Activos', 'value' => $activeProducts],
-                    ['label' => 'Usuarios', 'value' => $totalUsers],
-                    ['label' => 'Roles', 'value' => $totalRoles],
-                ] as $metric)
-                    <div class="col-6 col-lg-3">
-                        <div class="metric-card">
-                            <span>{{ $metric['label'] }}</span>
-                            <strong>{{ $metric['value'] }}</strong>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
 
             <div class="admin-header mb-3">
                 <div><div class="eyebrow">Smart Tags</div><h2 class="h4 fw-bold mt-2 mb-0">Identificaciones registradas</h2></div>
@@ -61,20 +35,6 @@
                     <h2 class="fw-bold mt-2 mb-0">Metricas del sitio</h2>
                 </div>
                 <span class="badge text-bg-light"><i class="bi bi-shield-check me-1"></i>Analitica privada</span>
-            </div>
-
-            <div class="panel-card mb-4">
-                <div class="eyebrow">Accesos rapidos</div>
-                <h2 class="h4 fw-bold mt-2 mb-3">¿Que quieres administrar?</h2>
-                <div class="admin-access-grid">
-                    <a href="{{ route('admin.tags.index') }}"><i class="bi bi-qr-code-scan"></i><span><strong>Smart Tags</strong><small>Crear y consultar Biker o Dog Tags</small></span><i class="bi bi-chevron-right"></i></a>
-                    @can('catalog.view')
-                        <a href="{{ route('admin.catalog.index') }}"><i class="bi bi-bag-heart-fill"></i><span><strong>Catalogo</strong><small>Productos, inventario y precios</small></span><i class="bi bi-chevron-right"></i></a>
-                        <a href="{{ route('admin.packages.index') }}"><i class="bi bi-box-seam-fill"></i><span><strong>Paquetes</strong><small>Armar ofertas y combinaciones</small></span><i class="bi bi-chevron-right"></i></a>
-                    @endcan
-                    @can('users.view')<a href="{{ route('admin.users.index') }}"><i class="bi bi-people-fill"></i><span><strong>Usuarios</strong><small>Gestionar cuentas administrativas</small></span><i class="bi bi-chevron-right"></i></a>@endcan
-                    @can('roles.view')<a href="{{ route('admin.roles.index') }}"><i class="bi bi-shield-lock-fill"></i><span><strong>Roles</strong><small>Controlar permisos de acceso</small></span><i class="bi bi-chevron-right"></i></a>@endcan
-                </div>
             </div>
 
             <div class="row g-3 mb-4">

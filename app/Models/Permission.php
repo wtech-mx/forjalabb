@@ -32,6 +32,10 @@ class Permission extends Model
             ['orders.view', 'Ver pedidos y descargar PDF'],
             ['orders.manage', 'Crear y editar pedidos y clientes'],
         ],
+        'Clientes' => [
+            ['customers.view', 'Ver clientes y prospectos'],
+            ['customers.manage', 'Actualizar seguimiento de prospectos'],
+        ],
     ];
 
     public function roles(): BelongsToMany

@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
         );
         $operator->permissions()->sync(
             $permissions
-                ->only(['dashboard.view', 'catalog.view', 'orders.view', 'orders.manage'])
+                ->only(['dashboard.view', 'catalog.view', 'orders.view', 'orders.manage', 'customers.view', 'customers.manage'])
                 ->pluck('id')
         );
 

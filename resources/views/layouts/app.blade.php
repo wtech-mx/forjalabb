@@ -66,7 +66,7 @@
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#servicios">Servicios</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#catalogo">Catalogo</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#textil">Textil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('services.sublimation') }}">Sublimación</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('services.laser') }}">Laser</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#valor">Valor</a></li>
                     @auth
@@ -135,6 +135,22 @@
     </footer>
 
     @unless (request()->routeIs('admin.*'))
+        @guest
+        <div class="lead-popup" data-lead-popup data-endpoint="{{ route('leads.store') }}" aria-hidden="true">
+            <div class="lead-popup-backdrop" data-lead-close></div>
+            <section class="lead-popup-dialog" role="dialog" aria-modal="true" aria-labelledby="leadPopupTitle">
+                <button class="lead-popup-close" type="button" aria-label="Cerrar promoción" data-lead-close><i class="bi bi-x-lg"></i></button>
+                <div class="lead-popup-visual"><img src="{{ asset('images/forjalab-hero.png') }}" alt="Productos personalizados creados por ForjaLab" width="900" height="700"><span><i class="bi bi-gift-fill"></i> Beneficio de bienvenida</span></div>
+                <div class="lead-popup-content">
+                    <div data-lead-form-wrap><span class="lead-popup-kicker">Tu primera idea comienza aquí</span><h2 id="leadPopupTitle"><strong>10%</strong> de descuento</h2><p>Déjanos tus datos y recibe el beneficio en tu primera compra con ForjaLab.</p>
+                        <form data-lead-form><div class="lead-form-grid"><label><span>Nombre *</span><input class="form-control" name="name" required maxlength="160" autocomplete="name"></label><label><span>Correo *</span><input class="form-control" name="email" type="email" required maxlength="160" autocomplete="email"></label><label><span>Teléfono *</span><input class="form-control" name="phone" type="tel" required maxlength="30" autocomplete="tel"></label><label><span>WhatsApp *</span><input class="form-control" name="whatsapp" type="tel" required maxlength="30"></label><label><span>Empresa <small>(opcional)</small></span><input class="form-control" name="company" maxlength="160" autocomplete="organization"></label><label><span>¿Qué servicio te interesa? *</span><select class="form-select" name="interested_service" required><option value="">Selecciona</option><option value="biker_tag">Biker Tag QR</option><option value="dog_tag">Dog Tag QR</option><option value="sublimation">Sublimación o DTF</option><option value="laser">Grabado y corte láser</option><option value="catalog">Productos del catálogo</option><option value="corporate">Pedido corporativo</option><option value="other">Otro proyecto</option></select></label></div><label class="lead-consent"><input type="checkbox" required> <span>Acepto que ForjaLab me contacte para atender mi solicitud y aplicar el descuento.</span></label><button class="btn btn-dark btn-lg w-100" type="submit" data-lead-submit><i class="bi bi-ticket-perforated-fill me-2"></i>Quiero mi 10% de descuento</button><small class="lead-form-status" data-lead-status></small></form>
+                    </div>
+                    <div class="lead-popup-success" data-lead-success hidden><i class="bi bi-check-circle-fill"></i><h2>¡Beneficio reservado!</h2><p>Registramos tus datos. Nuestro equipo te contactará para ayudarte con tu primera compra.</p><button class="btn btn-dark" type="button" data-lead-close>Seguir explorando</button></div>
+                </div>
+            </section>
+        </div>
+        @endguest
+
         <div class="social-chat" data-social-chat>
             <div class="social-chat-menu" id="socialChatMenu" aria-hidden="true">
                 <div class="social-chat-heading"><span><strong>¿Hablamos?</strong><small>Encuentra a ForjaLab</small></span></div>

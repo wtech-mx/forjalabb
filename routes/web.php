@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CatalogBundleController;
 use App\Http\Controllers\Admin\CatalogProductController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\RoleController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Admin\SmartTagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PublicTagController;
 use App\Models\CatalogBundle;
 use App\Models\CatalogProduct;
@@ -103,6 +105,7 @@ Route::get('/sitemap.xml', function () {
         ['loc' => route('services.show', 'biker-tag'), 'lastmod' => null],
         ['loc' => route('services.show', 'dog-tags'), 'lastmod' => null],
         ['loc' => route('services.laser'), 'lastmod' => null],
+        ['loc' => route('services.sublimation'), 'lastmod' => null],
     ])->concat(
         CatalogProduct::active()->get(['slug', 'updated_at'])->map(fn (CatalogProduct $product) => [
             'loc' => route('catalog.show', $product),
@@ -129,6 +132,10 @@ Route::get('/robots.txt', fn () => response(
 Route::get('/servicios/laser', function () {
     return view('laser');
 })->name('services.laser');
+
+Route::get('/servicios/sublimacion', function () {
+    return view('sublimation');
+})->name('services.sublimation');
 
 Route::get('/catalogo/paquetes/{bundle:slug}', function (CatalogBundle $bundle) {
     abort_unless($bundle->is_active, 404);
@@ -167,6 +174,7 @@ Route::middleware('guest')->group(function () {
 Route::post('/analytics/events', [AnalyticsController::class, 'store'])
     ->middleware('throttle:120,1')
     ->name('analytics.events');
+Route::post('/prospectos', [LeadController::class, 'store'])->middleware('throttle:10,1')->name('leads.store');
 
 Route::post('/admin/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
@@ -178,6 +186,9 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/orders/{order}/pdf', [OrderController::class, 'pdf'])->middleware('can:orders.view')->name('orders.pdf');
     Route::resource('orders', OrderController::class)->except(['index', 'show', 'destroy'])->middleware('can:orders.manage');
     Route::resource('orders', OrderController::class)->only(['index', 'show'])->middleware('can:orders.view');
+
+    Route::resource('customers', CustomerController::class)->only(['index'])->middleware('can:customers.view');
+    Route::resource('customers', CustomerController::class)->only(['update'])->middleware('can:customers.manage');
 
     Route::get('/tags/{tag}/qr', [SmartTagController::class, 'qr'])->name('tags.qr');
     Route::resource('tags', SmartTagController::class)->except('destroy');
