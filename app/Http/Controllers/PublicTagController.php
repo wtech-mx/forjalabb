@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\EmergencyScanAlert;
 use App\Models\SmartTag;
+use App\Services\EmergencyTagMailer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class PublicTagController extends Controller
 {
+    public function __construct(private readonly EmergencyTagMailer $mailer) {}
+
     public function __invoke(string $token): View
     {
         $tag = SmartTag::where('token', $token)->firstOrFail();
@@ -49,7 +50,7 @@ class PublicTagController extends Controller
             'ip' => $request->ip(),
         ];
 
-        Mail::to($recipients->all())->send(new EmergencyScanAlert($tag, $scan));
+        $this->mailer->send($tag, $scan, $recipients->all());
 
         return response()->json([
             'message' => 'Alerta enviada a los correos de emergencia.',

@@ -6,6 +6,9 @@
         <nav class="admin-sidebar-nav" aria-label="Menu administrativo">
             <a class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2"></i><span><strong>Panel</strong><small>Resumen y metricas</small></span></a>
             <a class="{{ request()->routeIs('admin.tags.*') ? 'active' : '' }}" href="{{ route('admin.tags.index') }}"><i class="bi bi-qr-code-scan"></i><span><strong>Smart Tags</strong><small>Biker y Dog Tags</small></span></a>
+            @can('orders.view')
+                <a class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}" href="{{ route('admin.orders.index') }}"><i class="bi bi-receipt-cutoff"></i><span><strong>Pedidos</strong><small>Clientes, pagos y PDF</small></span></a>
+            @endcan
             @can('catalog.view')
                 <a class="{{ request()->routeIs('admin.catalog.*') ? 'active' : '' }}" href="{{ route('admin.catalog.index') }}"><i class="bi bi-bag-heart-fill"></i><span><strong>Catalogo</strong><small>Productos y precios</small></span></a>
                 <a class="{{ request()->routeIs('admin.packages.*') ? 'active' : '' }}" href="{{ route('admin.packages.index') }}"><i class="bi bi-box-seam-fill"></i><span><strong>Paquetes</strong><small>Combos de productos</small></span></a>

@@ -28,6 +28,10 @@ class Permission extends Model
             ['catalog.view', 'Ver catalogo'],
             ['catalog.manage', 'Crear y editar productos'],
         ],
+        'Pedidos' => [
+            ['orders.view', 'Ver pedidos y descargar PDF'],
+            ['orders.manage', 'Crear y editar pedidos y clientes'],
+        ],
     ];
 
     public function roles(): BelongsToMany

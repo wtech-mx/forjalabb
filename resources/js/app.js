@@ -1,5 +1,78 @@
 import 'bootstrap';
 
+const orderForm = document.querySelector('[data-order-form]');
+if (orderForm) {
+    const itemsContainer = orderForm.querySelector('[data-order-items]');
+    const template = document.querySelector('#orderItemTemplate');
+    let itemIndex = 0;
+    const money = (value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value || 0);
+    const calculate = () => {
+        let subtotal = 0;
+        itemsContainer.querySelectorAll('[data-order-item]').forEach((row) => {
+            const quantity = Number(row.querySelector('[data-quantity]').value) || 0;
+            const price = Number(row.querySelector('[data-price]').value) || 0;
+            const line = quantity * price;
+            row.querySelector('[data-line-total]').textContent = money(line);
+            subtotal += line;
+        });
+        const discountValue = Number(orderForm.querySelector('[data-discount]').value) || 0;
+        const discount = orderForm.querySelector('[data-discount-type]').value === 'percent' ? subtotal * Math.min(discountValue, 100) / 100 : Math.min(discountValue, subtotal);
+        const shipping = orderForm.querySelector('[data-shipping-toggle]').checked ? Number(orderForm.querySelector('[data-shipping]').value) || 0 : 0;
+        const total = Math.max(0, subtotal - discount + shipping);
+        const advance = Math.min(Number(orderForm.querySelector('[data-advance]').value) || 0, total);
+        orderForm.querySelector('[data-subtotal]').textContent = money(subtotal);
+        orderForm.querySelector('[data-discount-total]').textContent = `-${money(discount)}`;
+        orderForm.querySelector('[data-shipping-total]').textContent = money(shipping);
+        orderForm.querySelector('[data-total]').textContent = money(total);
+        orderForm.querySelector('[data-advance-total]').textContent = money(advance);
+        orderForm.querySelector('[data-balance]').textContent = money(total - advance);
+    };
+    const addItem = (saved = {}) => {
+        const fragment = template.content.cloneNode(true);
+        const row = fragment.querySelector('[data-order-item]');
+        row.innerHTML = row.innerHTML.replaceAll('__INDEX__', itemIndex++);
+        const product = row.querySelector('[data-product]');
+        const price = row.querySelector('[data-price]');
+        if (saved.item_type && saved.item_id) product.value = `${saved.item_type}:${saved.item_id}`;
+        const syncItem = () => {
+            const selected = product.selectedOptions[0];
+            row.querySelector('[data-item-type]').value = selected?.dataset.type ?? '';
+            row.querySelector('[data-item-id]').value = selected?.dataset.id ?? '';
+            const contents = selected?.dataset.contents ?? '';
+            row.querySelector('[data-item-contents]').textContent = contents ? `Incluye: ${contents}` : '';
+        };
+        syncItem();
+        price.value = saved.unit_price ?? product.selectedOptions[0]?.dataset.price ?? '';
+        row.querySelector('[data-quantity]').value = saved.quantity ?? 1;
+        product.addEventListener('change', () => { syncItem(); price.value = product.selectedOptions[0]?.dataset.price ?? ''; calculate(); });
+        row.querySelectorAll('input').forEach((input) => input.addEventListener('input', calculate));
+        row.querySelector('[data-remove-item]').addEventListener('click', () => { row.remove(); calculate(); });
+        itemsContainer.append(row);
+        calculate();
+    };
+    const saved = JSON.parse(document.querySelector('#savedOrderItems')?.textContent || '[]');
+    (saved.length ? saved : [{}]).forEach(addItem);
+    orderForm.querySelector('[data-add-item]').addEventListener('click', () => addItem());
+    orderForm.querySelectorAll('[data-discount], [data-advance], [data-shipping]').forEach((input) => input.addEventListener('input', calculate));
+    orderForm.querySelector('[data-discount-type]').addEventListener('change', calculate);
+    orderForm.querySelector('[data-shipping-toggle]').addEventListener('change', (event) => { orderForm.querySelector('[data-shipping-wrap]').classList.toggle('d-none', !event.target.checked); calculate(); });
+    const customerToggle = orderForm.querySelector('[data-new-customer-toggle]');
+    customerToggle.addEventListener('click', (event) => {
+        const newBlock = orderForm.querySelector('[data-new-customer]');
+        const creating = newBlock.classList.contains('d-none');
+        newBlock.classList.toggle('d-none', !creating);
+        orderForm.querySelector('[data-existing-customer]').classList.toggle('d-none', creating);
+        newBlock.querySelectorAll('input').forEach((input) => input.disabled = !creating);
+        orderForm.querySelector('[data-customer-select]').disabled = creating;
+        event.currentTarget.innerHTML = creating ? '<i class="bi bi-search me-1"></i>Buscar cliente' : '<i class="bi bi-person-plus me-1"></i>Crear cliente';
+    });
+    orderForm.querySelector('[data-customer-search]').addEventListener('input', (event) => {
+        const search = event.target.value.toLowerCase().trim();
+        orderForm.querySelectorAll('[data-customer-select] option[data-search]').forEach((option) => option.hidden = !option.dataset.search.includes(search));
+    });
+    if (orderForm.dataset.createCustomer === '1') customerToggle.click();
+}
+
 document.querySelectorAll('[data-social-chat]').forEach((chat) => {
     const trigger = chat.querySelector('[data-social-chat-trigger]');
     const menu = chat.querySelector('.social-chat-menu');

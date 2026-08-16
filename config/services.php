@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    'tag_mail' => [
+        'host' => env('TAG_MAIL_HOST', env('MAIL_HOST')),
+        'port' => env('TAG_MAIL_PORT', env('MAIL_PORT', 465)),
+        'username' => env('TAG_MAIL_USERNAME', env('MAIL_USERNAME')),
+        'password' => env('TAG_MAIL_PASSWORD', env('MAIL_PASSWORD')),
+        'encryption' => env('TAG_MAIL_ENCRYPTION', 'ssl'),
+        'from_address' => env('TAG_MAIL_FROM_ADDRESS', env('MAIL_FROM_ADDRESS')),
+        'from_name' => env('TAG_MAIL_FROM_NAME', 'ForjaLab Emergencias'),
+    ],
+
 ];
