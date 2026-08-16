@@ -63,7 +63,14 @@
                                     <input class="form-control @error('gallery_photos.*') is-invalid @enderror" id="gallery_photos" name="gallery_photos[]" type="file" accept="image/*" multiple>
                                     @error('gallery_photos.*')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     @if ($bundle->photos->isNotEmpty())
-                                        <div class="form-text">{{ $bundle->photos->count() }} foto(s) cargadas.</div>
+                                        <div class="admin-gallery-grid mt-3">
+                                            @foreach ($bundle->photos as $photo)
+                                                <label class="admin-gallery-item">
+                                                    <img src="{{ $photo->image_url }}" alt="Foto {{ $loop->iteration }} de {{ $bundle->name }}" loading="lazy">
+                                                    <span><input name="remove_photo_ids[]" type="checkbox" value="{{ $photo->id }}"> Quitar</span>
+                                                </label>
+                                            @endforeach
+                                        </div>
                                     @endif
                                 </div>
                             </div>

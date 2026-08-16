@@ -116,6 +116,8 @@ class CatalogProductController extends Controller
             'cover_photo' => ['nullable', 'image', 'max:8192'],
             'gallery_photos' => ['nullable', 'array'],
             'gallery_photos.*' => ['nullable', 'image', 'max:8192'],
+            'remove_photo_ids' => ['nullable', 'array'],
+            'remove_photo_ids.*' => ['integer'],
             'presentation_mode' => ['required', Rule::in(array_keys(CatalogProduct::PRESENTATION_MODES))],
             'stock' => ['nullable', 'integer', 'min:0', 'max:999999'],
             'costs' => ['nullable', 'array'],
@@ -195,6 +197,14 @@ class CatalogProductController extends Controller
 
     private function syncPhotos(CatalogProduct $product, Request $request): void
     {
+        $product->photos()
+            ->whereIn('id', $request->input('remove_photo_ids', []))
+            ->get()
+            ->each(function ($photo): void {
+                File::delete(public_path($photo->image_path));
+                $photo->delete();
+            });
+
         if (! $request->hasFile('gallery_photos')) {
             return;
         }

@@ -113,6 +113,8 @@ class CatalogBundleController extends Controller
             'cover_photo' => ['nullable', 'image', 'max:8192'],
             'gallery_photos' => ['nullable', 'array'],
             'gallery_photos.*' => ['nullable', 'image', 'max:8192'],
+            'remove_photo_ids' => ['nullable', 'array'],
+            'remove_photo_ids.*' => ['integer'],
             'items' => ['nullable', 'array'],
             'items.*.catalog_product_id' => ['nullable', 'integer', Rule::exists('catalog_products', 'id')],
             'items.*.quantity' => ['nullable', 'integer', 'min:1', 'max:999999'],
@@ -176,6 +178,14 @@ class CatalogBundleController extends Controller
 
     private function syncPhotos(CatalogBundle $bundle, Request $request): void
     {
+        $bundle->photos()
+            ->whereIn('id', $request->input('remove_photo_ids', []))
+            ->get()
+            ->each(function ($photo): void {
+                File::delete(public_path($photo->image_path));
+                $photo->delete();
+            });
+
         if (! $request->hasFile('gallery_photos')) {
             return;
         }

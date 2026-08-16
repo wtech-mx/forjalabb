@@ -106,6 +106,16 @@
                         @else
                             <img class="dynamic-product-design" alt="" data-design-preview hidden>
                         @endif
+
+                        @if ($galleryImages->count() > 1)
+                            <div class="dynamic-gallery-strip" aria-label="Galería de {{ $product->name }}">
+                                @foreach ($galleryImages as $index => $image)
+                                    <button class="{{ $index === 0 ? 'active' : '' }}" type="button" data-dynamic-gallery-thumb="{{ $image }}" aria-label="Ver foto {{ $index + 1 }}">
+                                        <img src="{{ $image }}" alt="" loading="lazy" decoding="async">
+                                    </button>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
 
                     <div class="tequila-copy">
@@ -250,6 +260,19 @@
                         if (stockLabel) {
                             stockLabel.textContent = `Stock: ${button.dataset.baseStock || 0}`;
                         }
+                        updateSelection();
+                    });
+                });
+
+                product.querySelectorAll('[data-dynamic-gallery-thumb]').forEach((button) => {
+                    button.addEventListener('click', () => {
+                        product.querySelectorAll('[data-dynamic-gallery-thumb]').forEach((item) => item.classList.toggle('active', item === button));
+                        if (basePreview && button.dataset.dynamicGalleryThumb) {
+                            basePreview.src = button.dataset.dynamicGalleryThumb;
+                        }
+                        if (designPreview) designPreview.hidden = true;
+                        baseName = 'Foto de galería';
+                        designName = '';
                         updateSelection();
                     });
                 });

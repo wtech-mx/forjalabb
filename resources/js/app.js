@@ -1,5 +1,24 @@
 import 'bootstrap';
 
+document.querySelectorAll('[data-magazine-gallery]').forEach((gallery) => {
+    const main = gallery.querySelector('[data-magazine-gallery-main]');
+    gallery.querySelectorAll('[data-magazine-gallery-thumb]').forEach((button) => {
+        button.addEventListener('click', (event) => {
+            event.stopPropagation();
+            gallery.querySelectorAll('[data-magazine-gallery-thumb]').forEach((item) => item.classList.toggle('active', item === button));
+            if (main && button.dataset.magazineGalleryThumb) {
+                main.style.opacity = '0';
+                main.style.transform = 'scale(.985)';
+                window.setTimeout(() => {
+                    main.src = button.dataset.magazineGalleryThumb;
+                    main.style.opacity = '1';
+                    main.style.transform = 'scale(1)';
+                }, 140);
+            }
+        });
+    });
+});
+
 document.querySelectorAll('[data-magazine]').forEach((magazine) => {
     const pages = [...magazine.querySelectorAll('[data-magazine-page]')];
     const currentLabel = magazine.querySelector('[data-magazine-current]');
