@@ -21,8 +21,8 @@
 
                 <div class="scan-alert-box pet" data-scan-status>
                     <i class="bi bi-crosshair"></i>
-                    <span>Comparte la ubicacion GPS para avisar a sus contactos.</span>
-                    <button class="scan-location-button" type="button" data-scan-trigger>Enviar ubicacion</button>
+                    <span>Alerta automática: solicitaremos la ubicación GPS para avisar a sus contactos.</span>
+                    <button class="scan-location-button" type="button" data-scan-trigger>Reintentar alerta</button>
                 </div>
 
                 <div class="pet-profile-band">

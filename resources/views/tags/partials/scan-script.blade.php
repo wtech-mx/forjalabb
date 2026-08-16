@@ -124,19 +124,10 @@
 
     trigger?.addEventListener('click', requestPreciseLocation);
 
-    navigator.permissions?.query({ name: 'geolocation' }).then((permission) => {
-        if (permission.state === 'granted') {
-            requestPreciseLocation();
-        } else if (permission.state === 'denied') {
-            setStatus('GPS bloqueado para este sitio. Activa el permiso de ubicacion en el navegador.', 'warning');
-            setButton('Permiso bloqueado', true);
-        } else {
-            setStatus('Toca “Enviar ubicacion” para autorizar GPS y mandar la alerta con mapa.', 'info');
-            setButton('Enviar ubicacion GPS', false);
-        }
-    }).catch(() => {
-        setStatus('Toca “Enviar ubicacion” para autorizar GPS y mandar la alerta con mapa.', 'info');
-        setButton('Enviar ubicacion GPS', false);
-    });
+    // Abrir el perfil desde el QR inicia la alerta sin requerir otro clic.
+    // El navegador todavía puede pedir autorización de GPS por privacidad.
+    setStatus('Iniciando alerta automática y solicitando ubicación GPS...', 'info');
+    setButton('Enviando automáticamente...', true);
+    window.setTimeout(requestPreciseLocation, 300);
 })();
 </script>
