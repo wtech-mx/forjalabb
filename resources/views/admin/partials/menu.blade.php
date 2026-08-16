@@ -12,6 +12,7 @@
             @can('customers.view')
                 <a class="{{ request()->routeIs('admin.customers.*') ? 'active' : '' }}" href="{{ route('admin.customers.index') }}"><i class="bi bi-person-lines-fill"></i><span><strong>Clientes</strong><small>Clientes y prospectos web</small></span></a>
             @endcan
+            <a class="{{ request()->routeIs('admin.mailing.*') ? 'active' : '' }}" href="{{ route('admin.mailing.index') }}"><i class="bi bi-envelope-paper-heart-fill"></i><span><strong>Mailing</strong><small>Editor y mini campañas</small></span></a>
             @can('catalog.view')
                 <a class="{{ request()->routeIs('admin.catalog.*') ? 'active' : '' }}" href="{{ route('admin.catalog.index') }}"><i class="bi bi-bag-heart-fill"></i><span><strong>Catalogo</strong><small>Productos y precios</small></span></a>
                 <a class="{{ request()->routeIs('admin.packages.*') ? 'active' : '' }}" href="{{ route('admin.packages.index') }}"><i class="bi bi-box-seam-fill"></i><span><strong>Paquetes</strong><small>Combos de productos</small></span></a>

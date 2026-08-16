@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CatalogBundleController;
 use App\Http\Controllers\Admin\CatalogProductController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SmartTagController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CatalogMagazineController;
+use App\Http\Controllers\EmailTrackingController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PublicTagController;
 use App\Models\CatalogBundle;
@@ -182,6 +184,8 @@ Route::post('/analytics/events', [AnalyticsController::class, 'store'])
     ->middleware('throttle:120,1')
     ->name('analytics.events');
 Route::post('/prospectos', [LeadController::class, 'store'])->middleware('throttle:10,1')->name('leads.store');
+Route::get('/correo/open/{token}.gif', [EmailTrackingController::class, 'open'])->middleware('throttle:120,1')->name('mailing.track.open');
+Route::get('/correo/click/{token}', [EmailTrackingController::class, 'click'])->middleware(['signed', 'throttle:120,1'])->name('mailing.track.click');
 
 Route::post('/admin/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
@@ -196,6 +200,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('customers', CustomerController::class)->only(['index'])->middleware('can:customers.view');
     Route::resource('customers', CustomerController::class)->only(['update'])->middleware('can:customers.manage');
+
+    Route::post('/mailing/{mailing}/send', [EmailCampaignController::class, 'send'])->name('mailing.send');
+    Route::get('/mailing/{mailing}/preview', [EmailCampaignController::class, 'preview'])->name('mailing.preview');
+    Route::resource('mailing', EmailCampaignController::class)->except('show');
 
     Route::get('/tags/{tag}/qr', [SmartTagController::class, 'qr'])->name('tags.qr');
     Route::resource('tags', SmartTagController::class)->except('destroy');
