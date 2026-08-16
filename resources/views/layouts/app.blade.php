@@ -52,7 +52,7 @@
     @endunless
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="{{ request()->routeIs('admin.*') ? 'admin-page' : '' }}">
+<body class="{{ request()->routeIs('admin.*') ? 'admin-page' : '' }} {{ request()->routeIs('catalog.magazine*') ? 'magazine-page-body' : '' }}">
     <nav class="navbar navbar-expand-lg fixed-top navbar-glass">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ route('home') }}">
@@ -66,6 +66,7 @@
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#servicios">Servicios</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#catalogo">Catalogo</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('catalog.magazine.priced') }}"><i class="bi bi-journal-richtext me-1"></i>Revista</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('services.sublimation') }}">Sublimación</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('services.laser') }}">Laser</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#valor">Valor</a></li>
@@ -134,7 +135,7 @@
         </div>
     </footer>
 
-    @unless (request()->routeIs('admin.*'))
+    @unless (request()->routeIs('admin.*', 'catalog.magazine*'))
         @guest
         <div class="lead-popup" data-lead-popup data-endpoint="{{ route('leads.store') }}" aria-hidden="true">
             <div class="lead-popup-backdrop" data-lead-close></div>

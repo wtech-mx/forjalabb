@@ -15,6 +15,8 @@
             @can('catalog.view')
                 <a class="{{ request()->routeIs('admin.catalog.*') ? 'active' : '' }}" href="{{ route('admin.catalog.index') }}"><i class="bi bi-bag-heart-fill"></i><span><strong>Catalogo</strong><small>Productos y precios</small></span></a>
                 <a class="{{ request()->routeIs('admin.packages.*') ? 'active' : '' }}" href="{{ route('admin.packages.index') }}"><i class="bi bi-box-seam-fill"></i><span><strong>Paquetes</strong><small>Combos de productos</small></span></a>
+                <a href="{{ route('catalog.magazine.priced') }}" target="_blank"><i class="bi bi-tags-fill"></i><span><strong>Revista con precios</strong><small>Catálogo para venta directa</small></span></a>
+                <a href="{{ route('catalog.magazine.unpriced') }}" target="_blank"><i class="bi bi-eye-slash-fill"></i><span><strong>Revista sin precios</strong><small>Catálogo para cotización</small></span></a>
             @endcan
             @can('users.view')<a class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}"><i class="bi bi-people-fill"></i><span><strong>Usuarios</strong><small>Cuentas administrativas</small></span></a>@endcan
             @can('roles.view')<a class="{{ request()->routeIs('admin.roles.*') ? 'active' : '' }}" href="{{ route('admin.roles.index') }}"><i class="bi bi-shield-lock-fill"></i><span><strong>Roles</strong><small>Permisos y accesos</small></span></a>@endcan

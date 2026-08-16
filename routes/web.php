@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\SmartTagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CatalogMagazineController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PublicTagController;
 use App\Models\CatalogBundle;
@@ -106,6 +107,8 @@ Route::get('/sitemap.xml', function () {
         ['loc' => route('services.show', 'dog-tags'), 'lastmod' => null],
         ['loc' => route('services.laser'), 'lastmod' => null],
         ['loc' => route('services.sublimation'), 'lastmod' => null],
+        ['loc' => route('catalog.magazine.priced'), 'lastmod' => null],
+        ['loc' => route('catalog.magazine.unpriced'), 'lastmod' => null],
     ])->concat(
         CatalogProduct::active()->get(['slug', 'updated_at'])->map(fn (CatalogProduct $product) => [
             'loc' => route('catalog.show', $product),
@@ -136,6 +139,10 @@ Route::get('/servicios/laser', function () {
 Route::get('/servicios/sublimacion', function () {
     return view('sublimation');
 })->name('services.sublimation');
+
+Route::get('/catalogo-digital', fn () => redirect()->route('catalog.magazine.priced'))->name('catalog.magazine');
+Route::get('/catalogo-digital/con-precios', CatalogMagazineController::class)->defaults('showPrices', true)->name('catalog.magazine.priced');
+Route::get('/catalogo-digital/sin-precios', CatalogMagazineController::class)->defaults('showPrices', false)->name('catalog.magazine.unpriced');
 
 Route::get('/catalogo/paquetes/{bundle:slug}', function (CatalogBundle $bundle) {
     abort_unless($bundle->is_active, 404);

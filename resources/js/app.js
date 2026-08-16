@@ -1,5 +1,45 @@
 import 'bootstrap';
 
+document.querySelectorAll('[data-magazine]').forEach((magazine) => {
+    const pages = [...magazine.querySelectorAll('[data-magazine-page]')];
+    const currentLabel = magazine.querySelector('[data-magazine-current]');
+    const totalLabel = magazine.querySelector('[data-magazine-total]');
+    const progress = magazine.querySelector('[data-magazine-progress]');
+    const prev = magazine.querySelector('[data-magazine-prev]');
+    const next = magazine.querySelector('[data-magazine-next]');
+    let current = 0;
+    let touchStart = null;
+    const format = (number) => String(number).padStart(2, '0');
+    const showPage = (index, direction = 1) => {
+        const target = Math.max(0, Math.min(pages.length - 1, index));
+        pages.forEach((page, pageIndex) => {
+            page.classList.toggle('is-active', pageIndex === target);
+            page.classList.toggle('is-before', pageIndex < target);
+            page.classList.toggle('is-after', pageIndex > target);
+            page.style.setProperty('--flip-direction', direction);
+            page.setAttribute('aria-hidden', pageIndex === target ? 'false' : 'true');
+        });
+        current = target;
+        currentLabel.textContent = format(current + 1);
+        totalLabel.textContent = format(pages.length);
+        progress.style.width = `${((current + 1) / pages.length) * 100}%`;
+        prev.disabled = current === 0;
+        next.disabled = current === pages.length - 1;
+        history.replaceState(null, '', `${location.pathname}${location.search}#pagina-${current + 1}`);
+    };
+    prev.addEventListener('click', () => showPage(current - 1, -1));
+    next.addEventListener('click', () => showPage(current + 1, 1));
+    magazine.addEventListener('keydown', (event) => { if (event.key === 'ArrowLeft') showPage(current - 1, -1); if (event.key === 'ArrowRight' || event.key === ' ') showPage(current + 1, 1); });
+    magazine.addEventListener('touchstart', (event) => touchStart = event.changedTouches[0].clientX, { passive: true });
+    magazine.addEventListener('touchend', (event) => { if (touchStart === null) return; const distance = event.changedTouches[0].clientX - touchStart; if (Math.abs(distance) > 55) showPage(current + (distance < 0 ? 1 : -1), distance < 0 ? 1 : -1); touchStart = null; }, { passive: true });
+    magazine.querySelector('[data-magazine-fullscreen]')?.addEventListener('click', () => document.fullscreenElement ? document.exitFullscreen() : magazine.requestFullscreen?.());
+    magazine.querySelector('[data-magazine-share]')?.addEventListener('click', async () => { const data = { title: 'Catálogo digital ForjaLab', text: 'Mira los productos y paquetes de ForjaLab.', url: location.href }; if (navigator.share) await navigator.share(data).catch(() => {}); else { await navigator.clipboard?.writeText(location.href); } });
+    const hashPage = Number(location.hash.replace('#pagina-', ''));
+    showPage(Number.isFinite(hashPage) && hashPage > 0 ? hashPage - 1 : 0);
+    magazine.tabIndex = 0;
+    magazine.focus({ preventScroll: true });
+});
+
 const leadPopup = document.querySelector('[data-lead-popup]');
 if (leadPopup) {
     const form = leadPopup.querySelector('[data-lead-form]');

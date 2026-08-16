@@ -6,6 +6,13 @@
     <section class="admin-section">
         <div class="container">
 
+            @can('catalog.view')
+            <div class="catalog-magazine-dashboard mb-4">
+                <div class="catalog-magazine-dashboard-copy"><span><i class="bi bi-journal-richtext"></i> Catálogo compartible</span><h1>Abre tu catálogo animado.</h1><p>Elige si deseas mostrar precios antes de compartir el enlace con tus clientes.</p></div>
+                <div class="catalog-magazine-dashboard-actions"><a href="{{ route('catalog.magazine.priced') }}" target="_blank"><i class="bi bi-tags-fill"></i><span><strong>Ver con precios</strong><small>Ideal para venta directa</small></span><i class="bi bi-arrow-up-right"></i></a><a href="{{ route('catalog.magazine.unpriced') }}" target="_blank"><i class="bi bi-eye-slash-fill"></i><span><strong>Ver sin precios</strong><small>Ideal para cotización</small></span><i class="bi bi-arrow-up-right"></i></a></div>
+            </div>
+            @endcan
+
             <div class="admin-header mb-3">
                 <div><div class="eyebrow">Smart Tags</div><h2 class="h4 fw-bold mt-2 mb-0">Identificaciones registradas</h2></div>
                 <a class="btn btn-sm btn-outline-dark" href="{{ route('admin.tags.index') }}">Administrar tags</a>
