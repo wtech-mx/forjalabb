@@ -147,7 +147,7 @@ class EmailCampaignController extends Controller
             'name' => $data['name'],
             'subject' => $data['subject'],
             'preview_text' => $data['preview_text'] ?? null,
-            'content_html' => $data['content_html'] ?? null,
+            'content_html' => $this->normalizeContentUrls($data['content_html'] ?? null),
             'featured_type' => $type,
             'featured_id' => $id,
             'related_product_ids' => array_values($data['related_product_ids'] ?? []),
@@ -220,5 +220,18 @@ class EmailCampaignController extends Controller
         libxml_use_internal_errors($previous);
 
         return preg_replace('/^<\?xml encoding="UTF-8"\?>/', '', $tracked) ?: $html;
+    }
+
+    private function normalizeContentUrls(?string $html): ?string
+    {
+        if (! $html) {
+            return $html;
+        }
+
+        $imagesRoot = rtrim(url('/images'), '/').'/';
+        $html = preg_replace('~(["\'])(?:https?://[^/"\']+)?/admin/images/~i', '$1'.$imagesRoot, $html);
+        $html = preg_replace('~(src=["\'])(?:\.\./)*images/~i', '$1'.$imagesRoot, $html);
+
+        return $html;
     }
 }

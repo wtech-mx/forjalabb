@@ -3,6 +3,9 @@
 <body style="margin:0;background:#f3eee7;color:#2b1d15;font-family:Arial,sans-serif">
 @php
     $personalizedContent = str_replace('{{nombre}}', e($recipientName ?: 'cliente'), $campaign->content_html ?: '');
+    $imagesRoot = rtrim(url('/images'), '/').'/';
+    $personalizedContent = preg_replace('~(["\'])(?:https?://[^/"\']+)?/admin/images/~i', '$1'.$imagesRoot, $personalizedContent);
+    $personalizedContent = preg_replace('~(src=["\'])(?:\.\./)*images/~i', '$1'.$imagesRoot, $personalizedContent);
     $featuredUrl = $featured instanceof \App\Models\CatalogProduct ? route('catalog.show',$featured) : ($featured instanceof \App\Models\CatalogBundle ? route('catalog.bundle.show',$featured) : null);
     $contentIncludesProducts = str_contains($campaign->content_html ?: '', 'data-forjalab-product');
     $contentIncludesHeader = str_contains($campaign->content_html ?: '', 'data-forjalab-header');
