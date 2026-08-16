@@ -102,6 +102,35 @@ class EmailCampaignController extends Controller
         return back()->with('status', "Envío terminado: {$sent} entregados al servidor y {$failed} con error.");
     }
 
+    public function resend(EmailCampaign $mailing, CampaignMailer $mailer): RedirectResponse
+    {
+        abort_if($mailing->status === 'sending', 409, 'La campaña ya se está enviando.');
+        if (! $mailing->recipients()->exists()) {
+            return back()->withErrors(['recipients' => 'Esta campaña no tiene destinatarios guardados.']);
+        }
+
+        DB::transaction(function () use ($mailing) {
+            $mailing->recipients()->update([
+                'status' => 'pending',
+                'error_message' => null,
+                'sent_at' => null,
+                'opened_at' => null,
+                'open_count' => 0,
+                'clicked_at' => null,
+                'click_count' => 0,
+                'last_clicked_url' => null,
+            ]);
+            $mailing->update([
+                'status' => 'draft',
+                'sent_count' => 0,
+                'failed_count' => 0,
+                'sent_at' => null,
+            ]);
+        });
+
+        return $this->send($mailing->fresh(), $mailer);
+    }
+
     public function destroy(EmailCampaign $mailing): RedirectResponse
     {
         $mailing->delete();

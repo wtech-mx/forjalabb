@@ -202,6 +202,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('customers', CustomerController::class)->only(['update'])->middleware('can:customers.manage');
 
     Route::post('/mailing/{mailing}/send', [EmailCampaignController::class, 'send'])->name('mailing.send');
+    Route::post('/mailing/{mailing}/resend', [EmailCampaignController::class, 'resend'])->name('mailing.resend');
     Route::get('/mailing/{mailing}/preview', [EmailCampaignController::class, 'preview'])->name('mailing.preview');
     Route::resource('mailing', EmailCampaignController::class)->except('show');
 
