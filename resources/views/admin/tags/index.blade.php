@@ -11,6 +11,7 @@
                     <h1 class="fw-bold mt-2 mb-0">Tags registrados</h1>
                 </div>
                 <div class="d-flex flex-wrap gap-2">
+                    <a class="btn btn-warning" href="{{ route('admin.tags.invitations.create') }}"><i class="bi bi-send-fill me-2"></i>Enviar formulario al cliente</a>
                     <a class="btn btn-dark" href="{{ route('admin.tags.create', ['type' => 'biker']) }}">Nuevo Biker Tag</a>
                     <a class="btn btn-outline-dark" href="{{ route('admin.tags.create', ['type' => 'dog']) }}">Nuevo Dog Tag</a>
                 </div>

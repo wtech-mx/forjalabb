@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Illuminate\Support\Str;
 
 class SmartTagController extends Controller
 {
@@ -37,6 +38,34 @@ class SmartTagController extends Controller
             'tag' => new SmartTag(['type' => $type, 'is_active' => true]),
             'type' => $type,
         ]);
+    }
+
+    public function createInvitation(Request $request): View
+    {
+        return view('admin.tags.invitation', [
+            'selectedType' => $request->query('type', SmartTag::TYPE_BIKER),
+        ]);
+    }
+
+    public function storeInvitation(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'type' => ['required', Rule::in([SmartTag::TYPE_BIKER, SmartTag::TYPE_DOG])],
+            'payment_code' => ['required', 'digits:4'],
+        ]);
+
+        $tag = SmartTag::create([
+            'type' => $data['type'],
+            'display_name' => 'Pendiente de captura',
+            'is_active' => false,
+            'intake_token' => Str::random(48),
+            'payment_code' => $data['payment_code'],
+            'intake_status' => 'pending_capture',
+            'activated_at' => null,
+        ]);
+
+        return redirect()->route('admin.tags.show', $tag)
+            ->with('status', 'Enlace creado. Compártelo con el cliente para que capture sus datos.');
     }
 
     public function store(Request $request): RedirectResponse
@@ -72,6 +101,7 @@ class SmartTagController extends Controller
 
     public function qr(SmartTag $tag): Response
     {
+        abort_unless($tag->is_active, 404);
         $renderer = new ImageRenderer(
             new RendererStyle(420),
             new SvgImageBackEnd

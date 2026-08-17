@@ -23,12 +23,24 @@
             <div class="row g-4">
                 <div class="col-lg-4">
                     <div class="panel-card text-center">
-                        <img class="qr-preview" src="{{ route('admin.tags.qr', $tag) }}" alt="QR para {{ $tag->display_name }}">
-                        <div class="small text-secondary mt-3 text-break">{{ $tag->public_url }}</div>
-                        <div class="d-grid gap-2 mt-3">
+                        @if($tag->is_active)
+                            <img class="qr-preview" src="{{ route('admin.tags.qr', $tag) }}" alt="QR para {{ $tag->display_name }}">
+                            <div class="small text-secondary mt-3 text-break">{{ $tag->public_url }}</div>
+                            <div class="d-grid gap-2 mt-3">
                             <a class="btn btn-dark" href="{{ route('admin.tags.qr', $tag) }}" target="_blank" rel="noopener"><i class="bi bi-qr-code me-2"></i>Abrir QR SVG</a>
                             <a class="btn btn-outline-dark" href="{{ $tag->public_url }}" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right me-2"></i>Ver perfil publico</a>
-                        </div>
+                            </div>
+                        @else
+                            <div class="pending-tag-icon"><i class="bi bi-lock-fill"></i></div>
+                            <h2 class="h4 fw-bold">{{ $tag->intake_status==='pending_payment'?'Pago pendiente':'Esperando datos' }}</h2>
+                            <p class="text-secondary">El QR permanecerá bloqueado hasta que el cliente ingrese el código de pago.</p>
+                            @if($tag->intake_url)
+                                <label class="form-label">Enlace para el cliente</label>
+                                <div class="input-group"><input class="form-control" value="{{ $tag->intake_url }}" readonly id="clientIntakeUrl"><button class="btn btn-dark" type="button" onclick="navigator.clipboard.writeText(document.getElementById('clientIntakeUrl').value);this.innerHTML='Copiado'"><i class="bi bi-copy"></i></button></div>
+                                <a class="btn btn-outline-dark w-100 mt-2" href="{{ $tag->intake_url }}" target="_blank"><i class="bi bi-box-arrow-up-right me-2"></i>Abrir formulario</a>
+                                <div class="alert alert-warning mt-3 mb-0"><strong>Código de pago: {{ $tag->payment_code }}</strong><small class="d-block">Entrégalo únicamente cuando confirmes el pago.</small></div>
+                            @endif
+                        @endif
                     </div>
                 </div>
                 <div class="col-lg-8">

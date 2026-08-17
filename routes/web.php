@@ -15,6 +15,7 @@ use App\Http\Controllers\CatalogMagazineController;
 use App\Http\Controllers\EmailTrackingController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PublicTagController;
+use App\Http\Controllers\PublicTagIntakeController;
 use App\Models\CatalogBundle;
 use App\Models\CatalogProduct;
 use Illuminate\Support\Facades\Route;
@@ -184,6 +185,9 @@ Route::post('/analytics/events', [AnalyticsController::class, 'store'])
     ->middleware('throttle:120,1')
     ->name('analytics.events');
 Route::post('/prospectos', [LeadController::class, 'store'])->middleware('throttle:10,1')->name('leads.store');
+Route::get('/registro-tag/{token}', [PublicTagIntakeController::class, 'edit'])->name('tags.intake.edit');
+Route::put('/registro-tag/{token}', [PublicTagIntakeController::class, 'update'])->middleware('throttle:20,1')->name('tags.intake.update');
+Route::get('/registro-tag/{token}/qr', [PublicTagIntakeController::class, 'qr'])->name('tags.intake.qr');
 Route::get('/correo/open/{token}.gif', [EmailTrackingController::class, 'open'])->middleware('throttle:120,1')->name('mailing.track.open');
 Route::get('/correo/click/{token}', [EmailTrackingController::class, 'click'])->middleware(['signed', 'throttle:120,1'])->name('mailing.track.click');
 
@@ -206,6 +210,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/mailing/{mailing}/preview', [EmailCampaignController::class, 'preview'])->name('mailing.preview');
     Route::resource('mailing', EmailCampaignController::class)->except('show');
 
+    Route::get('/tags/invitations/create', [SmartTagController::class, 'createInvitation'])->name('tags.invitations.create');
+    Route::post('/tags/invitations', [SmartTagController::class, 'storeInvitation'])->name('tags.invitations.store');
     Route::get('/tags/{tag}/qr', [SmartTagController::class, 'qr'])->name('tags.qr');
     Route::resource('tags', SmartTagController::class)->except('destroy');
 

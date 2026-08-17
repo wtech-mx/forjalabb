@@ -9,6 +9,10 @@ use Illuminate\Support\Str;
 
 #[Fillable([
     'type',
+    'intake_token',
+    'payment_code',
+    'intake_status',
+    'client_submitted_at',
     'is_active',
     'tag_code',
     'display_name',
@@ -52,7 +56,9 @@ class SmartTag extends Model
     {
         static::creating(function (SmartTag $tag): void {
             $tag->token ??= Str::random(12);
-            $tag->activated_at ??= now();
+            if ($tag->is_active) {
+                $tag->activated_at ??= now();
+            }
         });
 
         static::created(function (SmartTag $tag): void {
@@ -76,6 +82,8 @@ class SmartTag extends Model
             'has_public_health_insurance' => 'boolean',
             'activated_at' => 'datetime',
             'expires_at' => 'datetime',
+            'client_submitted_at' => 'datetime',
+            'payment_code' => 'encrypted',
         ];
     }
 
@@ -138,5 +146,10 @@ class SmartTag extends Model
     public function getPublicUrlAttribute(): string
     {
         return route('tags.public', $this->token);
+    }
+
+    public function getIntakeUrlAttribute(): ?string
+    {
+        return $this->intake_token ? route('tags.intake.edit', $this->intake_token) : null;
     }
 }

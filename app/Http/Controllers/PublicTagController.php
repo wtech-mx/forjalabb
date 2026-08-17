@@ -15,6 +15,7 @@ class PublicTagController extends Controller
     public function __invoke(string $token): View
     {
         $tag = SmartTag::where('token', $token)->firstOrFail();
+        abort_unless($tag->is_active, 404);
 
         return view($tag->type === SmartTag::TYPE_BIKER ? 'tags.public-biker' : 'tags.public-dog', compact('tag'));
     }
@@ -22,6 +23,7 @@ class PublicTagController extends Controller
     public function scan(Request $request, string $token): JsonResponse
     {
         $tag = SmartTag::where('token', $token)->firstOrFail();
+        abort_unless($tag->is_active, 404);
 
         $data = $request->validate([
             'latitude' => ['required', 'numeric', 'between:-90,90'],
