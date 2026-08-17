@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SmartTagController;
+use App\Http\Controllers\Admin\ShipmentController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\AuthController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\EmailTrackingController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PublicTagController;
 use App\Http\Controllers\PublicTagIntakeController;
+use App\Http\Controllers\PublicShipmentController;
 use App\Models\CatalogBundle;
 use App\Models\CatalogProduct;
 use Illuminate\Support\Facades\Route;
@@ -190,6 +192,7 @@ Route::put('/registro-tag/{token}', [PublicTagIntakeController::class, 'update']
 Route::get('/registro-tag/{token}/qr', [PublicTagIntakeController::class, 'qr'])->name('tags.intake.qr');
 Route::get('/correo/open/{token}.gif', [EmailTrackingController::class, 'open'])->middleware('throttle:120,1')->name('mailing.track.open');
 Route::get('/correo/click/{token}', [EmailTrackingController::class, 'click'])->middleware(['signed', 'throttle:120,1'])->name('mailing.track.click');
+Route::get('/seguimiento/{token}', PublicShipmentController::class)->name('shipments.public');
 
 Route::post('/admin/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
@@ -201,6 +204,17 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/orders/{order}/pdf', [OrderController::class, 'pdf'])->middleware('can:orders.view')->name('orders.pdf');
     Route::resource('orders', OrderController::class)->except(['index', 'show', 'destroy'])->middleware('can:orders.manage');
     Route::resource('orders', OrderController::class)->only(['index', 'show'])->middleware('can:orders.view');
+    Route::get('/shipments', [ShipmentController::class, 'index'])->middleware('can:orders.view')->name('shipments.index');
+    Route::get('/shipments/create', [ShipmentController::class, 'selectOrder'])->middleware('can:orders.manage')->name('shipments.select-order');
+    Route::get('/shipments/postal-code/{postalCode}', [ShipmentController::class, 'postalCode'])->middleware('can:orders.manage')->name('shipments.postal-code');
+    Route::post('/orders/{order}/shipment/quote', [ShipmentController::class, 'draftQuote'])->middleware('can:orders.manage')->name('shipments.draft-quote');
+    Route::get('/orders/{order}/shipment/create', [ShipmentController::class, 'create'])->middleware('can:orders.manage')->name('shipments.create');
+    Route::post('/orders/{order}/shipment', [ShipmentController::class, 'store'])->middleware('can:orders.manage')->name('shipments.store');
+    Route::get('/shipments/{shipment}', [ShipmentController::class, 'show'])->middleware('can:orders.view')->name('shipments.show');
+    Route::put('/shipments/{shipment}', [ShipmentController::class, 'update'])->middleware('can:orders.manage')->name('shipments.update');
+    Route::post('/shipments/{shipment}/events', [ShipmentController::class, 'addEvent'])->middleware('can:orders.manage')->name('shipments.events.store');
+    Route::post('/shipments/{shipment}/quote', [ShipmentController::class, 'quote'])->middleware('can:orders.manage')->name('shipments.quote');
+    Route::post('/shipments/{shipment}/guide', [ShipmentController::class, 'generateGuide'])->middleware('can:orders.manage')->name('shipments.guide');
 
     Route::resource('customers', CustomerController::class)->only(['index'])->middleware('can:customers.view');
     Route::resource('customers', CustomerController::class)->only(['update'])->middleware('can:customers.manage');

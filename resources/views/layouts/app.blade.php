@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     @php
-        $isPrivatePage = request()->routeIs('admin.*', 'login');
+        $isPrivatePage = request()->routeIs('admin.*', 'login', 'shipments.public');
         $seoTitle = trim($__env->yieldContent('title', 'ForjaLab | Productos personalizados en CDMX'));
         $seoDescription = trim($__env->yieldContent('meta_description', 'ForjaLab crea productos personalizados en CDMX: placas QR para mascotas y motociclistas, corte laser, impresion 3D, sublimacion y DTF.'));
         $seoCanonical = trim($__env->yieldContent('canonical', url()->current()));
@@ -163,5 +163,6 @@
             <button class="social-chat-trigger" type="button" aria-label="Abrir redes sociales" aria-expanded="false" aria-controls="socialChatMenu" data-social-chat-trigger><i class="bi bi-chat-heart-fill"></i><span>Contactanos</span></button>
         </div>
     @endunless
+    @stack('scripts')
 </body>
 </html>

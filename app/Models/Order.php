@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable(['folio', 'customer_id', 'created_by', 'ordered_at', 'delivery_at', 'status', 'discount_type', 'discount_value', 'subtotal', 'discount_amount', 'has_shipping', 'shipping_cost', 'total', 'advance_payment', 'balance_due', 'observations'])]
 class Order extends Model
@@ -33,4 +34,5 @@ class Order extends Model
     public function customer(): BelongsTo { return $this->belongsTo(Customer::class); }
     public function creator(): BelongsTo { return $this->belongsTo(User::class, 'created_by'); }
     public function items(): HasMany { return $this->hasMany(OrderItem::class); }
+    public function shipment(): HasOne { return $this->hasOne(Shipment::class); }
 }

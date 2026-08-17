@@ -17,6 +17,12 @@
     --orange: #f8751f;
 }
 
+.shipping-rates{display:grid;gap:.75rem}.shipping-rate{display:flex;align-items:center;gap:1rem;padding:1rem;border:1px solid #d9d0c7;border-radius:14px;background:#fff;cursor:pointer}.shipping-rate:has(input:checked){border-color:#ff7417;box-shadow:0 0 0 3px rgba(255,116,23,.14)}.shipping-rate span{display:flex;flex-direction:column;flex:1}.shipping-rate small{color:#766b62}.shipping-rate b{font-size:1.15rem}.shipping-rate input{accent-color:#ff7417}
+@media(max-width:575.98px){.shipping-rate{align-items:flex-start;gap:.65rem;padding:.85rem}.shipping-rate b{font-size:1rem}}
+
+.shipment-public{padding:8rem 0 5rem;background:linear-gradient(145deg,#fff8ec,#f5eee4);min-height:100vh}.shipment-public-hero,.shipment-summary,.shipment-public-event{background:#fff;border:1px solid rgba(32,22,14,.1);border-radius:24px;padding:2rem;box-shadow:0 16px 50px rgba(40,25,12,.07)}.shipment-status{display:inline-flex;align-items:center;gap:1rem;background:#1d1916;color:#fff;border-radius:18px;padding:1rem 1.25rem}.shipment-status i{font-size:1.7rem;color:#ff8a20}.shipment-status small,.shipment-status strong{display:block}.shipment-public-event{position:relative;margin:1rem 0 1rem 2rem}.shipment-public-event time,.shipment-event small{color:#786c63;font-size:.82rem}.shipment-public-event h3{margin:.35rem 0}.shipment-dot{position:absolute;left:-3rem;top:1.5rem;width:2rem;height:2rem;border-radius:50%;display:grid;place-items:center;background:#ff7a18;color:#fff}.shipment-media{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}.shipment-media img,.shipment-media video{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;background:#111}.shipment-event{border-left:3px solid #ff7a18;padding:0 0 1rem 1rem;margin-top:1rem}.shipment-json{max-height:360px;overflow:auto;background:#171411;color:#e9ddcf;padding:1rem;border-radius:12px;font-size:.75rem}.shipment-summary{position:sticky;top:7rem}
+@media(max-width:575.98px){.shipment-public{padding-top:6.5rem}.shipment-public-hero,.shipment-summary,.shipment-public-event{padding:1.25rem;border-radius:18px}.shipment-public-event{margin-left:1.25rem}.shipment-dot{left:-2.3rem}.shipment-media{grid-template-columns:1fr 1fr}.shipment-public h1{font-size:2rem}}
+
 /* Biker Tag campaign landing */
 .biker-sales-page { background: #f4f1eb; color: #171717; overflow: hidden; }
 .biker-sales-hero { position: relative; padding: clamp(5rem, 9vw, 8.5rem) 0 5rem; color: #fff; background: radial-gradient(circle at 80% 20%, #4b3411 0, #17130d 28%, #090909 67%); }

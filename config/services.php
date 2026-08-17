@@ -45,5 +45,15 @@ return [
         'from_name' => env('TAG_MAIL_FROM_NAME', 'ForjaLab Emergencias'),
     ],
 
+    'skydropx' => [
+        'base_url' => env('SKYDROPX_BASE_URL', 'https://pro.skydropx.com'),
+        'client_id' => env('SKYDROPX_CLIENT_ID'),
+        'client_secret' => env('SKYDROPX_CLIENT_SECRET'),
+        'origin_postal_code' => env('SKYDROPX_ORIGIN_POSTAL_CODE'),
+        'origin_state' => env('SKYDROPX_ORIGIN_STATE'),
+        'origin_city' => env('SKYDROPX_ORIGIN_CITY'),
+        'origin_neighborhood' => env('SKYDROPX_ORIGIN_NEIGHBORHOOD'),
+    ],
+
 
 ];
