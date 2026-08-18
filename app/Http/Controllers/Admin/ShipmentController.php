@@ -34,6 +34,25 @@ class ShipmentController extends Controller
         ]);
     }
 
+    public function quickQuoteView(): View
+    {
+        return view('admin.shipments.quick-quote');
+    }
+
+    public function quickQuote(Request $request, SkydropxService $skydropx): JsonResponse
+    {
+        $data = $request->validate([
+            'destination_postal_code'=>['required','string','size:5'], 'destination_state'=>['required','string','max:120'],
+            'destination_city'=>['required','string','max:120'], 'destination_neighborhood'=>['required','string','max:160'],
+            'parcel_weight'=>['required','numeric','min:0.01','max:999'], 'parcel_length'=>['required','integer','min:1','max:999'],
+            'parcel_width'=>['required','integer','min:1','max:999'], 'parcel_height'=>['required','integer','min:1','max:999'],
+        ]);
+        try {
+            $response=$skydropx->quote($this->quotationPayload($data));
+            return response()->json(['rates'=>$skydropx->rates($response),'quoted_at'=>now()->format('d/m/Y H:i')]);
+        } catch(Throwable $e) { report($e); return response()->json(['message'=>'Skydropx no pudo cotizar: '.$e->getMessage()],422); }
+    }
+
     public function create(Order $order): View
     {
         $this->ensureEligible($order);

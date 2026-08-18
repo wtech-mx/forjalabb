@@ -8,7 +8,8 @@
             <a class="{{ request()->routeIs('admin.tags.*') ? 'active' : '' }}" href="{{ route('admin.tags.index') }}"><i class="bi bi-qr-code-scan"></i><span><strong>Smart Tags</strong><small>Biker y Dog Tags</small></span></a>
             @can('orders.view')
                 <a class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}" href="{{ route('admin.orders.index') }}"><i class="bi bi-receipt-cutoff"></i><span><strong>Pedidos</strong><small>Clientes, pagos y PDF</small></span></a>
-                <a class="{{ request()->routeIs('admin.shipments.*') ? 'active' : '' }}" href="{{ route('admin.shipments.index') }}"><i class="bi bi-truck"></i><span><strong>Envios</strong><small>Guias, evidencia y seguimiento</small></span></a>
+                <a class="{{ request()->routeIs('admin.shipments.*') && ! request()->routeIs('admin.shipments.quick-quote*') ? 'active' : '' }}" href="{{ route('admin.shipments.index') }}"><i class="bi bi-truck"></i><span><strong>Envios</strong><small>Guias, evidencia y seguimiento</small></span></a>
+                <a class="{{ request()->routeIs('admin.shipments.quick-quote*') ? 'active' : '' }}" href="{{ route('admin.shipments.quick-quote') }}"><i class="bi bi-calculator-fill"></i><span><strong>Cotizador de envíos</strong><small>Tarifas rápidas de Skydropx</small></span></a>
             @endcan
             @can('customers.view')
                 <a class="{{ request()->routeIs('admin.customers.*') ? 'active' : '' }}" href="{{ route('admin.customers.index') }}"><i class="bi bi-person-lines-fill"></i><span><strong>Clientes</strong><small>Clientes y prospectos web</small></span></a>
