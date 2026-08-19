@@ -21,5 +21,23 @@
         </div>
     </form>
 </div></section>
-<script>document.querySelectorAll('[data-intake-toggle]').forEach(toggle=>{const update=()=>{const box=document.getElementById(toggle.dataset.intakeToggle);if(!box)return;box.hidden=!toggle.checked;box.querySelectorAll('input,select').forEach(input=>input.disabled=!toggle.checked)};toggle.addEventListener('change',update);update()});</script>
+<script>
+document.querySelectorAll('[data-intake-toggle]').forEach((toggle) => {
+    const update = () => {
+        const box = document.getElementById(toggle.dataset.intakeToggle);
+        if (! box) return;
+
+        const isVisible = toggle.checked;
+        box.hidden = ! isVisible;
+        box.style.display = isVisible ? '' : 'none';
+        box.querySelectorAll('input, select').forEach((input) => {
+            input.disabled = ! isVisible;
+        });
+        toggle.setAttribute('aria-expanded', String(isVisible));
+    };
+
+    toggle.addEventListener('change', update);
+    update();
+});
+</script>
 @endsection

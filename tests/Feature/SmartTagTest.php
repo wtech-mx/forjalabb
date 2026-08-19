@@ -77,4 +77,17 @@ class SmartTagTest extends TestCase
             ->assertSee('IMSS')
             ->assertSee('NSS-987654');
     }
+
+    public function test_intake_conditional_fields_cannot_be_visible_while_disabled(): void
+    {
+        $tag = SmartTag::create([
+            'type' => SmartTag::TYPE_BIKER,
+            'display_name' => 'Pendiente de captura',
+        ]);
+
+        $this->get(route('tags.intake.edit', $tag->intake_token))
+            ->assertOk()
+            ->assertSee("box.style.display = isVisible ? '' : 'none';", false)
+            ->assertSee('input.disabled = ! isVisible;', false);
+    }
 }
