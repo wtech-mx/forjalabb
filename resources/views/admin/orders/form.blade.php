@@ -116,6 +116,19 @@
                         <input class="form-control mb-3" type="time" name="delivery_time" value="{{ $deliveryTime }}">
                         <label class="form-label">Lugar de entrega</label>
                         <textarea class="form-control mb-3" name="delivery_place" rows="3" placeholder="Dirección, punto de encuentro o indicaciones">{{ old('delivery_place', $order->delivery_place) }}</textarea>
+                        <label class="form-label">Ubicacion de Google Maps</label>
+                        <input class="form-control mb-2" type="url" name="delivery_map_url" value="{{ old('delivery_map_url', $order->delivery_map_url) }}" placeholder="https://maps.google.com/...">
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <input class="form-control" type="number" step="0.0000001" name="delivery_lat" value="{{ old('delivery_lat', $order->delivery_lat) }}" placeholder="Latitud">
+                            </div>
+                            <div class="col-6">
+                                <input class="form-control" type="number" step="0.0000001" name="delivery_lng" value="{{ old('delivery_lng', $order->delivery_lng) }}" placeholder="Longitud">
+                            </div>
+                            <div class="col-12">
+                                <small class="text-secondary">Si el link de Maps trae coordenadas, se llenan al guardar. Si es link corto, pega latitud y longitud.</small>
+                            </div>
+                        </div>
                         <label class="form-label">Estado</label>
                         <select class="form-select" name="status">
                             @foreach($statuses as $value => $label)

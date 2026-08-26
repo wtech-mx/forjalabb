@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CatalogBundleController;
 use App\Http\Controllers\Admin\CatalogProductController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\DeliveryMapController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Controllers\Admin\OrderController;
@@ -202,6 +203,7 @@ Route::post('/admin/logout', [AuthController::class, 'logout'])
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', DashboardController::class)->name('dashboard');
 
+    Route::get('/deliveries/map', DeliveryMapController::class)->middleware('can:orders.view')->name('deliveries.map');
     Route::get('/reports/sales', [SalesReportController::class, 'index'])->middleware('can:orders.view')->name('reports.sales');
     Route::get('/orders/{order}/pdf', [OrderController::class, 'pdf'])->middleware('can:orders.view')->name('orders.pdf');
     Route::post('/orders/{order}/archive', [OrderController::class, 'archive'])->middleware('can:orders.manage')->name('orders.archive');

@@ -12,6 +12,9 @@
                 <a class="btn btn-outline-dark" href="{{ route('admin.orders.index', $showArchived ? [] : ['archived' => 1]) }}">
                     <i class="bi bi-archive me-2"></i>{{ $showArchived ? 'Ver activos' : 'Archivados' }}
                 </a>
+                <a class="btn btn-outline-dark" href="{{ route('admin.deliveries.map', ['date' => $deliveryDate ?: now()->format('Y-m-d')]) }}">
+                    <i class="bi bi-map-fill me-2"></i>Mapa
+                </a>
                 @can('orders.manage')
                     <a class="btn btn-dark" href="{{ route('admin.orders.create') }}"><i class="bi bi-plus-circle me-2"></i>Nuevo pedido</a>
                 @endcan

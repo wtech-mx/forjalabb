@@ -146,6 +146,9 @@ class OrderController extends Controller
             'delivery_at' => ['nullable', 'date', 'after_or_equal:ordered_at'],
             'delivery_time' => ['nullable', 'date_format:H:i'],
             'delivery_place' => ['nullable', 'string', 'max:1000'],
+            'delivery_map_url' => ['nullable', 'url', 'max:2000'],
+            'delivery_lat' => ['nullable', 'numeric', 'between:-90,90'],
+            'delivery_lng' => ['nullable', 'numeric', 'between:-180,180'],
             'status' => ['required', Rule::in(array_keys(Order::STATUSES))],
             'items' => ['required', 'array', 'min:1'],
             'items.*.item_type' => ['required', Rule::in(['product', 'bundle'])],
@@ -209,11 +212,14 @@ class OrderController extends Controller
         $total = max(0, round($subtotal - $discountAmount + $shipping, 2));
         $paymentReceived = round((float) ($data['payment_received'] ?? 0), 2);
         $advance = min(round((float) ($data['advance_payment'] ?? 0), 2) + $paymentReceived, $total);
+        [$deliveryLat, $deliveryLng] = $this->deliveryCoordinates($data);
 
         $order->fill([
             'customer_id' => $customer->id, 'created_by' => $order->created_by ?: $request->user()->id,
             'ordered_at' => $data['ordered_at'], 'delivery_at' => $data['delivery_at'] ?? null,
-            'delivery_time' => $data['delivery_time'] ?? null, 'delivery_place' => $data['delivery_place'] ?? null, 'status' => $data['status'],
+            'delivery_time' => $data['delivery_time'] ?? null, 'delivery_place' => $data['delivery_place'] ?? null,
+            'delivery_map_url' => $data['delivery_map_url'] ?? null, 'delivery_lat' => $deliveryLat, 'delivery_lng' => $deliveryLng,
+            'status' => $data['status'],
             'discount_type' => $data['discount_type'], 'discount_value' => $discountValue, 'subtotal' => $subtotal,
             'discount_amount' => $discountAmount, 'has_shipping' => $request->boolean('has_shipping'), 'shipping_cost' => $shipping,
             'total' => $total, 'advance_payment' => $advance, 'balance_due' => round($total - $advance, 2), 'observations' => $data['observations'] ?? null,
@@ -263,6 +269,34 @@ class OrderController extends Controller
                 'sort_order' => ++$sortOrder,
             ]);
         }
+    }
+
+    private function deliveryCoordinates(array $data): array
+    {
+        $lat = $data['delivery_lat'] ?? null;
+        $lng = $data['delivery_lng'] ?? null;
+
+        if (is_numeric($lat) && is_numeric($lng)) {
+            return [(float) $lat, (float) $lng];
+        }
+
+        $url = (string) ($data['delivery_map_url'] ?? '');
+
+        foreach ([
+            '/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/',
+            '/[?&]q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/',
+            '/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/',
+        ] as $pattern) {
+            if (preg_match($pattern, $url, $matches)) {
+                return [(float) $matches[1], (float) $matches[2]];
+            }
+        }
+
+        if (preg_match('/!2d(-?\d+(?:\.\d+)?)!3d(-?\d+(?:\.\d+)?)/', $url, $matches)) {
+            return [(float) $matches[2], (float) $matches[1]];
+        }
+
+        return [null, null];
     }
 
     private function storeReferenceImage($file, Order $order): string

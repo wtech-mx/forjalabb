@@ -131,6 +131,9 @@
                     <p><strong>Pedido:</strong> {{ $order->ordered_at->format('d/m/Y') }}</p>
                     <p><strong>Entrega:</strong> {{ $order->delivery_at?->format('d/m/Y') ?: 'Por definir' }}{{ $order->delivery_time ? ' · '.\Illuminate\Support\Carbon::parse($order->delivery_time)->format('H:i') : '' }}</p>
                     <p><strong>Lugar:</strong><br>{{ $order->delivery_place ?: 'Por definir' }}</p>
+                    @if($order->delivery_maps_link)
+                        <p><strong>Maps:</strong><br><a href="{{ $order->delivery_maps_link }}" target="_blank" rel="noopener">Abrir ubicacion</a></p>
+                    @endif
                     <p class="mb-0"><strong>Observaciones:</strong><br>{{ $order->observations ?: 'Sin observaciones' }}</p>
                 </div>
             </div>
