@@ -25,16 +25,19 @@ class OrderController extends Controller
     {
         $search = trim((string) $request->query('q'));
         $showArchived = $request->boolean('archived');
+        $deliveryDate = $request->date('delivery_date')?->format('Y-m-d');
 
         return view('admin.orders.index', [
             'orders' => Order::with('customer')
             ->when($showArchived, fn ($query) => $query->whereNotNull('archived_at'), fn ($query) => $query->whereNull('archived_at'))
+            ->when($deliveryDate, fn ($query) => $query->whereDate('delivery_at', $deliveryDate))
             ->when($search, function ($query) use ($search) {
                 $query->where(fn ($q) => $q->where('folio', 'like', "%{$search}%")
                     ->orWhereHas('customer', fn ($customer) => $customer->where('name', 'like', "%{$search}%")->orWhere('phone', 'like', "%{$search}%")));
-            })->latest()->paginate(15)->withQueryString(),
+            })->orderByRaw('delivery_at is null')->orderBy('delivery_at')->latest('ordered_at')->paginate(15)->withQueryString(),
             'search' => $search,
             'showArchived' => $showArchived,
+            'deliveryDate' => $deliveryDate,
         ]);
     }
 

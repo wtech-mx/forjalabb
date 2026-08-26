@@ -19,16 +19,26 @@
         </div>
 
         <div class="panel-card mb-4">
-            <form class="row g-2" method="GET">
+            <form class="row g-2 align-items-end" method="GET">
                 @if($showArchived)
                     <input type="hidden" name="archived" value="1">
                 @endif
                 <div class="col-md">
+                    <label class="form-label">Buscar</label>
                     <input class="form-control" name="q" value="{{ $search }}" placeholder="Buscar por folio, cliente o telefono">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Fecha de entrega</label>
+                    <input class="form-control" type="date" name="delivery_date" value="{{ $deliveryDate }}">
                 </div>
                 <div class="col-md-auto">
                     <button class="btn btn-outline-dark w-100"><i class="bi bi-search me-1"></i>Buscar</button>
                 </div>
+                @if($search || $deliveryDate)
+                    <div class="col-md-auto">
+                        <a class="btn btn-outline-secondary w-100" href="{{ route('admin.orders.index', $showArchived ? ['archived' => 1] : []) }}">Limpiar</a>
+                    </div>
+                @endif
             </form>
         </div>
 
@@ -39,7 +49,8 @@
                         <tr>
                             <th>Folio</th>
                             <th>Cliente</th>
-                            <th>Fecha</th>
+                            <th>Pedido</th>
+                            <th>Entrega</th>
                             <th>Estado</th>
                             <th>Total</th>
                             <th>Saldo</th>
@@ -55,6 +66,23 @@
                                     <small class="d-block text-secondary">{{ $order->customer->phone }}</small>
                                 </td>
                                 <td>{{ $order->ordered_at->format('d/m/Y') }}</td>
+                                <td>
+                                    @if($order->delivery_at)
+                                        <strong>{{ $order->delivery_at->format('d/m/Y') }}</strong>
+                                        @if($order->delivery_time)
+                                            <small class="d-block text-secondary"><i class="bi bi-clock me-1"></i>{{ \Illuminate\Support\Carbon::parse($order->delivery_time)->format('H:i') }}</small>
+                                        @else
+                                            <small class="d-block text-secondary">Sin horario</small>
+                                        @endif
+                                        @if($order->delivery_place)
+                                            <small class="d-block text-secondary" style="max-width:260px;white-space:normal;"><i class="bi bi-geo-alt me-1"></i>{{ $order->delivery_place }}</small>
+                                        @else
+                                            <small class="d-block text-secondary">Sin direccion</small>
+                                        @endif
+                                    @else
+                                        <span class="text-secondary">Por definir</span>
+                                    @endif
+                                </td>
                                 <td>
                                     <span class="badge text-bg-{{ $order->status === 'delivered' ? 'success' : ($order->status === 'cancelled' ? 'danger' : 'warning') }}">{{ \App\Models\Order::STATUSES[$order->status] }}</span>
                                     @if($order->archived_at)
@@ -84,7 +112,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-5 text-secondary">{{ $showArchived ? 'No hay pedidos archivados.' : 'Todavia no hay pedidos registrados.' }}</td>
+                                <td colspan="8" class="text-center py-5 text-secondary">{{ $showArchived ? 'No hay pedidos archivados.' : 'Todavia no hay pedidos registrados.' }}</td>
                             </tr>
                         @endforelse
                     </tbody>
