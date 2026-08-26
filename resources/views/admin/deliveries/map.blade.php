@@ -70,6 +70,8 @@
     .delivery-route-item strong{font-size:1.05rem}
     .delivery-route-item small{color:#6f665f}
     .delivery-route-item.missing-pin{border-style:dashed;background:#fff8ef}
+    .delivery-pin-label{padding:.2rem .45rem;color:#1b120b;font-weight:800;background:#fff8ec;border:1px solid rgba(32,22,14,.18);border-radius:.5rem;box-shadow:0 8px 20px rgba(32,22,14,.14)}
+    .delivery-pin-label::before{display:none}
     @media(max-width:767.98px){.delivery-map-canvas{height:480px;min-height:380px}.delivery-route-list{max-height:none}}
 </style>
 @push('scripts')
@@ -97,7 +99,7 @@
         const bounds = [];
         pins.forEach((pin) => {
             bounds.push([pin.lat, pin.lng]);
-            L.marker([pin.lat, pin.lng]).addTo(map).bindPopup(`
+            const marker = L.marker([pin.lat, pin.lng]).addTo(map).bindPopup(`
                 <strong>${escapeHtml(pin.time)} · ${escapeHtml(pin.customer)}</strong><br>
                 ${escapeHtml(pin.folio)}<br>
                 ${escapeHtml(pin.place)}<br>
@@ -105,6 +107,12 @@
                 <a href="${pin.url}">Ver pedido</a>
                 ${pin.maps_url ? ` · <a href="${pin.maps_url}" target="_blank" rel="noopener">Maps</a>` : ''}
             `);
+            marker.bindTooltip(`${pin.time} · ${pin.customer}`, {
+                permanent: true,
+                direction: 'top',
+                offset: [0, -12],
+                className: 'delivery-pin-label',
+            });
         });
 
         if (bounds.length > 1) {

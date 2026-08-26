@@ -146,7 +146,7 @@ class OrderController extends Controller
             'delivery_at' => ['nullable', 'date', 'after_or_equal:ordered_at'],
             'delivery_time' => ['nullable', 'date_format:H:i'],
             'delivery_place' => ['nullable', 'string', 'max:1000'],
-            'delivery_map_url' => ['nullable', 'url', 'max:2000'],
+            'delivery_map_url' => ['nullable', 'string', 'max:6000'],
             'delivery_lat' => ['nullable', 'numeric', 'between:-90,90'],
             'delivery_lng' => ['nullable', 'numeric', 'between:-180,180'],
             'status' => ['required', Rule::in(array_keys(Order::STATUSES))],
@@ -212,13 +212,14 @@ class OrderController extends Controller
         $total = max(0, round($subtotal - $discountAmount + $shipping, 2));
         $paymentReceived = round((float) ($data['payment_received'] ?? 0), 2);
         $advance = min(round((float) ($data['advance_payment'] ?? 0), 2) + $paymentReceived, $total);
-        [$deliveryLat, $deliveryLng] = $this->deliveryCoordinates($data);
+        $deliveryMapUrl = $this->deliveryMapUrl($data['delivery_map_url'] ?? null);
+        [$deliveryLat, $deliveryLng] = $this->deliveryCoordinates($data, $deliveryMapUrl);
 
         $order->fill([
             'customer_id' => $customer->id, 'created_by' => $order->created_by ?: $request->user()->id,
             'ordered_at' => $data['ordered_at'], 'delivery_at' => $data['delivery_at'] ?? null,
             'delivery_time' => $data['delivery_time'] ?? null, 'delivery_place' => $data['delivery_place'] ?? null,
-            'delivery_map_url' => $data['delivery_map_url'] ?? null, 'delivery_lat' => $deliveryLat, 'delivery_lng' => $deliveryLng,
+            'delivery_map_url' => $deliveryMapUrl, 'delivery_lat' => $deliveryLat, 'delivery_lng' => $deliveryLng,
             'status' => $data['status'],
             'discount_type' => $data['discount_type'], 'discount_value' => $discountValue, 'subtotal' => $subtotal,
             'discount_amount' => $discountAmount, 'has_shipping' => $request->boolean('has_shipping'), 'shipping_cost' => $shipping,
@@ -271,7 +272,22 @@ class OrderController extends Controller
         }
     }
 
-    private function deliveryCoordinates(array $data): array
+    private function deliveryMapUrl(?string $value): ?string
+    {
+        $value = trim((string) $value);
+
+        if ($value === '') {
+            return null;
+        }
+
+        if (preg_match('/<iframe[^>]+src=["\']([^"\']+)["\']/i', $value, $matches)) {
+            return html_entity_decode($matches[1], ENT_QUOTES | ENT_HTML5);
+        }
+
+        return $value;
+    }
+
+    private function deliveryCoordinates(array $data, ?string $deliveryMapUrl = null): array
     {
         $lat = $data['delivery_lat'] ?? null;
         $lng = $data['delivery_lng'] ?? null;
@@ -280,7 +296,7 @@ class OrderController extends Controller
             return [(float) $lat, (float) $lng];
         }
 
-        $url = (string) ($data['delivery_map_url'] ?? '');
+        $url = (string) ($deliveryMapUrl ?? $data['delivery_map_url'] ?? '');
 
         foreach ([
             '/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/',

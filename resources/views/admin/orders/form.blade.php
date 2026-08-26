@@ -117,7 +117,7 @@
                         <label class="form-label">Lugar de entrega</label>
                         <textarea class="form-control mb-3" name="delivery_place" rows="3" placeholder="Dirección, punto de encuentro o indicaciones">{{ old('delivery_place', $order->delivery_place) }}</textarea>
                         <label class="form-label">Ubicacion de Google Maps</label>
-                        <input class="form-control mb-2" type="url" name="delivery_map_url" value="{{ old('delivery_map_url', $order->delivery_map_url) }}" placeholder="https://maps.google.com/...">
+                        <textarea class="form-control mb-2" name="delivery_map_url" rows="3" placeholder="Pega aqui el link de Maps o el iframe completo">{{ old('delivery_map_url', $order->delivery_map_url) }}</textarea>
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <input class="form-control" type="number" step="0.0000001" name="delivery_lat" value="{{ old('delivery_lat', $order->delivery_lat) }}" placeholder="Latitud">
