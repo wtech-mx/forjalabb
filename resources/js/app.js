@@ -119,7 +119,7 @@ if (orderForm) {
         let subtotal = 0;
         itemsContainer.querySelectorAll('[data-order-item]').forEach((row) => {
             const quantity = Number(row.querySelector('[data-quantity]').value) || 0;
-            const price = Number(row.querySelector('[data-price]').value) || 0;
+            const price = Number(row.querySelector('[data-unit-price]').value) || 0;
             const line = quantity * price;
             row.querySelector('[data-line-total]').textContent = money(line);
             subtotal += line;
@@ -144,7 +144,7 @@ if (orderForm) {
         const salePackage = row.querySelector('[data-sale-package]');
         const salePackageWrap = row.querySelector('[data-sale-package-wrap]');
         const quantity = row.querySelector('[data-quantity]');
-        const price = row.querySelector('[data-price]');
+        const price = row.querySelector('[data-unit-price]');
         if (saved.item_type && saved.item_id) product.value = `${saved.item_type}:${saved.item_id}`;
         const packageLabel = (item) => `${item.name} · ${item.quantity} pza${Number(item.quantity) === 1 ? '' : 's'} · ${money(item.unit_price)} c/u`;
         const fillSalePackages = () => {
@@ -155,8 +155,8 @@ if (orderForm) {
             salePackage.innerHTML = '<option value="">Precio base</option>';
             packages.forEach((item) => {
                 const option = new Option(packageLabel(item), item.id);
-                option.dataset.quantity = item.quantity;
-                option.dataset.price = item.unit_price;
+                option.dataset.packageQuantity = item.quantity;
+                option.dataset.packagePrice = item.unit_price;
                 salePackage.add(option);
             });
 
@@ -174,8 +174,8 @@ if (orderForm) {
             const selectedPackage = salePackage.selectedOptions[0];
 
             if (!salePackage.disabled && selectedPackage?.value) {
-                price.value = selectedPackage.dataset.price ?? price.value;
-                if (updateQuantity) quantity.value = selectedPackage.dataset.quantity ?? quantity.value;
+                price.value = selectedPackage.dataset.packagePrice ?? price.value;
+                if (updateQuantity) quantity.value = selectedPackage.dataset.packageQuantity ?? quantity.value;
             } else {
                 price.value = product.selectedOptions[0]?.dataset.price ?? '';
             }

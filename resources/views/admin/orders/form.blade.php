@@ -176,7 +176,7 @@
         </div>
         <div>
             <label class="form-label">Precio unitario</label>
-            <input class="form-control" type="number" min="0" step="0.01" name="items[__INDEX__][unit_price]" data-price required>
+            <input class="form-control" type="number" min="0" step="0.01" name="items[__INDEX__][unit_price]" data-unit-price required>
         </div>
         <div>
             <label class="form-label">Importe</label>
