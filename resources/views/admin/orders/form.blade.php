@@ -56,7 +56,7 @@
                         </div>
                         <div class="row g-3 d-none" data-new-customer>
                             <div class="col-md-6"><label class="form-label">Nombre *</label><input class="form-control" name="new_customer_name" value="{{ old('new_customer_name') }}" disabled></div>
-                            <div class="col-md-6"><label class="form-label">Teléfono</label><input class="form-control" name="new_customer_phone" value="{{ old('new_customer_phone') }}" disabled></div>
+                            <div class="col-md-6"><label class="form-label">Teléfono</label><input class="form-control" type="tel" name="new_customer_phone" value="{{ old('new_customer_phone') }}" inputmode="numeric" pattern="[0-9]{10}" minlength="10" maxlength="10" placeholder="5564442949" data-phone-10 disabled><small class="text-secondary">10 dígitos, sin espacios.</small></div>
                             <div class="col-md-6"><label class="form-label">Correo</label><input class="form-control" type="email" name="new_customer_email" value="{{ old('new_customer_email') }}" disabled></div>
                             <div class="col-md-6"><label class="form-label">Dirección</label><input class="form-control" name="new_customer_address" value="{{ old('new_customer_address') }}" disabled></div>
                         </div>
@@ -134,7 +134,9 @@
                         <div class="mb-3 {{ old('has_shipping', $order->has_shipping) ? '' : 'd-none' }}" data-shipping-wrap><label class="form-label">Costo de envío</label><input class="form-control" type="number" min="0" step="0.01" name="shipping_cost" value="{{ old('shipping_cost', $order->shipping_cost ?? 0) }}" data-shipping></div>
                         <label class="form-label">Anticipo pagado</label>
                         <input class="form-control mb-3" type="number" min="0" step="0.01" name="advance_payment" value="{{ old('advance_payment', $order->advance_payment ?? 0) }}" data-advance>
-                        <div class="order-totals"><div><span>Subtotal</span><strong data-subtotal>$0.00</strong></div><div><span>Descuento</span><strong data-discount-total>-$0.00</strong></div><div><span>Envío</span><strong data-shipping-total>$0.00</strong></div><div class="total"><span>Total</span><strong data-total>$0.00</strong></div><div><span>Anticipo</span><strong data-advance-total>$0.00</strong></div><div class="balance"><span>Saldo</span><strong data-balance>$0.00</strong></div></div>
+                        <label class="form-label">Restante / liquidar ahora</label>
+                        <input class="form-control mb-3" type="number" min="0" step="0.01" name="payment_received" value="{{ old('payment_received', 0) }}" data-payment-received>
+                        <div class="order-totals"><div><span>Subtotal</span><strong data-subtotal>$0.00</strong></div><div><span>Descuento</span><strong data-discount-total>-$0.00</strong></div><div><span>Envío</span><strong data-shipping-total>$0.00</strong></div><div class="total"><span>Total</span><strong data-total>$0.00</strong></div><div><span>Pagado total</span><strong data-advance-total>$0.00</strong></div><div class="balance"><span>Saldo</span><strong data-balance>$0.00</strong></div></div>
                         <button class="btn btn-dark btn-lg w-100 mt-4"><i class="bi bi-check2-circle me-2"></i>{{ $order->exists ? 'Guardar cambios' : 'Crear pedido' }}</button>
                     </div>
                 </div>

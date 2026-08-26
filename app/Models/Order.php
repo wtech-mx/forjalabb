@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-#[Fillable(['folio', 'customer_id', 'created_by', 'ordered_at', 'delivery_at', 'delivery_time', 'delivery_place', 'status', 'discount_type', 'discount_value', 'subtotal', 'discount_amount', 'has_shipping', 'shipping_cost', 'total', 'advance_payment', 'balance_due', 'observations'])]
+#[Fillable(['folio', 'customer_id', 'created_by', 'ordered_at', 'delivery_at', 'delivery_time', 'delivery_place', 'status', 'discount_type', 'discount_value', 'subtotal', 'discount_amount', 'has_shipping', 'shipping_cost', 'total', 'advance_payment', 'balance_due', 'observations', 'archived_at'])]
 class Order extends Model
 {
     use HasFactory;
@@ -25,7 +25,7 @@ class Order extends Model
     protected function casts(): array
     {
         return [
-            'ordered_at' => 'date', 'delivery_at' => 'date', 'delivery_time' => 'datetime:H:i', 'has_shipping' => 'boolean',
+            'ordered_at' => 'date', 'delivery_at' => 'date', 'delivery_time' => 'datetime:H:i', 'archived_at' => 'datetime', 'has_shipping' => 'boolean',
             'subtotal' => 'decimal:2', 'discount_value' => 'decimal:2', 'discount_amount' => 'decimal:2',
             'shipping_cost' => 'decimal:2', 'total' => 'decimal:2', 'advance_payment' => 'decimal:2', 'balance_due' => 'decimal:2',
         ];

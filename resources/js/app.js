@@ -128,7 +128,9 @@ if (orderForm) {
         const discount = orderForm.querySelector('[data-discount-type]').value === 'percent' ? subtotal * Math.min(discountValue, 100) / 100 : Math.min(discountValue, subtotal);
         const shipping = orderForm.querySelector('[data-shipping-toggle]').checked ? Number(orderForm.querySelector('[data-shipping]').value) || 0 : 0;
         const total = Math.max(0, subtotal - discount + shipping);
-        const advance = Math.min(Number(orderForm.querySelector('[data-advance]').value) || 0, total);
+        const advanceBase = Number(orderForm.querySelector('[data-advance]').value) || 0;
+        const paymentReceived = Number(orderForm.querySelector('[data-payment-received]')?.value) || 0;
+        const advance = Math.min(advanceBase + paymentReceived, total);
         orderForm.querySelector('[data-subtotal]').textContent = money(subtotal);
         orderForm.querySelector('[data-discount-total]').textContent = `-${money(discount)}`;
         orderForm.querySelector('[data-shipping-total]').textContent = money(shipping);
@@ -192,8 +194,8 @@ if (orderForm) {
         syncPriceFromPackage(!saved.quantity);
         if (saved.unit_price) price.value = saved.unit_price;
         quantity.value = saved.quantity ?? quantity.value ?? 1;
-        product.addEventListener('change', () => { saved.sale_package_id = null; syncItem(); syncPriceFromPackage(true); calculate(); });
-        salePackage.addEventListener('change', () => { syncPriceFromPackage(true); calculate(); });
+        product.addEventListener('change', () => { saved.sale_package_id = null; saved.unit_price = null; syncItem(); syncPriceFromPackage(true); calculate(); });
+        salePackage.addEventListener('change', () => { saved.unit_price = null; syncPriceFromPackage(true); calculate(); });
         row.querySelectorAll('input').forEach((input) => input.addEventListener('input', calculate));
         row.querySelector('[data-remove-item]').addEventListener('click', () => { row.remove(); calculate(); });
         itemsContainer.append(row);
@@ -202,7 +204,7 @@ if (orderForm) {
     const saved = JSON.parse(document.querySelector('#savedOrderItems')?.textContent || '[]');
     (saved.length ? saved : [{}]).forEach(addItem);
     orderForm.querySelector('[data-add-item]').addEventListener('click', () => addItem());
-    orderForm.querySelectorAll('[data-discount], [data-advance], [data-shipping]').forEach((input) => input.addEventListener('input', calculate));
+    orderForm.querySelectorAll('[data-discount], [data-advance], [data-payment-received], [data-shipping]').forEach((input) => input.addEventListener('input', calculate));
     orderForm.querySelector('[data-discount-type]').addEventListener('change', calculate);
     orderForm.querySelector('[data-shipping-toggle]').addEventListener('change', (event) => { orderForm.querySelector('[data-shipping-wrap]').classList.toggle('d-none', !event.target.checked); calculate(); });
     const customerToggle = orderForm.querySelector('[data-new-customer-toggle]');
@@ -220,6 +222,11 @@ if (orderForm) {
         orderForm.querySelectorAll('[data-customer-select] option[data-search]').forEach((option) => option.hidden = !option.dataset.search.includes(search));
     });
     if (orderForm.dataset.createCustomer === '1') customerToggle.click();
+    orderForm.querySelectorAll('[data-phone-10]').forEach((input) => {
+        input.addEventListener('input', () => {
+            input.value = input.value.replace(/\D/g, '').slice(0, 10);
+        });
+    });
 }
 
 document.querySelectorAll('[data-social-chat]').forEach((chat) => {

@@ -24,13 +24,17 @@ class OrderController extends Controller
     public function index(Request $request): View
     {
         $search = trim((string) $request->query('q'));
+        $showArchived = $request->boolean('archived');
 
         return view('admin.orders.index', [
-            'orders' => Order::with('customer')->when($search, function ($query) use ($search) {
+            'orders' => Order::with('customer')
+            ->when($showArchived, fn ($query) => $query->whereNotNull('archived_at'), fn ($query) => $query->whereNull('archived_at'))
+            ->when($search, function ($query) use ($search) {
                 $query->where(fn ($q) => $q->where('folio', 'like', "%{$search}%")
                     ->orWhereHas('customer', fn ($customer) => $customer->where('name', 'like', "%{$search}%")->orWhere('phone', 'like', "%{$search}%")));
             })->latest()->paginate(15)->withQueryString(),
             'search' => $search,
+            'showArchived' => $showArchived,
         ]);
     }
 
@@ -61,6 +65,20 @@ class OrderController extends Controller
         DB::transaction(fn () => $this->saveOrder($order, $request));
 
         return redirect()->route('admin.orders.show', $order)->with('status', 'Pedido actualizado correctamente.');
+    }
+
+    public function archive(Order $order): RedirectResponse
+    {
+        $order->forceFill(['archived_at' => now()])->save();
+
+        return redirect()->route('admin.orders.index')->with('status', 'Pedido archivado correctamente.');
+    }
+
+    public function restore(Order $order): RedirectResponse
+    {
+        $order->forceFill(['archived_at' => null])->save();
+
+        return redirect()->route('admin.orders.show', $order)->with('status', 'Pedido restaurado correctamente.');
     }
 
     public function pdf(Order $order): Response
@@ -118,7 +136,7 @@ class OrderController extends Controller
         $data = $request->validate([
             'customer_id' => ['nullable', 'required_without:new_customer_name', 'exists:customers,id'],
             'new_customer_name' => ['nullable', 'required_without:customer_id', 'string', 'max:160'],
-            'new_customer_phone' => ['nullable', 'string', 'max:30'],
+            'new_customer_phone' => ['nullable', 'regex:/^\d{10}$/'],
             'new_customer_email' => ['nullable', 'email', 'max:160'],
             'new_customer_address' => ['nullable', 'string', 'max:1000'],
             'ordered_at' => ['required', 'date'],
@@ -143,6 +161,7 @@ class OrderController extends Controller
             'has_shipping' => ['nullable', 'boolean'],
             'shipping_cost' => ['nullable', 'numeric', 'min:0', 'max:9999999'],
             'advance_payment' => ['nullable', 'numeric', 'min:0', 'max:9999999'],
+            'payment_received' => ['nullable', 'numeric', 'min:0', 'max:9999999'],
             'observations' => ['nullable', 'string', 'max:3000'],
         ]);
 
@@ -172,7 +191,7 @@ class OrderController extends Controller
                 abort_unless($salePackage && (int) $salePackage->catalog_product_id === (int) $record->id, 422, 'La presentación elegida no pertenece al producto seleccionado.');
             }
 
-            $price = $salePackage ? ceil((float) $salePackage->unit_public_price) : ceil((float) $item['unit_price']);
+            $price = ceil((float) $item['unit_price']);
 
             return ['item_type' => $item['item_type'], 'catalog_product_id' => $isBundle ? null : $record->id,
                 'catalog_bundle_id' => $isBundle ? $record->id : null, 'catalog_product_sale_package_id' => $salePackage?->id,
@@ -185,7 +204,8 @@ class OrderController extends Controller
         $discountAmount = $data['discount_type'] === 'percent' ? round($subtotal * min($discountValue, 100) / 100, 2) : min($discountValue, $subtotal);
         $shipping = $request->boolean('has_shipping') ? round((float) ($data['shipping_cost'] ?? 0), 2) : 0;
         $total = max(0, round($subtotal - $discountAmount + $shipping, 2));
-        $advance = min(round((float) ($data['advance_payment'] ?? 0), 2), $total);
+        $paymentReceived = round((float) ($data['payment_received'] ?? 0), 2);
+        $advance = min(round((float) ($data['advance_payment'] ?? 0), 2) + $paymentReceived, $total);
 
         $order->fill([
             'customer_id' => $customer->id, 'created_by' => $order->created_by ?: $request->user()->id,
