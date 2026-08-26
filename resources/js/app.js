@@ -112,6 +112,7 @@ const orderForm = document.querySelector('[data-order-form]');
 if (orderForm) {
     const itemsContainer = orderForm.querySelector('[data-order-items]');
     const template = document.querySelector('#orderItemTemplate');
+    const productPackages = JSON.parse(document.querySelector('#orderProductPackages')?.textContent || '{}');
     let itemIndex = 0;
     const money = (value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value || 0);
     const calculate = () => {
@@ -140,19 +141,59 @@ if (orderForm) {
         const row = fragment.querySelector('[data-order-item]');
         row.innerHTML = row.innerHTML.replaceAll('__INDEX__', itemIndex++);
         const product = row.querySelector('[data-product]');
+        const salePackage = row.querySelector('[data-sale-package]');
+        const salePackageWrap = row.querySelector('[data-sale-package-wrap]');
+        const quantity = row.querySelector('[data-quantity]');
         const price = row.querySelector('[data-price]');
         if (saved.item_type && saved.item_id) product.value = `${saved.item_type}:${saved.item_id}`;
+        const packageLabel = (item) => `${item.name} · ${item.quantity} pza${Number(item.quantity) === 1 ? '' : 's'} · ${money(item.unit_price)} c/u`;
+        const fillSalePackages = () => {
+            const selected = product.selectedOptions[0];
+            const isProduct = selected?.dataset.type === 'product';
+            const packages = isProduct ? (productPackages[selected.dataset.id] || []) : [];
+
+            salePackage.innerHTML = '<option value="">Precio base</option>';
+            packages.forEach((item) => {
+                const option = new Option(packageLabel(item), item.id);
+                option.dataset.quantity = item.quantity;
+                option.dataset.price = item.unit_price;
+                salePackage.add(option);
+            });
+
+            salePackage.disabled = !packages.length;
+            salePackageWrap.classList.toggle('d-none', !isProduct || !packages.length);
+
+            if (saved.sale_package_id && packages.some((item) => String(item.id) === String(saved.sale_package_id))) {
+                salePackage.value = saved.sale_package_id;
+            } else {
+                const defaultPackage = packages.find((item) => item.is_default) || packages[0];
+                salePackage.value = defaultPackage?.id || '';
+            }
+        };
+        const syncPriceFromPackage = (updateQuantity = false) => {
+            const selectedPackage = salePackage.selectedOptions[0];
+
+            if (!salePackage.disabled && selectedPackage?.value) {
+                price.value = selectedPackage.dataset.price ?? price.value;
+                if (updateQuantity) quantity.value = selectedPackage.dataset.quantity ?? quantity.value;
+            } else {
+                price.value = product.selectedOptions[0]?.dataset.price ?? '';
+            }
+        };
         const syncItem = () => {
             const selected = product.selectedOptions[0];
             row.querySelector('[data-item-type]').value = selected?.dataset.type ?? '';
             row.querySelector('[data-item-id]').value = selected?.dataset.id ?? '';
             const contents = selected?.dataset.contents ?? '';
             row.querySelector('[data-item-contents]').textContent = contents ? `Incluye: ${contents}` : '';
+            fillSalePackages();
         };
         syncItem();
-        price.value = saved.unit_price ?? product.selectedOptions[0]?.dataset.price ?? '';
-        row.querySelector('[data-quantity]').value = saved.quantity ?? 1;
-        product.addEventListener('change', () => { syncItem(); price.value = product.selectedOptions[0]?.dataset.price ?? ''; calculate(); });
+        syncPriceFromPackage(!saved.quantity);
+        if (saved.unit_price) price.value = saved.unit_price;
+        quantity.value = saved.quantity ?? quantity.value ?? 1;
+        product.addEventListener('change', () => { saved.sale_package_id = null; syncItem(); syncPriceFromPackage(true); calculate(); });
+        salePackage.addEventListener('change', () => { syncPriceFromPackage(true); calculate(); });
         row.querySelectorAll('input').forEach((input) => input.addEventListener('input', calculate));
         row.querySelector('[data-remove-item]').addEventListener('click', () => { row.remove(); calculate(); });
         itemsContainer.append(row);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CatalogProduct;
+use App\Models\CatalogProductSalePackage;
 use App\Models\CatalogBundle;
 use App\Models\Customer;
 use App\Models\Order;
@@ -12,6 +13,7 @@ use Dompdf\Options;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -46,12 +48,12 @@ class OrderController extends Controller
 
     public function show(Order $order): View
     {
-        return view('admin.orders.show', ['order' => $order->load(['customer', 'items', 'creator', 'shipment.events.media'])]);
+        return view('admin.orders.show', ['order' => $order->load(['customer', 'items', 'references', 'creator', 'shipment.events.media'])]);
     }
 
     public function edit(Order $order): View
     {
-        return $this->form($order->load('items'));
+        return $this->form($order->load(['items', 'references']));
     }
 
     public function update(Request $request, Order $order): RedirectResponse
@@ -63,7 +65,7 @@ class OrderController extends Controller
 
     public function pdf(Order $order): Response
     {
-        $order->load(['customer', 'items.product', 'items.bundle', 'creator']);
+        $order->load(['customer', 'items.product', 'items.bundle', 'references', 'creator']);
         $order->items->each(function ($item) {
             $path = $item->item_type === 'bundle'
                 ? $item->bundle?->cover_photo_path
@@ -101,7 +103,10 @@ class OrderController extends Controller
         return view('admin.orders.form', [
             'order' => $order,
             'customers' => Customer::orderBy('name')->get(),
-            'products' => CatalogProduct::active()->orderBy('name')->get(['id', 'name', 'public_price']),
+            'products' => CatalogProduct::active()
+                ->with(['salePackages:id,catalog_product_id,name,quantity,unit_public_price,public_price,is_default,sort_order'])
+                ->orderBy('name')
+                ->get(['id', 'name', 'public_price']),
             // En pedidos administrativos se muestran todos los paquetes, incluso si no están publicados.
             'bundles' => CatalogBundle::with('items.product')->orderByDesc('is_active')->orderBy('name')->get(),
             'statuses' => Order::STATUSES,
@@ -118,12 +123,21 @@ class OrderController extends Controller
             'new_customer_address' => ['nullable', 'string', 'max:1000'],
             'ordered_at' => ['required', 'date'],
             'delivery_at' => ['nullable', 'date', 'after_or_equal:ordered_at'],
+            'delivery_time' => ['nullable', 'date_format:H:i'],
+            'delivery_place' => ['nullable', 'string', 'max:1000'],
             'status' => ['required', Rule::in(array_keys(Order::STATUSES))],
             'items' => ['required', 'array', 'min:1'],
             'items.*.item_type' => ['required', Rule::in(['product', 'bundle'])],
             'items.*.item_id' => ['required', 'integer'],
+            'items.*.sale_package_id' => ['nullable', 'integer', Rule::exists('catalog_product_sale_packages', 'id')],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:99999'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0', 'max:9999999'],
+            'reference_links' => ['nullable', 'array'],
+            'reference_links.*' => ['nullable', 'url', 'max:1000'],
+            'reference_files' => ['nullable', 'array'],
+            'reference_files.*' => ['nullable', 'image', 'max:10240'],
+            'remove_references' => ['nullable', 'array'],
+            'remove_references.*' => ['integer'],
             'discount_type' => ['required', Rule::in(['fixed', 'percent'])],
             'discount_value' => ['nullable', 'numeric', 'min:0', 'max:9999999'],
             'has_shipping' => ['nullable', 'boolean'],
@@ -143,17 +157,28 @@ class OrderController extends Controller
         $bundleIds = collect($data['items'])->where('item_type', 'bundle')->pluck('item_id');
         $products = CatalogProduct::whereIn('id', $productIds)->get()->keyBy('id');
         $bundles = CatalogBundle::with('items.product')->whereIn('id', $bundleIds)->get()->keyBy('id');
-        $items = collect($data['items'])->map(function ($item) use ($products, $bundles) {
+        $salePackageIds = collect($data['items'])->where('item_type', 'product')->pluck('sale_package_id')->filter();
+        $salePackages = CatalogProductSalePackage::whereIn('id', $salePackageIds)->get()->keyBy('id');
+        $items = collect($data['items'])->map(function ($item) use ($products, $bundles, $salePackages) {
             $isBundle = $item['item_type'] === 'bundle';
             $record = $isBundle ? $bundles->get($item['item_id']) : $products->get($item['item_id']);
             abort_unless($record, 422, 'Uno de los productos o paquetes ya no está disponible.');
             $quantity = (int) $item['quantity'];
-            $price = round((float) $item['unit_price'], 2);
             $contents = $isBundle ? $record->items->map(fn ($bundleItem) => $bundleItem->quantity.' × '.($bundleItem->product?->name ?? 'Producto'))->join("\n") : null;
+            $salePackage = null;
+
+            if (! $isBundle && filled($item['sale_package_id'] ?? null)) {
+                $salePackage = $salePackages->get((int) $item['sale_package_id']);
+                abort_unless($salePackage && (int) $salePackage->catalog_product_id === (int) $record->id, 422, 'La presentación elegida no pertenece al producto seleccionado.');
+            }
+
+            $price = $salePackage ? ceil((float) $salePackage->unit_public_price) : ceil((float) $item['unit_price']);
+
             return ['item_type' => $item['item_type'], 'catalog_product_id' => $isBundle ? null : $record->id,
-                'catalog_bundle_id' => $isBundle ? $record->id : null, 'product_name' => $record->name,
-                'contents_snapshot' => $contents, 'quantity' => $quantity, 'unit_price' => $price,
-                'line_total' => round($quantity * $price, 2)];
+                'catalog_bundle_id' => $isBundle ? $record->id : null, 'catalog_product_sale_package_id' => $salePackage?->id,
+                'product_name' => $record->name, 'contents_snapshot' => $contents,
+                'sale_package_name' => $salePackage?->name, 'sale_package_quantity' => $salePackage?->quantity,
+                'quantity' => $quantity, 'unit_price' => $price, 'line_total' => ceil($quantity * $price)];
         });
         $subtotal = round($items->sum('line_total'), 2);
         $discountValue = round((float) ($data['discount_value'] ?? 0), 2);
@@ -164,7 +189,8 @@ class OrderController extends Controller
 
         $order->fill([
             'customer_id' => $customer->id, 'created_by' => $order->created_by ?: $request->user()->id,
-            'ordered_at' => $data['ordered_at'], 'delivery_at' => $data['delivery_at'] ?? null, 'status' => $data['status'],
+            'ordered_at' => $data['ordered_at'], 'delivery_at' => $data['delivery_at'] ?? null,
+            'delivery_time' => $data['delivery_time'] ?? null, 'delivery_place' => $data['delivery_place'] ?? null, 'status' => $data['status'],
             'discount_type' => $data['discount_type'], 'discount_value' => $discountValue, 'subtotal' => $subtotal,
             'discount_amount' => $discountAmount, 'has_shipping' => $request->boolean('has_shipping'), 'shipping_cost' => $shipping,
             'total' => $total, 'advance_payment' => $advance, 'balance_due' => round($total - $advance, 2), 'observations' => $data['observations'] ?? null,
@@ -175,7 +201,73 @@ class OrderController extends Controller
         $order->save();
         $order->items()->delete();
         $order->items()->createMany($items->all());
+        $this->syncReferences($order, $request);
 
         return $order;
+    }
+
+    private function syncReferences(Order $order, Request $request): void
+    {
+        $removeIds = collect($request->input('remove_references', []))->map(fn ($id) => (int) $id)->filter();
+
+        if ($removeIds->isNotEmpty()) {
+            $order->references()->whereIn('id', $removeIds)->get()->each(function ($reference) {
+                $this->deletePublicFile($reference->path);
+                $reference->delete();
+            });
+        }
+
+        $sortOrder = (int) ($order->references()->max('sort_order') ?? 0);
+
+        foreach (array_filter($request->input('reference_links', [])) as $url) {
+            $order->references()->create([
+                'type' => 'link',
+                'url' => trim((string) $url),
+                'label' => parse_url((string) $url, PHP_URL_HOST) ?: 'Referencia',
+                'sort_order' => ++$sortOrder,
+            ]);
+        }
+
+        foreach ($request->file('reference_files', []) as $file) {
+            if (! $file->isValid()) {
+                continue;
+            }
+
+            $order->references()->create([
+                'type' => 'image',
+                'path' => $this->storeReferenceImage($file, $order),
+                'label' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+                'sort_order' => ++$sortOrder,
+            ]);
+        }
+    }
+
+    private function storeReferenceImage($file, Order $order): string
+    {
+        $directory = 'images/orders/'.$order->id.'/referencias';
+        $absoluteDirectory = public_path($directory);
+
+        if (! File::isDirectory($absoluteDirectory)) {
+            File::makeDirectory($absoluteDirectory, 0755, true);
+        }
+
+        $extension = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+        $filename = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)).'-'.Str::uuid().'.'.$extension;
+        $file->move($absoluteDirectory, $filename);
+
+        return $directory.'/'.$filename;
+    }
+
+    private function deletePublicFile(?string $path): void
+    {
+        if (blank($path) || Str::startsWith($path, ['http://', 'https://'])) {
+            return;
+        }
+
+        $absolutePath = public_path(ltrim($path, '/\\'));
+
+        if (is_file($absolutePath)) {
+            @unlink($absolutePath);
+        }
     }
 }
