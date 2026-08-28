@@ -19,6 +19,11 @@ return [
 
     'default' => env('DB_CONNECTION', 'sqlite'),
 
+    'backup_binaries' => [
+        'mysqldump' => env('DB_MYSQLDUMP_BINARY'),
+        'mysql' => env('DB_MYSQL_BINARY'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Database Connections

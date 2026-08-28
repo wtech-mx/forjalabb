@@ -24,6 +24,9 @@ class Permission extends Model
             ['roles.view', 'Ver roles'],
             ['roles.manage', 'Crear y editar roles'],
         ],
+        'Configuracion' => [
+            ['settings.manage', 'Descargar y restaurar respaldos de base de datos'],
+        ],
         'Catalogo' => [
             ['catalog.view', 'Ver catalogo'],
             ['catalog.manage', 'Crear y editar productos'],

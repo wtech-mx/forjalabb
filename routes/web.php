@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SalesReportController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SmartTagController;
 use App\Http\Controllers\Admin\ShipmentController;
 use App\Http\Controllers\Admin\UserController;
@@ -203,7 +204,13 @@ Route::post('/admin/logout', [AuthController::class, 'logout'])
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', DashboardController::class)->name('dashboard');
 
+    Route::get('/settings', [SettingsController::class, 'index'])->middleware('can:settings.manage')->name('settings.index');
+    Route::post('/settings/database/download', [SettingsController::class, 'download'])->middleware(['can:settings.manage', 'throttle:5,1'])->name('settings.database.download');
+    Route::post('/settings/database/restore', [SettingsController::class, 'restore'])->middleware(['can:settings.manage', 'throttle:2,1'])->name('settings.database.restore');
+
     Route::get('/deliveries/map', DeliveryMapController::class)->middleware('can:orders.view')->name('deliveries.map');
+    Route::get('/deliveries/locations', [DeliveryMapController::class, 'locations'])->middleware('can:orders.view')->name('deliveries.locations');
+    Route::post('/deliveries/locations', [DeliveryMapController::class, 'storeLocation'])->middleware(['can:orders.view', 'throttle:30,1'])->name('deliveries.locations.store');
     Route::get('/reports/sales', [SalesReportController::class, 'index'])->middleware('can:orders.view')->name('reports.sales');
     Route::get('/orders/{order}/pdf', [OrderController::class, 'pdf'])->middleware('can:orders.view')->name('orders.pdf');
     Route::post('/orders/{order}/archive', [OrderController::class, 'archive'])->middleware('can:orders.manage')->name('orders.archive');

@@ -25,6 +25,7 @@
             @endcan
             @can('users.view')<a class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}"><i class="bi bi-people-fill"></i><span><strong>Usuarios</strong><small>Cuentas administrativas</small></span></a>@endcan
             @can('roles.view')<a class="{{ request()->routeIs('admin.roles.*') ? 'active' : '' }}" href="{{ route('admin.roles.index') }}"><i class="bi bi-shield-lock-fill"></i><span><strong>Roles</strong><small>Permisos y accesos</small></span></a>@endcan
+            @can('settings.manage')<a class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}" href="{{ route('admin.settings.index') }}"><i class="bi bi-gear-fill"></i><span><strong>Configuracion</strong><small>Respaldos del sistema</small></span></a>@endcan
         </nav>
         <div class="admin-sidebar-footer"><a href="{{ route('home') }}"><i class="bi bi-box-arrow-up-right"></i>Ver sitio publico</a><form method="POST" action="{{ route('logout') }}">@csrf<button type="submit"><i class="bi bi-box-arrow-left"></i>Cerrar sesion</button></form></div>
     </div>
