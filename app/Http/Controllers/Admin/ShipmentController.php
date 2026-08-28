@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Throwable;
@@ -34,9 +35,65 @@ class ShipmentController extends Controller
         ]);
     }
 
-    public function quickQuoteView(): View
+    public function quickQuoteView(SkydropxService $skydropx): View
     {
-        return view('admin.shipments.quick-quote');
+        $apiError = null;
+        $guides = collect();
+        $pickups = collect();
+        $balance = null;
+
+        try {
+            $shipmentsResponse = $skydropx->shipments();
+            $guides = $this->normalizeSkydropxShipments($shipmentsResponse);
+            $balanceResponse = $skydropx->balance();
+            $balance = [
+                'amount' => (float) data_get($balanceResponse, 'data.balance', 0),
+                'currency' => data_get($balanceResponse, 'data.currency', 'MXN'),
+            ];
+            $pickups = $this->normalizePickups($skydropx->pickups());
+        } catch (Throwable $e) {
+            report($e);
+            $apiError = 'No se pudo sincronizar Skydropx: '.$e->getMessage();
+        }
+
+        return view('admin.shipments.quick-quote', compact('guides', 'pickups', 'balance', 'apiError'));
+    }
+
+    public function pickupCoverage(Request $request, SkydropxService $skydropx): JsonResponse
+    {
+        $data = $request->validate(['shipment_id' => ['required', 'uuid']]);
+        try {
+            return response()->json($skydropx->pickupCoverage($data['shipment_id']));
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['message' => 'No se pudo consultar la cobertura: '.$e->getMessage()], 422);
+        }
+    }
+
+    public function schedulePickup(Request $request, SkydropxService $skydropx): RedirectResponse
+    {
+        $data = $request->validate([
+            'reference_shipment_id' => ['required', 'uuid'],
+            'packages' => ['required', 'integer', 'min:1', 'max:100'],
+            'total_weight' => ['required', 'numeric', 'min:0.01', 'max:9999'],
+            'scheduled_from' => ['required', 'date', 'after:now'],
+            'scheduled_to' => ['required', 'date', 'after:scheduled_from'],
+        ]);
+
+        try {
+            $skydropx->schedulePickup([
+                'reference_shipment_id' => $data['reference_shipment_id'],
+                'packages' => (int) $data['packages'],
+                'total_weight' => (float) $data['total_weight'],
+                'scheduled_from' => Carbon::parse($data['scheduled_from'])->format('Y-m-d H:i:s'),
+                'scheduled_to' => Carbon::parse($data['scheduled_to'])->format('Y-m-d H:i:s'),
+            ]);
+
+            return redirect()->route('admin.shipments.quick-quote', ['tab' => 'pickups'])->with('status', 'Recoleccion solicitada correctamente a Skydropx.');
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withInput()->withErrors(['pickup' => 'No se pudo solicitar la recoleccion: '.$e->getMessage()]);
+        }
     }
 
     public function quickQuote(Request $request, SkydropxService $skydropx): JsonResponse
@@ -198,5 +255,69 @@ class ShipmentController extends Controller
     {
         abort_unless($order->has_shipping, 422, 'El pedido no tiene envío habilitado.');
         abort_unless(in_array($order->status, ['in_progress','ready','delivered'], true), 422, 'El envío se habilita cuando el pedido entra a producción.');
+    }
+
+    private function normalizeSkydropxShipments(array $response)
+    {
+        $included = collect($response['included'] ?? []);
+
+        return collect($response['data'] ?? [])->map(function (array $shipment) use ($included) {
+            $attributes = $shipment['attributes'] ?? $shipment;
+            $related = $included->filter(fn ($item) => data_get($item, 'relationships.shipment.data.id') === ($shipment['id'] ?? null));
+            $label = $related->first(fn ($item) =>
+                str_contains(strtolower((string) ($item['type'] ?? '')), 'label')
+                || filled(data_get($item, 'attributes.label_url'))
+                || filled(data_get($item, 'attributes.tracking_number'))
+            );
+            $labelAttributes = $label['attributes'] ?? [];
+            $address = $related->first(fn ($item) => in_array(strtolower((string) ($item['type'] ?? '')), ['address', 'addresses'], true) && data_get($item, 'attributes.address_type') === 'to');
+            $status = strtolower((string) ($attributes['workflow_status'] ?? $attributes['status'] ?? 'created'));
+            $tracking = $attributes['master_tracking_number'] ?? $labelAttributes['tracking_number'] ?? null;
+            $carrier = $attributes['carrier_name'] ?? data_get($attributes, 'rate.provider_display_name') ?? 'Paqueteria';
+
+            return [
+                'id' => $shipment['id'] ?? $attributes['id'] ?? '',
+                'carrier' => $carrier,
+                'status' => $status,
+                'active' => ! in_array($status, ['delivered', 'cancelled', 'canceled', 'error'], true),
+                'tracking_number' => $tracking,
+                'tracking_url' => $attributes['tracking_url'] ?? $labelAttributes['tracking_url_provider'] ?? $this->carrierTrackingUrl($carrier, $tracking),
+                'label_url' => $attributes['label_url'] ?? $labelAttributes['label_url'] ?? null,
+                'recipient' => data_get($address, 'attributes.name'),
+                'created_at' => $attributes['created_at'] ?? null,
+                'total' => (float) ($attributes['total'] ?? 0),
+            ];
+        })->filter(fn ($shipment) => $shipment['active'])->values();
+    }
+
+    private function normalizePickups(array $response)
+    {
+        return collect($response['data'] ?? [])->map(function (array $pickup) {
+            $attributes = $pickup['attributes'] ?? $pickup;
+            return [
+                'id' => $pickup['id'] ?? $attributes['id'] ?? '',
+                'status' => $attributes['status'] ?? 'pending',
+                'request_number' => $attributes['request_number'] ?? null,
+                'packages' => $attributes['packages'] ?? 0,
+                'weight' => $attributes['total_weight'] ?? 0,
+                'from' => $attributes['scheduled_from'] ?? null,
+                'to' => $attributes['scheduled_to'] ?? null,
+                'error' => $attributes['error_reason'] ?? null,
+            ];
+        });
+    }
+
+    private function carrierTrackingUrl(string $carrier, ?string $tracking): ?string
+    {
+        if (! $tracking) return null;
+        $name = strtolower($carrier);
+        return match (true) {
+            str_contains($name, 'dhl') => 'https://www.dhl.com/mx-es/home/rastreo.html?tracking-id='.urlencode($tracking),
+            str_contains($name, 'fedex') => 'https://www.fedex.com/fedextrack/?trknbr='.urlencode($tracking),
+            str_contains($name, 'estafeta') => 'https://www.estafeta.com/Herramientas/Rastreo?guias='.urlencode($tracking),
+            str_contains($name, 'ups') => 'https://www.ups.com/track?tracknum='.urlencode($tracking),
+            str_contains($name, 'paquetexpress') => 'https://www.paquetexpress.com.mx/rastreo/'.urlencode($tracking),
+            default => null,
+        };
     }
 }

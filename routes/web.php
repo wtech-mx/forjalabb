@@ -220,6 +220,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/shipments', [ShipmentController::class, 'index'])->middleware('can:orders.view')->name('shipments.index');
     Route::get('/shipping-quote', [ShipmentController::class, 'quickQuoteView'])->middleware('can:orders.view')->name('shipments.quick-quote');
     Route::post('/shipping-quote', [ShipmentController::class, 'quickQuote'])->middleware('can:orders.view')->name('shipments.quick-quote.calculate');
+    Route::get('/shipping-quote/pickup-coverage', [ShipmentController::class, 'pickupCoverage'])->middleware('can:orders.view')->name('shipments.pickup-coverage');
+    Route::post('/shipping-quote/pickups', [ShipmentController::class, 'schedulePickup'])->middleware(['can:orders.manage', 'throttle:5,1'])->name('shipments.pickups.store');
     Route::get('/shipments/create', [ShipmentController::class, 'selectOrder'])->middleware('can:orders.manage')->name('shipments.select-order');
     Route::get('/shipments/postal-code/{postalCode}', [ShipmentController::class, 'postalCode'])->middleware('can:orders.manage')->name('shipments.postal-code');
     Route::post('/orders/{order}/shipment/quote', [ShipmentController::class, 'draftQuote'])->middleware('can:orders.manage')->name('shipments.draft-quote');

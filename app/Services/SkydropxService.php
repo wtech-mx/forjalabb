@@ -8,6 +8,31 @@ use RuntimeException;
 
 class SkydropxService
 {
+    public function shipments(int $page = 1): array
+    {
+        return $this->request('get', '/api/v1/shipments', ['page' => $page]);
+    }
+
+    public function balance(): array
+    {
+        return $this->request('get', '/api/v1/finance/credits');
+    }
+
+    public function pickups(int $page = 1): array
+    {
+        return $this->request('get', '/api/v1/pickups', ['page' => $page]);
+    }
+
+    public function pickupCoverage(string $shipmentId): array
+    {
+        return $this->request('get', '/api/v1/pickups/coverage', ['shipment_id' => $shipmentId]);
+    }
+
+    public function schedulePickup(array $pickup): array
+    {
+        return $this->request('post', '/api/v1/pickups/', ['pickup' => $pickup]);
+    }
+
     public function quote(array $quotation): array
     {
         $response = Http::acceptJson()->withToken($this->token())->timeout(30)
@@ -90,6 +115,16 @@ class SkydropxService
             if (blank($token)) throw new RuntimeException('Skydropx no devolvió un token de acceso.');
             return $token;
         });
+    }
+
+    private function request(string $method, string $path, array $data = []): array
+    {
+        $request = Http::acceptJson()->withToken($this->token())->timeout(45);
+        $response = $method === 'get'
+            ? $request->get($this->url($path), $data)
+            : $request->post($this->url($path), $data);
+
+        return $response->throw()->json();
     }
 
     private function url(string $path): string
