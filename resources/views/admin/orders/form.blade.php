@@ -33,15 +33,15 @@
             </div>
         </div>
 
-        <form method="POST" enctype="multipart/form-data" action="{{ $order->exists ? route('admin.orders.update', $order) : route('admin.orders.store') }}" data-order-form data-create-customer="{{ old('new_customer_name') ? '1' : '0' }}">
+        <form class="order-editor" method="POST" enctype="multipart/form-data" action="{{ $order->exists ? route('admin.orders.update', $order) : route('admin.orders.store') }}" data-order-form data-create-customer="{{ old('new_customer_name') ? '1' : '0' }}">
             @csrf
             @if($order->exists) @method('PUT') @endif
 
             <div class="row g-4">
                 <div class="col-lg-8">
-                    <div class="panel-card mb-4">
+                    <div class="panel-card order-editor-card order-editor-customer mb-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h2 class="h5 fw-bold mb-0"><i class="bi bi-person-fill me-2"></i>¿A quién se le entregará?</h2>
+                            <h2 class="h5 fw-bold mb-0 order-editor-title"><span><i class="bi bi-person-vcard-fill"></i></span>¿A quién se le entregará?</h2>
                             <button class="btn btn-sm btn-outline-dark" type="button" data-new-customer-toggle><i class="bi bi-person-plus me-1"></i>Crear cliente</button>
                         </div>
                         <div data-existing-customer>
@@ -62,16 +62,16 @@
                         </div>
                     </div>
 
-                    <div class="panel-card mb-4">
+                    <div class="panel-card order-editor-card order-editor-products mb-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h2 class="h5 fw-bold mb-0"><i class="bi bi-bag-check-fill me-2"></i>Productos y paquetes</h2>
+                            <h2 class="h5 fw-bold mb-0 order-editor-title"><span><i class="bi bi-bag-check-fill"></i></span>Productos y paquetes</h2>
                             <button class="btn btn-sm btn-dark" type="button" data-add-item><i class="bi bi-plus-lg me-1"></i>Agregar concepto</button>
                         </div>
                         <div class="order-items" data-order-items></div>
                     </div>
 
-                    <div class="panel-card mb-4">
-                        <h2 class="h5 fw-bold"><i class="bi bi-images me-2"></i>Referencias del cliente</h2>
+                    <div class="panel-card order-editor-card order-editor-references mb-4">
+                        <h2 class="h5 fw-bold order-editor-title"><span><i class="bi bi-images"></i></span>Referencias del cliente</h2>
                         <p class="text-secondary mb-3">Agrega fotos que mande el cliente o links de inspiración para este pedido.</p>
                         @if($order->exists && $order->references->isNotEmpty())
                             <div class="order-reference-grid mb-3">
@@ -99,15 +99,15 @@
                         </div>
                     </div>
 
-                    <div class="panel-card">
-                        <h2 class="h5 fw-bold"><i class="bi bi-card-text me-2"></i>Observaciones</h2>
+                    <div class="panel-card order-editor-card order-editor-notes">
+                        <h2 class="h5 fw-bold order-editor-title"><span><i class="bi bi-chat-left-text-fill"></i></span>Observaciones</h2>
                         <textarea class="form-control" name="observations" rows="4" placeholder="Colores, personalización, acuerdos o indicaciones especiales...">{{ old('observations', $order->observations) }}</textarea>
                     </div>
                 </div>
 
                 <div class="col-lg-4">
-                    <div class="panel-card mb-4">
-                        <h2 class="h5 fw-bold">Entrega y estado</h2>
+                    <div class="panel-card order-editor-card order-editor-delivery mb-4">
+                        <h2 class="h5 fw-bold order-editor-title"><span><i class="bi bi-truck-front-fill"></i></span>Entrega y estado</h2>
                         <label class="form-label">Fecha del pedido</label>
                         <input class="form-control mb-3" type="date" name="ordered_at" value="{{ old('ordered_at', $order->ordered_at?->format('Y-m-d') ?? now()->format('Y-m-d')) }}" required>
                         <label class="form-label">Día de entrega</label>
@@ -137,8 +137,8 @@
                         </select>
                     </div>
 
-                    <div class="panel-card order-summary">
-                        <h2 class="h5 fw-bold">Resumen</h2>
+                    <div class="panel-card order-editor-card order-editor-summary order-summary">
+                        <h2 class="h5 fw-bold order-editor-title"><span><i class="bi bi-calculator-fill"></i></span>Resumen</h2>
                         <div class="row g-2 mb-3">
                             <div class="col-5"><label class="form-label">Descuento</label><select class="form-select" name="discount_type" data-discount-type><option value="fixed" @selected(old('discount_type', $order->discount_type) === 'fixed')>$ MXN</option><option value="percent" @selected(old('discount_type', $order->discount_type) === 'percent')>%</option></select></div>
                             <div class="col-7"><label class="form-label">Cantidad</label><input class="form-control" type="number" min="0" step="0.01" name="discount_value" value="{{ old('discount_value', $order->discount_value ?? 0) }}" data-discount></div>

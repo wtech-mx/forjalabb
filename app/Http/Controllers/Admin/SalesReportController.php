@@ -61,6 +61,21 @@ class SalesReportController extends Controller
         $totalPaid = (float) $orders->sum('advance_payment');
         $totalPending = (float) $orders->sum('balance_due');
 
+        $dailyRows = collect();
+        for ($day = $start->copy(); $day->lte($end); $day->addDay()) {
+            $dailyRows->put($day->toDateString(), ['label' => $day->format($mode === 'week' ? 'D d' : 'd M'), 'sales' => 0, 'expense' => 0, 'profit' => 0]);
+        }
+        foreach ($orders as $order) {
+            $key = $order->ordered_at->toDateString();
+            if (! $dailyRows->has($key)) continue;
+            $expense = (float) $order->items->sum(fn ($item) => $this->itemExpense($item));
+            $row = $dailyRows->get($key);
+            $row['sales'] += (float) $order->total;
+            $row['expense'] += $expense;
+            $row['profit'] += (float) $order->total - $expense;
+            $dailyRows->put($key, $row);
+        }
+
         return view('admin.reports.sales', [
             'mode' => $mode,
             'date' => $date,
@@ -77,6 +92,11 @@ class SalesReportController extends Controller
                 'total_pending' => $totalPending,
                 'total_expense' => $totalExpense,
                 'estimated_profit' => $totalSold - $totalExpense,
+            ],
+            'chartData' => [
+                'daily' => $dailyRows->values(),
+                'products' => $productRows->take(8)->values(),
+                'payments' => ['paid' => $totalPaid, 'pending' => $totalPending],
             ],
         ]);
     }

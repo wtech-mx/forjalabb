@@ -44,6 +44,28 @@
             <div class="col-lg-3 col-6"><div class="panel-card h-100"><small class="text-secondary">Utilidad estimada</small><h2 class="h3 fw-bold mb-0">${{ number_format($summary['estimated_profit'], 0) }}</h2></div></div>
         </div>
 
+        <div class="row g-4 mb-4 report-chart-grid">
+            <div class="col-xl-8">
+                <div class="panel-card h-100 report-chart-card">
+                    <div class="report-chart-heading"><div><div class="eyebrow">Comportamiento del periodo</div><h2 class="h5 fw-bold mb-0">Ventas, gastos y utilidad</h2></div><i class="bi bi-graph-up-arrow"></i></div>
+                    <div class="report-chart-main"><canvas id="sales-timeline-chart" aria-label="Grafica de ventas, gastos y utilidad"></canvas></div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="panel-card h-100 report-chart-card">
+                    <div class="report-chart-heading"><div><div class="eyebrow">Estado de cobro</div><h2 class="h5 fw-bold mb-0">Cobrado y pendiente</h2></div><i class="bi bi-pie-chart-fill"></i></div>
+                    <div class="report-chart-doughnut"><canvas id="payments-chart" aria-label="Grafica de pagos cobrados y pendientes"></canvas></div>
+                    <div class="report-payment-legend"><span><i class="paid"></i>Cobrado <strong>${{ number_format($summary['total_paid'], 0) }}</strong></span><span><i class="pending"></i>Pendiente <strong>${{ number_format($summary['total_pending'], 0) }}</strong></span></div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="panel-card report-chart-card">
+                    <div class="report-chart-heading"><div><div class="eyebrow">Productos destacados</div><h2 class="h5 fw-bold mb-0">Los que generan mayores ventas</h2></div><i class="bi bi-bar-chart-fill"></i></div>
+                    <div class="report-chart-products"><canvas id="products-chart" aria-label="Grafica de ventas y utilidad por producto"></canvas></div>
+                </div>
+            </div>
+        </div>
+
         <div class="row g-4">
             <div class="col-lg-7">
                 <div class="panel-card h-100">
@@ -107,3 +129,35 @@
     </div>
 </section>
 @endsection
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const data = @json($chartData);
+    const money = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
+    const grid = 'rgba(90,53,29,.09)';
+    const tooltip = { callbacks: { label: context => `${context.dataset.label}: ${money.format(context.raw)}` } };
+
+    new Chart(document.getElementById('sales-timeline-chart'), {
+        type: 'line',
+        data: { labels: data.daily.map(x => x.label), datasets: [
+            { label: 'Ventas', data: data.daily.map(x => x.sales), borderColor: '#ed741d', backgroundColor: 'rgba(237,116,29,.12)', fill: true, tension: .35, pointRadius: 3 },
+            { label: 'Gastos', data: data.daily.map(x => x.expense), borderColor: '#b94b55', backgroundColor: 'transparent', tension: .35, pointRadius: 2 },
+            { label: 'Utilidad', data: data.daily.map(x => x.profit), borderColor: '#47763b', backgroundColor: 'transparent', tension: .35, pointRadius: 2 },
+        ]},
+        options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { tooltip }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: grid }, ticks: { callback: value => money.format(value) } } } }
+    });
+
+    new Chart(document.getElementById('payments-chart'), {
+        type: 'doughnut', data: { labels: ['Cobrado', 'Pendiente'], datasets: [{ data: [data.payments.paid, data.payments.pending], backgroundColor: ['#47763b', '#d45151'], borderWidth: 0, hoverOffset: 8 }] },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { display: false }, tooltip } }
+    });
+
+    new Chart(document.getElementById('products-chart'), {
+        type: 'bar', data: { labels: data.products.map(x => x.name), datasets: [
+            { label: 'Vendido', data: data.products.map(x => x.revenue), backgroundColor: '#ed741d', borderRadius: 6 },
+            { label: 'Utilidad', data: data.products.map(x => x.profit), backgroundColor: '#5f873f', borderRadius: 6 },
+        ]}, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { tooltip }, scales: { x: { beginAtZero: true, grid: { color: grid }, ticks: { callback: value => money.format(value) } }, y: { grid: { display: false } } } }
+    });
+});
+</script>
+@endpush

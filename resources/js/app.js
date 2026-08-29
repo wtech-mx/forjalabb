@@ -1,4 +1,7 @@
 import 'bootstrap';
+import Chart from 'chart.js/auto';
+
+window.Chart = Chart;
 
 document.querySelectorAll('[data-magazine-gallery]').forEach((gallery) => {
     const main = gallery.querySelector('[data-magazine-gallery-main]');
