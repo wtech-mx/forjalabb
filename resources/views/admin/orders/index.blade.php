@@ -111,7 +111,7 @@
                                                     <button class="btn btn-sm btn-success" type="submit"><i class="bi bi-arrow-counterclockwise me-1"></i>Restaurar</button>
                                                 </form>
                                             @else
-                                                <form method="POST" action="{{ route('admin.orders.archive', $order) }}" onsubmit="return confirm('Archivar este pedido? Ya no aparecera en la lista principal.')">
+                                                <form method="POST" action="{{ route('admin.orders.archive', $order) }}" data-confirm="Ya no aparecerá en la lista principal, pero podrás restaurarlo después." data-confirm-title="¿Archivar este pedido?" data-confirm-button="Sí, archivar">
                                                     @csrf
                                                     <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="bi bi-archive"></i></button>
                                                 </form>

@@ -38,7 +38,7 @@
                             <a class="btn btn-outline-dark" href="{{ route('admin.catalog.preview', $product) }}" title="Vista previa"><i class="bi bi-eye"></i></a>
                             @can('catalog.manage')
                                 <a class="btn btn-outline-dark" href="{{ route('admin.catalog.edit', $product) }}" title="Editar"><i class="bi bi-pencil"></i></a>
-                                <form method="POST" action="{{ route('admin.catalog.destroy', $product) }}" onsubmit="return confirm('¿Eliminar este producto?')">
+                                <form method="POST" action="{{ route('admin.catalog.destroy', $product) }}" data-confirm="¿Eliminar este producto?" data-confirm-title="Eliminar producto" data-confirm-button="Sí, eliminar">
                                     @csrf
                                     @method('DELETE')
                                     <button class="btn btn-outline-danger" type="submit" title="Eliminar"><i class="bi bi-trash"></i></button>

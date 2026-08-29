@@ -40,7 +40,7 @@
                         <a class="btn btn-dark" href="{{ route('admin.orders.edit', $order) }}">
                             <i class="bi bi-pencil me-2"></i>Editar
                         </a>
-                        <form method="POST" action="{{ route('admin.orders.archive', $order) }}" onsubmit="return confirm('Archivar este pedido? Ya no aparecera en la lista principal.')">
+                        <form method="POST" action="{{ route('admin.orders.archive', $order) }}" data-confirm="Ya no aparecerá en la lista principal, pero podrás restaurarlo después." data-confirm-title="¿Archivar este pedido?" data-confirm-button="Sí, archivar">
                             @csrf
                             <button class="btn btn-outline-secondary" type="submit">
                                 <i class="bi bi-archive me-2"></i>Archivar
@@ -134,6 +134,20 @@
                     <a class="order-info-row" href="mailto:{{ $order->customer->email }}"><i class="bi bi-envelope-fill"></i><span><small>Correo</small>{{ $order->customer->email ?: 'Sin correo' }}</span></a>
                     <div class="order-info-row"><i class="bi bi-house-door-fill"></i><span><small>Direccion</small>{{ $order->customer->address ?: 'Sin direccion' }}</span></div>
                 </div>
+                @can('orders.manage')
+                    @php
+                        $whatsappPhone = $order->customer->whatsapp ?: $order->customer->phone;
+                        $whatsappMessage = "Hola {$order->customer->name}, te contactamos de ForjaLab respecto a tu pedido {$order->folio}.";
+                    @endphp
+                    <div class="panel-card mb-4 order-whatsapp-card">
+                        <h2 class="h5 fw-bold section-title-icon"><i class="bi bi-whatsapp"></i>Enviar WhatsApp</h2>
+                        <form method="POST" action="{{ route('admin.orders.whatsapp.send', $order) }}">@csrf
+                            <label class="form-label fw-bold" for="whatsapp-phone">Numero</label><input class="form-control mb-3" id="whatsapp-phone" name="phone" value="{{ old('phone', $whatsappPhone) }}" placeholder="55 1234 5678" required>
+                            <label class="form-label fw-bold" for="whatsapp-message">Mensaje</label><textarea class="form-control" id="whatsapp-message" name="message" rows="5" maxlength="4096" required>{{ old('message', $whatsappMessage) }}</textarea>
+                            <button class="btn btn-success w-100 mt-3" type="submit"><i class="bi bi-send-fill me-2"></i>Enviar mensaje</button>
+                        </form>
+                    </div>
+                @endcan
                 <div class="panel-card order-info-card">
                     <h2 class="h5 fw-bold section-title-icon"><i class="bi bi-card-checklist"></i>Detalles</h2>
                     <p><strong>Pedido:</strong> {{ $order->ordered_at->format('d/m/Y') }}</p>

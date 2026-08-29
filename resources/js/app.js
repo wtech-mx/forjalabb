@@ -1,7 +1,64 @@
 import 'bootstrap';
 import Chart from 'chart.js/auto';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 window.Chart = Chart;
+window.Swal = Swal;
+
+window.ForjaConfirm = async (message, options = {}) => {
+    const result = await Swal.fire({
+        title: options.title || '¿Deseas continuar?',
+        text: message,
+        icon: options.icon || 'warning',
+        showCancelButton: true,
+        confirmButtonText: options.confirmText || 'Sí, continuar',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true,
+        focusCancel: true,
+        customClass: {
+            popup: 'forjalab-swal',
+            confirmButton: 'btn btn-dark px-4',
+            cancelButton: 'btn btn-outline-secondary px-4',
+        },
+        buttonsStyling: false,
+    });
+
+    return result.isConfirmed;
+};
+
+const flashData = document.getElementById('app-flash-data');
+if (flashData) {
+    const flash = JSON.parse(flashData.textContent || '{}');
+    if (flash.error) {
+        Swal.fire({ title: 'Revisa la información', text: flash.error, icon: 'error', confirmButtonText: 'Entendido', customClass: { popup: 'forjalab-swal', confirmButton: 'btn btn-dark px-4' }, buttonsStyling: false });
+    } else if (flash.success) {
+        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: flash.success, showConfirmButton: false, timer: 3800, timerProgressBar: true, customClass: { popup: 'forjalab-toast' } });
+    }
+}
+
+document.addEventListener('submit', async (event) => {
+    const form = event.target.closest('form[data-confirm]');
+    if (!form || form.dataset.confirmed === 'true') return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    const confirmed = await window.ForjaConfirm(form.dataset.confirm, {
+        title: form.dataset.confirmTitle,
+        confirmText: form.dataset.confirmButton,
+    });
+    if (!confirmed) return;
+
+    form.dataset.confirmed = 'true';
+    HTMLFormElement.prototype.submit.call(form);
+}, true);
+
+const pickupForm = document.getElementById('pickup-form');
+if (pickupForm) {
+    pickupForm.dataset.confirm = 'La solicitud se enviará directamente a Skydropx.';
+    pickupForm.dataset.confirmTitle = '¿Solicitar la recolección?';
+    pickupForm.dataset.confirmButton = 'Sí, solicitar';
+}
 
 document.querySelectorAll('[data-magazine-gallery]').forEach((gallery) => {
     const main = gallery.querySelector('[data-magazine-gallery-main]');

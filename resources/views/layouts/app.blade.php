@@ -99,17 +99,11 @@
     @endauth
 
     <main>
-        @if (request()->routeIs('admin.*'))
-            <div class="admin-flash container">
-                @if (session('status'))
-                    <div class="alert alert-success mb-0">{{ session('status') }}</div>
-                @endif
-                @if ($errors->any())
-                    <div class="alert alert-danger mb-0">
-                        {{ $errors->first() }}
-                    </div>
-                @endif
-            </div>
+        @if (request()->routeIs('admin.*') && (session('status') || $errors->any()))
+            <script id="app-flash-data" type="application/json">{!! json_encode([
+                'success' => session('status'),
+                'error' => $errors->first(),
+            ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE) !!}</script>
         @endif
         @yield('content')
     </main>

@@ -62,5 +62,10 @@ return [
         'store_url' => env('GOOGLE_MERCHANT_STORE_URL', env('APP_URL')),
     ],
 
+    'whatsapp_web' => [
+        'url' => env('WHATSAPP_WEB_URL', 'http://127.0.0.1:3210'),
+        'token' => env('WHATSAPP_API_TOKEN', 'forjalab-local-whatsapp'),
+    ],
+
 
 ];

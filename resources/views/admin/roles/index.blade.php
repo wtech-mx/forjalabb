@@ -43,7 +43,7 @@
                                                 <a class="btn btn-outline-dark" href="{{ route('admin.roles.edit', $role) }}" title="Editar">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <form method="POST" action="{{ route('admin.roles.destroy', $role) }}" onsubmit="return confirm('¿Eliminar este rol?')">
+                                                <form method="POST" action="{{ route('admin.roles.destroy', $role) }}" data-confirm="Los usuarios ya no podrán utilizar este rol." data-confirm-title="¿Eliminar este rol?" data-confirm-button="Sí, eliminar">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button class="btn btn-outline-danger" type="submit" title="Eliminar" @disabled($role->isSuperAdmin() || $role->users_count > 0)>

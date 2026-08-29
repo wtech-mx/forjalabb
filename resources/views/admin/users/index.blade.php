@@ -51,7 +51,7 @@
                                                 <a class="btn btn-outline-dark" href="{{ route('admin.users.edit', $user) }}" title="Editar">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('¿Eliminar este usuario?')">
+                                                <form method="POST" action="{{ route('admin.users.destroy', $user) }}" data-confirm="¿Eliminar este usuario?" data-confirm-title="Eliminar usuario" data-confirm-button="Sí, eliminar">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button class="btn btn-outline-danger" type="submit" title="Eliminar" @disabled(auth()->id() === $user->id)>
