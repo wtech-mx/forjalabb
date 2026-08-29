@@ -20,6 +20,7 @@
     <link rel="manifest" href="{{ asset('site.webmanifest') }}">
     <meta name="theme-color" content="#1b120b">
     <title>{{ $seoTitle }}</title>
+    <meta name="google-site-verification" content="l5yN_NubwUk_rgKRlIHfhlGgVXDeqV7VF8u-LB40vyo" />
     <meta name="description" content="{{ $seoDescription }}">
     <meta name="robots" content="{{ $isPrivatePage ? 'noindex, nofollow, noarchive' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' }}">
     @unless ($isPrivatePage)
