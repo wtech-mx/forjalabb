@@ -5,8 +5,9 @@
     <div class="container">
         <div class="admin-header">
             <div>
-                <div class="eyebrow">Pedido {{ $order->folio }}</div>
-                <h1 class="fw-bold mt-2 mb-0">{{ $order->customer->name }}</h1>
+                <a class="order-back-link" href="{{ route('admin.orders.index') }}"><i class="bi bi-arrow-left"></i>Volver a pedidos</a>
+                <div class="eyebrow mt-2">Pedido {{ $order->folio }}</div>
+                <div class="d-flex align-items-center gap-3 flex-wrap"><h1 class="fw-bold mt-2 mb-0">{{ $order->customer->name }}</h1><span class="order-status order-status-{{ $order->status }} mt-2"><i class="bi bi-circle-fill"></i>{{ \App\Models\Order::STATUSES[$order->status] }}</span></div>
             </div>
             <div class="d-flex gap-2 flex-wrap">
                 <a class="btn btn-outline-dark" href="{{ route('admin.orders.pdf', $order) }}">
@@ -50,12 +51,19 @@
             </div>
         </div>
 
+        <div class="order-detail-metrics mb-4">
+            <article><i class="bi bi-cash-stack"></i><div><small>Total del pedido</small><strong>${{ number_format($order->total, 2) }}</strong></div></article>
+            <article><i class="bi bi-check2-circle"></i><div><small>Anticipo pagado</small><strong>${{ number_format($order->advance_payment, 2) }}</strong></div></article>
+            <article class="{{ $order->balance_due > 0 ? 'is-due' : 'is-paid' }}"><i class="bi bi-wallet2"></i><div><small>Saldo pendiente</small><strong>${{ number_format($order->balance_due, 2) }}</strong></div></article>
+            <article><i class="bi bi-calendar-event"></i><div><small>Entrega programada</small><strong>{{ $order->delivery_at?->format('d/m/Y') ?: 'Por definir' }}</strong></div></article>
+        </div>
+
         <div class="row g-4">
             <div class="col-lg-8">
                 <div class="panel-card">
                     <div class="d-flex justify-content-between mb-3">
-                        <h2 class="h5 fw-bold">Productos y paquetes</h2>
-                        <span class="badge text-bg-dark">{{ \App\Models\Order::STATUSES[$order->status] }}</span>
+                        <h2 class="h5 fw-bold section-title-icon"><i class="bi bi-box-seam-fill"></i>Productos y paquetes</h2>
+                        <span class="order-count-badge">{{ $order->items->sum('quantity') }} pieza(s)</span>
                     </div>
                     <div class="table-responsive">
                         <table class="table">
@@ -71,7 +79,7 @@
                                 @foreach($order->items as $item)
                                     <tr>
                                         <td>
-                                            <strong>{{ $item->product_name }}</strong>
+                                            <span class="order-product-name"><i class="bi bi-box2-heart"></i><strong>{{ $item->product_name }}</strong></span>
                                             @if($item->item_type === 'bundle')
                                                 <span class="badge text-bg-success ms-1">Paquete</span>
                                                 <small class="d-block text-secondary mt-1" style="white-space:pre-line">Incluye: {{ $item->contents_snapshot }}</small>
@@ -101,7 +109,7 @@
 
                 @if($order->references->isNotEmpty())
                     <div class="panel-card mt-4">
-                        <h2 class="h5 fw-bold">Referencias</h2>
+                        <h2 class="h5 fw-bold section-title-icon"><i class="bi bi-images"></i>Referencias</h2>
                         <div class="order-reference-grid">
                             @foreach($order->references as $reference)
                                 <a class="order-reference-card text-decoration-none text-dark" href="{{ $reference->display_url }}" target="_blank" rel="noopener">
@@ -119,15 +127,15 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="panel-card mb-4">
-                    <h2 class="h5 fw-bold">Cliente</h2>
-                    <p class="mb-1 fw-bold">{{ $order->customer->name }}</p>
-                    <p class="mb-1">{{ $order->customer->phone ?: 'Sin telefono' }}</p>
-                    <p class="mb-1">{{ $order->customer->email }}</p>
-                    <p class="mb-0 text-secondary">{{ $order->customer->address }}</p>
+                <div class="panel-card mb-4 order-info-card">
+                    <h2 class="h5 fw-bold section-title-icon"><i class="bi bi-person-fill"></i>Cliente</h2>
+                    <div class="order-customer-profile"><span>{{ strtoupper(mb_substr($order->customer->name, 0, 1)) }}</span><div><strong>{{ $order->customer->name }}</strong><small>Cliente del pedido</small></div></div>
+                    <a class="order-info-row" href="tel:{{ $order->customer->phone }}"><i class="bi bi-telephone-fill"></i><span><small>Telefono</small>{{ $order->customer->phone ?: 'Sin telefono' }}</span></a>
+                    <a class="order-info-row" href="mailto:{{ $order->customer->email }}"><i class="bi bi-envelope-fill"></i><span><small>Correo</small>{{ $order->customer->email ?: 'Sin correo' }}</span></a>
+                    <div class="order-info-row"><i class="bi bi-house-door-fill"></i><span><small>Direccion</small>{{ $order->customer->address ?: 'Sin direccion' }}</span></div>
                 </div>
-                <div class="panel-card">
-                    <h2 class="h5 fw-bold">Detalles</h2>
+                <div class="panel-card order-info-card">
+                    <h2 class="h5 fw-bold section-title-icon"><i class="bi bi-card-checklist"></i>Detalles</h2>
                     <p><strong>Pedido:</strong> {{ $order->ordered_at->format('d/m/Y') }}</p>
                     <p><strong>Entrega:</strong> {{ $order->delivery_at?->format('d/m/Y') ?: 'Por definir' }}{{ $order->delivery_time ? ' · '.\Illuminate\Support\Carbon::parse($order->delivery_time)->format('H:i') : '' }}</p>
                     <p><strong>Lugar:</strong><br>{{ $order->delivery_place ?: 'Por definir' }}</p>

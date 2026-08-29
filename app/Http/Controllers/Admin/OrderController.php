@@ -27,14 +27,24 @@ class OrderController extends Controller
         $showArchived = $request->boolean('archived');
         $deliveryDate = $request->date('delivery_date')?->format('Y-m-d');
 
-        return view('admin.orders.index', [
-            'orders' => Order::with('customer')
+        $query = Order::query()
             ->when($showArchived, fn ($query) => $query->whereNotNull('archived_at'), fn ($query) => $query->whereNull('archived_at'))
             ->when($deliveryDate, fn ($query) => $query->whereDate('delivery_at', $deliveryDate))
             ->when($search, function ($query) use ($search) {
                 $query->where(fn ($q) => $q->where('folio', 'like', "%{$search}%")
                     ->orWhereHas('customer', fn ($customer) => $customer->where('name', 'like', "%{$search}%")->orWhere('phone', 'like', "%{$search}%")));
-            })->orderByRaw('delivery_at is null')->orderBy('delivery_at')->latest('ordered_at')->paginate(15)->withQueryString(),
+            });
+
+        $summary = [
+            'total' => (clone $query)->count(),
+            'production' => (clone $query)->whereIn('status', ['pending', 'in_progress'])->count(),
+            'ready' => (clone $query)->where('status', 'ready')->count(),
+            'balance' => (float) (clone $query)->where('balance_due', '>', 0)->sum('balance_due'),
+        ];
+
+        return view('admin.orders.index', [
+            'orders' => $query->with('customer')->orderByRaw('delivery_at is null')->orderBy('delivery_at')->latest('ordered_at')->paginate(15)->withQueryString(),
+            'summary' => $summary,
             'search' => $search,
             'showArchived' => $showArchived,
             'deliveryDate' => $deliveryDate,
