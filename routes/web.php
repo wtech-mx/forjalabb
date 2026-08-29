@@ -212,6 +212,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/settings/database/restore', [SettingsController::class, 'restore'])->middleware(['can:settings.manage', 'throttle:2,1'])->name('settings.database.restore');
     Route::get('/settings/whatsapp/status', [WhatsappController::class, 'status'])->middleware(['can:settings.manage', 'throttle:60,1'])->name('settings.whatsapp.status');
     Route::post('/settings/whatsapp/logout', [WhatsappController::class, 'logout'])->middleware(['can:settings.manage', 'throttle:5,1'])->name('settings.whatsapp.logout');
+    Route::get('/whatsapp', [WhatsappController::class, 'index'])->middleware('can:orders.view')->name('whatsapp.index');
+    Route::get('/whatsapp/chats', [WhatsappController::class, 'chats'])->middleware(['can:orders.view', 'throttle:120,1'])->name('whatsapp.chats');
+    Route::post('/whatsapp/messages', [WhatsappController::class, 'messages'])->middleware(['can:orders.view', 'throttle:120,1'])->name('whatsapp.messages');
+    Route::post('/whatsapp/send', [WhatsappController::class, 'sendChat'])->middleware(['can:orders.manage', 'throttle:60,1'])->name('whatsapp.send');
 
     Route::get('/deliveries/map', DeliveryMapController::class)->middleware('can:orders.view')->name('deliveries.map');
     Route::get('/deliveries/locations', [DeliveryMapController::class, 'locations'])->middleware('can:orders.view')->name('deliveries.locations');

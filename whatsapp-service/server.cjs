@@ -37,6 +37,69 @@ const server = http.createServer(async (request, response) => {
     if (request.headers.authorization !== `Bearer ${apiToken}`) return json(response, 401, { message: 'No autorizado.' });
     if (request.method === 'GET' && request.url === '/status') return json(response, 200, { state, connected: state === 'ready', qr: qrImage, account, error: lastError });
 
+    if (request.method === 'GET' && request.url === '/chats') {
+        if (state !== 'ready') return json(response, 409, { message: 'WhatsApp no esta conectado.' });
+        try {
+            const chats = (await client.pupPage.evaluate(() => window.require('WAWebCollections').Chat.getModelsArray().map((chat) => {
+                const chatMessages = chat.msgs?.getModelsArray?.() || [];
+                const lastMessage = chatMessages[chatMessages.length - 1];
+                return {
+                    id: chat.id?._serialized,
+                    name: chat.formattedTitle || chat.name || chat.contact?.pushname || chat.id?.user || 'Contacto',
+                    phone: chat.id?.server === 'c.us' ? chat.id.user : null,
+                    timestamp: chat.t || lastMessage?.t || 0,
+                    unread: chat.unreadCount || 0,
+                    last_message: lastMessage?.body || (lastMessage?.type && lastMessage.type !== 'chat' ? `[${lastMessage.type}]` : ''),
+                    last_from_me: Boolean(lastMessage?.id?.fromMe),
+                    is_group: chat.id?.server === 'g.us',
+                };
+            })))
+                .filter((chat) => chat.id)
+                .filter((chat) => chat.timestamp > 0)
+                .sort((a, b) => b.timestamp - a.timestamp)
+                .slice(0, 250);
+            return json(response, 200, { chats });
+        } catch (error) { return json(response, 500, { message: error.message || 'No se pudieron cargar las conversaciones.' }); }
+    }
+
+    if (request.method === 'POST' && request.url === '/messages') {
+        if (state !== 'ready') return json(response, 409, { message: 'WhatsApp no esta conectado.' });
+        try {
+            const body = await readBody(request);
+            const chatId = String(body.chat_id || '');
+            if (!chatId || chatId.length > 100) return json(response, 422, { message: 'Conversacion invalida.' });
+            const result = await client.pupPage.evaluate(({ chatId, limit }) => {
+                const wid = window.require('WAWebWidFactory').createWid(chatId);
+                const chat = window.require('WAWebCollections').Chat.get(wid);
+                if (!chat) return null;
+                const items = (chat.msgs?.getModelsArray?.() || []).slice(-limit).map((message) => ({
+                    id: message.id?._serialized || `${message.t}-${message.id?.fromMe}`,
+                    body: message.body || '',
+                    from_me: Boolean(message.id?.fromMe),
+                    timestamp: message.t || 0,
+                    type: message.type || 'chat',
+                    has_media: Boolean(message.isMedia || message.isMMS),
+                    ack: message.ack ?? null,
+                }));
+                return { chat: { id: chatId, name: chat.formattedTitle || chat.name || chat.contact?.pushname || chat.id?.user || 'Contacto' }, messages: items };
+            }, { chatId, limit: Math.min(Number(body.limit) || 50, 100) });
+            if (!result) return json(response, 404, { message: 'No se encontro la conversacion.' });
+            return json(response, 200, result);
+        } catch (error) { return json(response, 500, { message: error.message || 'No se pudieron cargar los mensajes.' }); }
+    }
+
+    if (request.method === 'POST' && request.url === '/chat/send') {
+        if (state !== 'ready') return json(response, 409, { message: 'WhatsApp no esta conectado.' });
+        try {
+            const body = await readBody(request);
+            const chatId = String(body.chat_id || '');
+            const message = String(body.message || '').trim();
+            if (!chatId || chatId.length > 100 || !message || message.length > 4096) return json(response, 422, { message: 'Conversacion o mensaje invalido.' });
+            const sent = await client.sendMessage(chatId, message);
+            return json(response, 200, { sent: true, id: sent?.id?._serialized || null, timestamp: sent?.timestamp || Math.floor(Date.now() / 1000) });
+        } catch (error) { return json(response, 500, { message: error.message || 'No se pudo enviar el mensaje.' }); }
+    }
+
     if (request.method === 'POST' && request.url === '/send') {
         if (state !== 'ready') return json(response, 409, { message: 'WhatsApp no esta conectado.' });
         try {

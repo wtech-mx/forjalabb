@@ -8,6 +8,7 @@
             <a class="{{ request()->routeIs('admin.tags.*') ? 'active' : '' }}" href="{{ route('admin.tags.index') }}"><i class="bi bi-qr-code-scan"></i><span><strong>Smart Tags</strong><small>Biker y Dog Tags</small></span></a>
             @can('orders.view')
                 <a class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}" href="{{ route('admin.orders.index') }}"><i class="bi bi-receipt-cutoff"></i><span><strong>Pedidos</strong><small>Clientes, pagos y PDF</small></span></a>
+                <a class="{{ request()->routeIs('admin.whatsapp.*') ? 'active' : '' }}" href="{{ route('admin.whatsapp.index') }}"><i class="bi bi-whatsapp"></i><span><strong>WhatsApp Web</strong><small>Chats y mensajes</small></span></a>
                 <a class="{{ request()->routeIs('admin.deliveries.*') ? 'active' : '' }}" href="{{ route('admin.deliveries.map') }}"><i class="bi bi-map-fill"></i><span><strong>Mapa entregas</strong><small>Rutas por dia y horario</small></span></a>
                 <a class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" href="{{ route('admin.reports.sales') }}"><i class="bi bi-graph-up-arrow"></i><span><strong>Reportes</strong><small>Ventas, gastos y utilidad</small></span></a>
                 <a class="{{ request()->routeIs('admin.shipments.*') && ! request()->routeIs('admin.shipments.quick-quote*') ? 'active' : '' }}" href="{{ route('admin.shipments.index') }}"><i class="bi bi-truck"></i><span><strong>Envios</strong><small>Guias, evidencia y seguimiento</small></span></a>
