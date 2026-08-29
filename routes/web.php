@@ -189,6 +189,8 @@ Route::middleware('guest')->group(function () {
 Route::post('/analytics/events', [AnalyticsController::class, 'store'])
     ->middleware('throttle:120,1')
     ->name('analytics.events');
+Route::view('/polita_devoluciones', 'returns-policy')->name('returns.policy');
+Route::redirect('/politica_devoluciones', '/polita_devoluciones', 301);
 Route::post('/prospectos', [LeadController::class, 'store'])->middleware('throttle:10,1')->name('leads.store');
 Route::get('/registro-tag/{token}', [PublicTagIntakeController::class, 'edit'])->name('tags.intake.edit');
 Route::put('/registro-tag/{token}', [PublicTagIntakeController::class, 'update'])->middleware('throttle:20,1')->name('tags.intake.update');
@@ -257,6 +259,9 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/catalog/{catalog}/preview', [CatalogProductController::class, 'preview'])
         ->middleware('can:catalog.view')
         ->name('catalog.preview');
+    Route::post('/catalog/google-merchant/sync', [CatalogProductController::class, 'syncMerchant'])
+        ->middleware(['can:catalog.manage', 'throttle:3,1'])
+        ->name('catalog.merchant.sync');
 
     Route::resource('packages', CatalogBundleController::class)
         ->parameters(['packages' => 'package'])

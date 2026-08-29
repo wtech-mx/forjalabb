@@ -127,6 +127,7 @@
                 <span class="badge text-bg-light">DTF</span>
                 <span class="badge text-bg-light">QR/NFC</span>
                 <span class="badge text-bg-light">Software</span>
+                <a class="footer-policy-link" href="{{ route('returns.policy') }}">Cambios y devoluciones</a>
             </div>
             <div class="footer-socials" aria-label="Redes sociales de ForjaLab">
                 <a href="https://www.facebook.com/share/19UaksSXGK/" target="_blank" rel="noopener noreferrer" aria-label="ForjaLab en Facebook"><i class="bi bi-facebook"></i></a>

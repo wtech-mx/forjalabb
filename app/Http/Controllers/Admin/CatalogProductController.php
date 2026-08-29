@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CatalogProduct;
 use App\Models\CatalogProductOption;
+use App\Services\GoogleMerchantService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -24,6 +25,20 @@ class CatalogProductController extends Controller
                 ->orderBy('name')
                 ->paginate(15),
         ]);
+    }
+
+    public function syncMerchant(GoogleMerchantService $merchant): RedirectResponse
+    {
+        try {
+            $result = $merchant->syncCatalog();
+            $message = "Google Merchant: {$result['synced']} sincronizados y {$result['skipped']} omitidos.";
+            return $result['errors']
+                ? back()->with('status', $message)->withErrors(['merchant' => implode(' | ', $result['errors'])])
+                : back()->with('status', $message);
+        } catch (\Throwable $exception) {
+            report($exception);
+            return back()->withErrors(['merchant' => $exception->getMessage()]);
+        }
     }
 
     public function create(): View

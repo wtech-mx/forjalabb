@@ -55,5 +55,12 @@ return [
         'origin_neighborhood' => env('SKYDROPX_ORIGIN_NEIGHBORHOOD'),
     ],
 
+    'google_merchant' => [
+        'account_id' => env('GOOGLE_MERCHANT_ACCOUNT_ID'),
+        'data_source' => env('GOOGLE_MERCHANT_DATA_SOURCE'),
+        'credentials' => env('GOOGLE_MERCHANT_CREDENTIALS', 'storage/app/private/google-merchant-service-account.json'),
+        'store_url' => env('GOOGLE_MERCHANT_STORE_URL', env('APP_URL')),
+    ],
+
 
 ];
