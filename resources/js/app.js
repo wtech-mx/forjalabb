@@ -53,6 +53,31 @@ document.addEventListener('submit', async (event) => {
     HTMLFormElement.prototype.submit.call(form);
 }, true);
 
+const onPress = (element, callback) => {
+    let touchMoved = false;
+    let lastTouchAt = 0;
+
+    element.addEventListener('touchstart', () => {
+        touchMoved = false;
+    }, { passive: true });
+
+    element.addEventListener('touchmove', () => {
+        touchMoved = true;
+    }, { passive: true });
+
+    element.addEventListener('touchend', (event) => {
+        if (touchMoved) return;
+        event.preventDefault();
+        lastTouchAt = Date.now();
+        callback(event);
+    }, { passive: false });
+
+    element.addEventListener('click', (event) => {
+        if (Date.now() - lastTouchAt < 500) return;
+        callback(event);
+    });
+};
+
 const pickupForm = document.getElementById('pickup-form');
 if (pickupForm) {
     pickupForm.dataset.confirm = 'La solicitud se enviará directamente a Skydropx.';
@@ -63,7 +88,7 @@ if (pickupForm) {
 document.querySelectorAll('[data-magazine-gallery]').forEach((gallery) => {
     const main = gallery.querySelector('[data-magazine-gallery-main]');
     gallery.querySelectorAll('[data-magazine-gallery-thumb]').forEach((button) => {
-        button.addEventListener('click', (event) => {
+        onPress(button, (event) => {
             event.stopPropagation();
             gallery.querySelectorAll('[data-magazine-gallery-thumb]').forEach((item) => item.classList.toggle('active', item === button));
             if (main && button.dataset.magazineGalleryThumb) {
@@ -167,6 +192,13 @@ if (leadPopup) {
         }
     });
 }
+
+window.addEventListener('pageshow', () => {
+    const openLeadPopup = document.querySelector('[data-lead-popup].is-open');
+    if (!openLeadPopup) {
+        document.body.classList.remove('lead-popup-open');
+    }
+});
 
 const orderForm = document.querySelector('[data-order-form]');
 if (orderForm) {
@@ -524,7 +556,7 @@ document.querySelectorAll('[data-tequila-configurator]').forEach((configurator) 
     };
 
     finishButtons.forEach((button) => {
-        button.addEventListener('click', () => {
+        onPress(button, () => {
             activeFinish = button.dataset.tequilaFinish;
             preview.dataset.finish = activeFinish;
             finishButtons.forEach((item) => {
@@ -535,7 +567,7 @@ document.querySelectorAll('[data-tequila-configurator]').forEach((configurator) 
     });
 
     designOptions.forEach((option) => {
-        option.addEventListener('click', () => {
+        onPress(option, () => {
             activeDesign = option.dataset.tequilaName;
             previewDesign.src = option.dataset.tequilaDesign;
             designOptions.forEach((item) => {
@@ -564,7 +596,7 @@ document.querySelectorAll('[data-coaster-configurator]').forEach((configurator) 
     };
 
     designOptions.forEach((option) => {
-        option.addEventListener('click', () => {
+        onPress(option, () => {
             activeDesign = option.dataset.coasterName;
             previewDesign.src = option.dataset.coasterDesign;
             previewDesign.alt = option.dataset.coasterAlt;
@@ -604,7 +636,7 @@ document.querySelectorAll('[data-drinkware-configurator]').forEach((configurator
     };
 
     colorButtons.forEach((button) => {
-        button.addEventListener('click', () => {
+        onPress(button, () => {
             activeColor = button.dataset.drinkwareColor;
             activeColorName = button.dataset.drinkwareColorName;
             preview.dataset.color = activeColor;
@@ -616,7 +648,7 @@ document.querySelectorAll('[data-drinkware-configurator]').forEach((configurator
     });
 
     designOptions.forEach((option) => {
-        option.addEventListener('click', () => {
+        onPress(option, () => {
             activeDesign = option.dataset.drinkwareName;
             previewDesign.src = option.dataset.drinkwareDesign;
             designOptions.forEach((item) => {
@@ -650,7 +682,7 @@ document.querySelectorAll('[data-color-product-configurator]').forEach((configur
     };
 
     colorButtons.forEach((button) => {
-        button.addEventListener('click', () => {
+        onPress(button, () => {
             activeColor = button.dataset.colorProductColor;
             activeColorName = button.dataset.colorProductColorName;
             preview.dataset.color = activeColor;

@@ -193,6 +193,23 @@
 
     <script>
         (() => {
+            const onPress = (element, callback) => {
+                let moved = false;
+                let lastTouchAt = 0;
+                element.addEventListener('touchstart', () => moved = false, { passive: true });
+                element.addEventListener('touchmove', () => moved = true, { passive: true });
+                element.addEventListener('touchend', (event) => {
+                    if (moved) return;
+                    event.preventDefault();
+                    lastTouchAt = Date.now();
+                    callback(event);
+                }, { passive: false });
+                element.addEventListener('click', (event) => {
+                    if (Date.now() - lastTouchAt < 500) return;
+                    callback(event);
+                });
+            };
+
             document.querySelectorAll('[data-gallery-product]').forEach((product) => {
                 const preview = product.querySelector('[data-gallery-preview]');
                 const priceLabel = product.querySelector('[data-price-label]');
@@ -206,7 +223,7 @@
                 };
 
                 product.querySelectorAll('[data-gallery-thumb]').forEach((button) => {
-                    button.addEventListener('click', () => {
+                    onPress(button, () => {
                         product.querySelectorAll('[data-gallery-thumb]').forEach((item) => item.classList.toggle('active', item === button));
                         if (preview && button.dataset.galleryThumb) {
                             preview.src = button.dataset.galleryThumb;
@@ -215,7 +232,7 @@
                 });
 
                 product.querySelectorAll('[data-package-option]').forEach((button) => {
-                    button.addEventListener('click', () => {
+                    onPress(button, () => {
                         product.querySelectorAll('[data-package-option]').forEach((item) => item.classList.toggle('active', item === button));
                         packageName = button.dataset.packageName || '';
                         if (priceLabel && button.dataset.packagePrice) {
@@ -251,7 +268,7 @@
                 };
 
                 product.querySelectorAll('[data-base-option]').forEach((button) => {
-                    button.addEventListener('click', () => {
+                    onPress(button, () => {
                         product.querySelectorAll('[data-base-option]').forEach((item) => item.classList.toggle('active', item === button));
                         baseName = button.dataset.baseName || 'Base';
                         if (basePreview && button.dataset.baseOption) {
@@ -265,7 +282,7 @@
                 });
 
                 product.querySelectorAll('[data-dynamic-gallery-thumb]').forEach((button) => {
-                    button.addEventListener('click', () => {
+                    onPress(button, () => {
                         product.querySelectorAll('[data-dynamic-gallery-thumb]').forEach((item) => item.classList.toggle('active', item === button));
                         if (basePreview && button.dataset.dynamicGalleryThumb) {
                             basePreview.src = button.dataset.dynamicGalleryThumb;
@@ -278,7 +295,7 @@
                 });
 
                 product.querySelectorAll('[data-design-option]').forEach((figure) => {
-                    figure.addEventListener('click', () => {
+                    onPress(figure, () => {
                         product.querySelectorAll('[data-design-option]').forEach((item) => item.classList.toggle('active', item === figure));
                         designName = figure.dataset.designName || '';
                         if (designPreview && figure.dataset.designOption) {
@@ -290,7 +307,7 @@
                 });
 
                 product.querySelectorAll('[data-package-option]').forEach((button) => {
-                    button.addEventListener('click', () => {
+                    onPress(button, () => {
                         product.querySelectorAll('[data-package-option]').forEach((item) => item.classList.toggle('active', item === button));
                         packageName = button.dataset.packageName || '';
                         if (priceLabel && button.dataset.packagePrice) {

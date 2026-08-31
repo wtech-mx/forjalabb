@@ -5447,3 +5447,45 @@ a {
         grid-column: 1 / -1;
     }
 }
+
+/* Mobile touch interaction fixes for catalog pages. */
+@media (hover: none) and (pointer: coarse) {
+    .catalog-card,
+    .catalog-card-link,
+    .season-package-media,
+    .bundle-home-bottom .btn,
+    .tequila-copy .btn,
+    .finish-list button,
+    .color-list button,
+    .design-strip figure,
+    .product-gallery-strip button,
+    .dynamic-gallery-strip button,
+    .bundle-item-picker button,
+    .bundle-single-gallery button,
+    .sale-package-picker button {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: rgba(248, 117, 31, .18);
+    }
+
+    .design-strip,
+    .product-gallery-strip,
+    .dynamic-gallery-strip,
+    .bundle-single-gallery {
+        overscroll-behavior-x: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .home-motion .catalog-card:hover,
+    .home-motion .bundle-home-card:hover,
+    .home-motion .product-card:hover,
+    .catalog-card:hover {
+        transform: none;
+    }
+
+    .tequila-feature,
+    .product-gallery-single,
+    .bundle-single,
+    .catalog-card {
+        backdrop-filter: none;
+    }
+}

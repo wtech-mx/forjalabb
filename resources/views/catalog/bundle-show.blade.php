@@ -79,12 +79,29 @@
 
     <script>
         (() => {
+            const onPress = (element, callback) => {
+                let moved = false;
+                let lastTouchAt = 0;
+                element.addEventListener('touchstart', () => moved = false, { passive: true });
+                element.addEventListener('touchmove', () => moved = true, { passive: true });
+                element.addEventListener('touchend', (event) => {
+                    if (moved) return;
+                    event.preventDefault();
+                    lastTouchAt = Date.now();
+                    callback(event);
+                }, { passive: false });
+                element.addEventListener('click', (event) => {
+                    if (Date.now() - lastTouchAt < 500) return;
+                    callback(event);
+                });
+            };
+
             document.querySelectorAll('[data-bundle-single]').forEach((bundle) => {
                 const preview = bundle.querySelector('[data-bundle-preview]');
                 const selection = bundle.querySelector('[data-bundle-selection]');
 
                 bundle.querySelectorAll('[data-bundle-item-option]').forEach((button) => {
-                    button.addEventListener('click', () => {
+                    onPress(button, () => {
                         bundle.querySelectorAll('[data-bundle-item-option]').forEach((item) => item.classList.toggle('active', item === button));
                         if (preview && button.dataset.image) {
                             preview.src = button.dataset.image;
