@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CatalogBundleController;
 use App\Http\Controllers\Admin\CatalogProductController;
+use App\Http\Controllers\Admin\CommissionReportController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DeliveryMapController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -221,6 +222,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/deliveries/locations', [DeliveryMapController::class, 'locations'])->middleware('can:orders.view')->name('deliveries.locations');
     Route::post('/deliveries/locations', [DeliveryMapController::class, 'storeLocation'])->middleware(['can:orders.view', 'throttle:30,1'])->name('deliveries.locations.store');
     Route::get('/reports/sales', [SalesReportController::class, 'index'])->middleware('can:orders.view')->name('reports.sales');
+    Route::get('/reports/commissions', [CommissionReportController::class, 'index'])->middleware('can:orders.view')->name('reports.commissions');
+    Route::get('/reports/commissions/pdf', [CommissionReportController::class, 'pdf'])->middleware('can:orders.view')->name('reports.commissions.pdf');
     Route::get('/orders/{order}/pdf', [OrderController::class, 'pdf'])->middleware('can:orders.view')->name('orders.pdf');
     Route::post('/orders/{order}/whatsapp', [WhatsappController::class, 'send'])->middleware(['can:orders.manage', 'throttle:10,1'])->name('orders.whatsapp.send');
     Route::post('/orders/{order}/archive', [OrderController::class, 'archive'])->middleware('can:orders.manage')->name('orders.archive');

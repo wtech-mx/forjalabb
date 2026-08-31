@@ -36,6 +36,7 @@ class UserController extends Controller
         $data = $this->validated($request);
         $roles = $data['roles'];
         unset($data['roles']);
+        $data['commission_percentage'] = $data['commission_percentage'] ?? 0;
 
         $user = User::create($data);
         $user->roles()->sync($roles);
@@ -59,6 +60,7 @@ class UserController extends Controller
         $data = $this->validated($request, $user);
         $roles = $data['roles'];
         unset($data['roles']);
+        $data['commission_percentage'] = $data['commission_percentage'] ?? 0;
 
         if (blank($data['password'] ?? null)) {
             unset($data['password']);
@@ -96,6 +98,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:160', Rule::unique('users', 'email')->ignore($userId)],
             'password' => $passwordRules,
+            'commission_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'roles' => ['required', 'array', 'min:1'],
             'roles.*' => ['integer', Rule::exists('roles', 'id')],
         ]);

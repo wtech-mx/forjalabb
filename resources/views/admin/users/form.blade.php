@@ -58,6 +58,12 @@
                                     <label class="form-label" for="password_confirmation">Confirmar contraseña</label>
                                     <input class="form-control" id="password_confirmation" name="password_confirmation" type="password" {{ $isEdit ? '' : 'required' }}>
                                 </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="commission_percentage">Comisión (%)</label>
+                                    <input class="form-control @error('commission_percentage') is-invalid @enderror" id="commission_percentage" name="commission_percentage" type="number" min="0" max="100" step="0.01" value="{{ old('commission_percentage', $user->commission_percentage ?? 0) }}">
+                                    @error('commission_percentage')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    <div class="form-text">Ej. 10 equivale al 10% sobre cada nota sin envío.</div>
+                                </div>
                             </div>
                         </div>
                     </div>

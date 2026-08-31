@@ -24,6 +24,7 @@
                             <tr>
                                 <th>Usuario</th>
                                 <th>Roles</th>
+                                <th>Comisión</th>
                                 <th>Alta</th>
                                 <th class="text-end">Acciones</th>
                             </tr>
@@ -44,6 +45,7 @@
                                             @endforelse
                                         </div>
                                     </td>
+                                    <td class="fw-semibold">{{ number_format((float) $user->commission_percentage, 2) }}%</td>
                                     <td class="text-secondary">{{ $user->created_at?->format('d/m/Y') }}</td>
                                     <td class="text-end">
                                         @can('users.manage')
@@ -64,7 +66,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td class="text-center text-secondary py-4" colspan="4">Todavia no hay usuarios.</td>
+                                    <td class="text-center text-secondary py-4" colspan="5">Todavia no hay usuarios.</td>
                                 </tr>
                             @endforelse
                         </tbody>
