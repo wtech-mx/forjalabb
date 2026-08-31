@@ -10,10 +10,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
-#[Fillable(['folio', 'customer_id', 'created_by', 'ordered_at', 'delivery_at', 'delivery_time', 'delivery_place', 'delivery_map_url', 'delivery_lat', 'delivery_lng', 'status', 'discount_type', 'discount_value', 'subtotal', 'discount_amount', 'has_shipping', 'shipping_cost', 'total', 'advance_payment', 'balance_due', 'observations', 'archived_at'])]
+#[Fillable(['folio', 'customer_id', 'created_by', 'ordered_at', 'delivery_at', 'delivery_time', 'delivery_method', 'delivery_place', 'delivery_map_url', 'delivery_lat', 'delivery_lng', 'status', 'discount_type', 'discount_value', 'subtotal', 'discount_amount', 'has_shipping', 'shipping_cost', 'total', 'advance_payment', 'balance_due', 'observations', 'archived_at'])]
 class Order extends Model
 {
     use HasFactory;
+
+    public const DELIVERY_METHODS = [
+        'skydropx' => 'Skydropx / foráneo',
+        'cdmx' => 'Entrega CDMX',
+        'pickup' => 'Recoger en tienda',
+    ];
 
     public const STATUSES = [
         'pending' => 'Pendiente',

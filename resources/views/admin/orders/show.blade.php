@@ -87,6 +87,9 @@
                                                 <span class="badge text-bg-warning ms-1">{{ $item->sale_package_name }}</span>
                                                 <small class="d-block text-secondary mt-1">{{ $item->sale_package_quantity }} pieza{{ $item->sale_package_quantity === 1 ? '' : 's' }} · precio aplicado ${{ number_format($item->unit_price, 0) }} c/u</small>
                                             @endif
+                                            @if($item->selected_colors)
+                                                <small class="d-block text-secondary mt-1">Colores: {{ collect($item->selected_colors)->map(fn ($color, $index) => 'Pieza '.($index + 1).': '.\Illuminate\Support\Str::headline($color))->join(' · ') }}</small>
+                                            @endif
                                         </td>
                                         <td>{{ $item->quantity }}</td>
                                         <td>${{ number_format($item->unit_price, 2) }}</td>
@@ -152,7 +155,7 @@
                     <h2 class="h5 fw-bold section-title-icon"><i class="bi bi-card-checklist"></i>Detalles</h2>
                     <p><strong>Pedido:</strong> {{ $order->ordered_at->format('d/m/Y') }}</p>
                     <p><strong>Entrega:</strong> {{ $order->delivery_at?->format('d/m/Y') ?: 'Por definir' }}{{ $order->delivery_time ? ' · '.\Illuminate\Support\Carbon::parse($order->delivery_time)->format('H:i') : '' }}</p>
-                    <p><strong>Lugar:</strong><br>{{ $order->delivery_place ?: 'Por definir' }}</p>
+                    <p><strong>Tipo de entrega:</strong><br>{{ \App\Models\Order::DELIVERY_METHODS[$order->delivery_method] ?? 'Por definir' }}</p>
                     @if($order->delivery_maps_link)
                         <p><strong>Maps:</strong><br><a href="{{ $order->delivery_maps_link }}" target="_blank" rel="noopener">Abrir ubicacion</a></p>
                     @endif

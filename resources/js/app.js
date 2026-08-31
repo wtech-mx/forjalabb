@@ -205,6 +205,7 @@ if (orderForm) {
     const itemsContainer = orderForm.querySelector('[data-order-items]');
     const template = document.querySelector('#orderItemTemplate');
     const productPackages = JSON.parse(document.querySelector('#orderProductPackages')?.textContent || '{}');
+    const itemColorOptions = ['azul', 'negro', 'rosa', 'blanco', 'amarillo', 'verde', 'naranja', 'rojo'];
     let itemIndex = 0;
     const money = (value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value || 0);
     const calculate = () => {
@@ -233,12 +234,43 @@ if (orderForm) {
     const addItem = (saved = {}) => {
         const fragment = template.content.cloneNode(true);
         const row = fragment.querySelector('[data-order-item]');
-        row.innerHTML = row.innerHTML.replaceAll('__INDEX__', itemIndex++);
+        const currentItemIndex = itemIndex++;
+        row.dataset.itemIndex = String(currentItemIndex);
+        row.innerHTML = row.innerHTML.replaceAll('__INDEX__', currentItemIndex);
         const product = row.querySelector('[data-product]');
         const salePackage = row.querySelector('[data-sale-package]');
         const salePackageWrap = row.querySelector('[data-sale-package-wrap]');
         const quantity = row.querySelector('[data-quantity]');
         const price = row.querySelector('[data-unit-price]');
+        const colorCard = row.querySelector('[data-color-card]');
+        const colorInputs = row.querySelector('[data-color-inputs]');
+        const itemName = () => product.selectedOptions[0]?.dataset.name?.toLowerCase() || '';
+        const packageName = () => salePackage.selectedOptions[0]?.dataset.packageName?.toLowerCase() || '';
+        const needsColorBreakdown = () => {
+            const name = `${itemName()} ${packageName()}`.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            return name.includes('tarro cervecero') || (name.includes('tequilero') && (name.includes('blanco') || !packageName()));
+        };
+        const colorSelect = (value = '', piece = 1) => {
+            const select = document.createElement('select');
+            select.className = 'form-select form-select-sm';
+            select.name = `items[${row.dataset.itemIndex}][selected_colors][]`;
+            select.disabled = true;
+            select.innerHTML = `<option value="">Pieza ${piece}: color</option>${itemColorOptions.map((color) => `<option value="${color}" ${color === value ? 'selected' : ''}>${color.charAt(0).toUpperCase() + color.slice(1)}</option>`).join('')}`;
+            return select;
+        };
+        const syncColorInputs = () => {
+            const colors = [...colorInputs.querySelectorAll('select')].map((select) => select.value);
+            const amount = Math.max(1, Number.parseInt(quantity.value, 10) || 1);
+            const enabled = needsColorBreakdown();
+            colorInputs.innerHTML = '';
+            colorCard.classList.toggle('d-none', !enabled);
+
+            for (let index = 0; index < amount; index += 1) {
+                const select = colorSelect(colors[index] ?? saved.selected_colors?.[index] ?? '', index + 1);
+                select.disabled = !enabled;
+                colorInputs.append(select);
+            }
+        };
         if (saved.item_type && saved.item_id) product.value = `${saved.item_type}:${saved.item_id}`;
         const packageLabel = (item) => `${item.name} · ${item.quantity} pza${Number(item.quantity) === 1 ? '' : 's'} · ${money(item.unit_price)} c/u`;
         const fillSalePackages = () => {
@@ -249,6 +281,7 @@ if (orderForm) {
             salePackage.innerHTML = '<option value="">Precio base</option>';
             packages.forEach((item) => {
                 const option = new Option(packageLabel(item), item.id);
+                option.dataset.packageName = item.name;
                 option.dataset.packageQuantity = item.quantity;
                 option.dataset.packagePrice = item.unit_price;
                 salePackage.add(option);
@@ -281,13 +314,16 @@ if (orderForm) {
             const contents = selected?.dataset.contents ?? '';
             row.querySelector('[data-item-contents]').textContent = contents ? `Incluye: ${contents}` : '';
             fillSalePackages();
+            syncColorInputs();
         };
         syncItem();
         syncPriceFromPackage(!saved.quantity);
         if (saved.unit_price) price.value = saved.unit_price;
         quantity.value = saved.quantity ?? quantity.value ?? 1;
-        product.addEventListener('change', () => { saved.sale_package_id = null; saved.unit_price = null; syncItem(); syncPriceFromPackage(true); calculate(); });
-        salePackage.addEventListener('change', () => { saved.unit_price = null; syncPriceFromPackage(true); calculate(); });
+        syncColorInputs();
+        product.addEventListener('change', () => { saved.sale_package_id = null; saved.unit_price = null; saved.selected_colors = []; syncItem(); syncPriceFromPackage(true); syncColorInputs(); calculate(); });
+        salePackage.addEventListener('change', () => { saved.unit_price = null; syncPriceFromPackage(true); syncColorInputs(); calculate(); });
+        quantity.addEventListener('input', syncColorInputs);
         row.querySelectorAll('input').forEach((input) => input.addEventListener('input', calculate));
         row.querySelector('[data-remove-item]').addEventListener('click', () => { row.remove(); calculate(); });
         itemsContainer.append(row);
@@ -299,6 +335,41 @@ if (orderForm) {
     orderForm.querySelectorAll('[data-discount], [data-advance], [data-payment-received], [data-shipping]').forEach((input) => input.addEventListener('input', calculate));
     orderForm.querySelector('[data-discount-type]').addEventListener('change', calculate);
     orderForm.querySelector('[data-shipping-toggle]').addEventListener('change', (event) => { orderForm.querySelector('[data-shipping-wrap]').classList.toggle('d-none', !event.target.checked); calculate(); });
+    const deliveryMethodInputs = orderForm.querySelectorAll('[data-delivery-method]');
+    const deliveryLocationWrap = orderForm.querySelector('[data-delivery-location-wrap]');
+    const syncDeliveryLocation = () => {
+        const method = orderForm.querySelector('[data-delivery-method]:checked')?.value || 'pickup';
+        const needsLocation = method === 'cdmx';
+        const shippingToggle = orderForm.querySelector('[data-shipping-toggle]');
+        const shippingWrap = orderForm.querySelector('[data-shipping-wrap]');
+
+        deliveryLocationWrap?.classList.toggle('d-none', !needsLocation);
+        orderForm.querySelectorAll('[data-delivery-location-field]').forEach((field) => {
+            field.disabled = !needsLocation;
+        });
+
+        if (shippingToggle) {
+            shippingToggle.checked = method !== 'pickup';
+            shippingWrap?.classList.toggle('d-none', !shippingToggle.checked);
+            calculate();
+        }
+    };
+    deliveryMethodInputs.forEach((input) => {
+        input.addEventListener('change', () => {
+            if (!input.checked && !orderForm.querySelector('[data-delivery-method]:checked')) {
+                input.checked = true;
+            }
+
+            if (input.checked) {
+                deliveryMethodInputs.forEach((item) => {
+                    if (item !== input) item.checked = false;
+                });
+            }
+
+            syncDeliveryLocation();
+        });
+    });
+    syncDeliveryLocation();
     const customerToggle = orderForm.querySelector('[data-new-customer-toggle]');
     customerToggle.addEventListener('click', (event) => {
         const newBlock = orderForm.querySelector('[data-new-customer]');

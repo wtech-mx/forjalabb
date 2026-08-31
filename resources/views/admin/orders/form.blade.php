@@ -8,6 +8,7 @@
         'sale_package_id' => $item->catalog_product_sale_package_id,
         'quantity' => $item->quantity,
         'unit_price' => $item->unit_price,
+        'selected_colors' => $item->selected_colors ?? [],
     ])->all() : []);
 
     $productPackageMap = $products->mapWithKeys(fn ($product) => [
@@ -22,6 +23,7 @@
     ]);
 
     $deliveryTime = old('delivery_time', $order->delivery_time ? \Illuminate\Support\Carbon::parse($order->delivery_time)->format('H:i') : '');
+    $deliveryMethod = old('delivery_method', $order->delivery_method ?: ($order->delivery_map_url || $order->delivery_lat ? 'cdmx' : ($order->has_shipping ? 'skydropx' : 'pickup')));
     $referenceLinks = old('reference_links', ['', '']);
 @endphp
 <section class="admin-section">
@@ -114,20 +116,29 @@
                         <input class="form-control mb-3" type="date" name="delivery_at" value="{{ old('delivery_at', $order->delivery_at?->format('Y-m-d')) }}">
                         <label class="form-label">Hora de entrega</label>
                         <input class="form-control mb-3" type="time" name="delivery_time" value="{{ $deliveryTime }}">
-                        <label class="form-label">Lugar de entrega</label>
-                        <textarea class="form-control mb-3" name="delivery_place" rows="3" placeholder="Dirección, punto de encuentro o indicaciones">{{ old('delivery_place', $order->delivery_place) }}</textarea>
+                        <label class="form-label">Tipo de entrega</label>
+                        <div class="delivery-method-options mb-3" data-delivery-methods>
+                            @foreach($deliveryMethods as $value => $label)
+                                <label class="delivery-method-option">
+                                    <input class="form-check-input" type="checkbox" name="delivery_method" value="{{ $value }}" data-delivery-method @checked($deliveryMethod === $value)>
+                                    <span>{{ $label }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                        <div data-delivery-location-wrap class="{{ $deliveryMethod === 'cdmx' ? '' : 'd-none' }}">
                         <label class="form-label">Ubicacion de Google Maps</label>
-                        <textarea class="form-control mb-2" name="delivery_map_url" rows="3" placeholder="Pega aqui el link de Maps o el iframe completo">{{ old('delivery_map_url', $order->delivery_map_url) }}</textarea>
+                        <textarea class="form-control mb-2" name="delivery_map_url" rows="3" placeholder="Pega aqui el link de Maps o el iframe completo" data-delivery-location-field>{{ old('delivery_map_url', $order->delivery_map_url) }}</textarea>
                         <div class="row g-2 mb-3">
                             <div class="col-6">
-                                <input class="form-control" type="number" step="0.0000001" name="delivery_lat" value="{{ old('delivery_lat', $order->delivery_lat) }}" placeholder="Latitud">
+                                <input class="form-control" type="number" step="0.0000001" name="delivery_lat" value="{{ old('delivery_lat', $order->delivery_lat) }}" placeholder="Latitud" data-delivery-location-field>
                             </div>
                             <div class="col-6">
-                                <input class="form-control" type="number" step="0.0000001" name="delivery_lng" value="{{ old('delivery_lng', $order->delivery_lng) }}" placeholder="Longitud">
+                                <input class="form-control" type="number" step="0.0000001" name="delivery_lng" value="{{ old('delivery_lng', $order->delivery_lng) }}" placeholder="Longitud" data-delivery-location-field>
                             </div>
                             <div class="col-12">
                                 <small class="text-secondary">Si el link de Maps trae coordenadas, se llenan al guardar. Si es link corto, pega latitud y longitud.</small>
                             </div>
+                        </div>
                         </div>
                         <label class="form-label">Estado</label>
                         <select class="form-select" name="status">
@@ -166,7 +177,7 @@
                 <option value="">Selecciona...</option>
                 <optgroup label="Productos">
                     @foreach($products as $product)
-                        <option value="product:{{ $product->id }}" data-type="product" data-id="{{ $product->id }}" data-price="{{ $product->public_price }}">{{ $product->name }}</option>
+                        <option value="product:{{ $product->id }}" data-type="product" data-id="{{ $product->id }}" data-name="{{ $product->name }}" data-price="{{ $product->public_price }}">{{ $product->name }}</option>
                     @endforeach
                 </optgroup>
                 <optgroup label="Paquetes">
@@ -192,6 +203,13 @@
         <div>
             <label class="form-label">Precio unitario</label>
             <input class="form-control" type="number" min="0" step="0.01" name="items[__INDEX__][unit_price]" data-unit-price required>
+        </div>
+        <div class="order-item-color-card d-none" data-color-card>
+            <div>
+                <strong>Colores por pieza</strong>
+                <small>Selecciona un color por cada pieza del tarro cervecero o tequileros blancos.</small>
+            </div>
+            <div class="order-item-colors" data-color-inputs></div>
         </div>
         <div>
             <label class="form-label">Importe</label>

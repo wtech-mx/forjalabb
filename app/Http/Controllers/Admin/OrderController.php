@@ -141,6 +141,7 @@ class OrderController extends Controller
             // En pedidos administrativos se muestran todos los paquetes, incluso si no están publicados.
             'bundles' => CatalogBundle::with('items.product')->orderByDesc('is_active')->orderBy('name')->get(),
             'statuses' => Order::STATUSES,
+            'deliveryMethods' => Order::DELIVERY_METHODS,
         ]);
     }
 
@@ -155,7 +156,7 @@ class OrderController extends Controller
             'ordered_at' => ['required', 'date'],
             'delivery_at' => ['nullable', 'date', 'after_or_equal:ordered_at'],
             'delivery_time' => ['nullable', 'date_format:H:i'],
-            'delivery_place' => ['nullable', 'string', 'max:1000'],
+            'delivery_method' => ['required', Rule::in(array_keys(Order::DELIVERY_METHODS))],
             'delivery_map_url' => ['nullable', 'string', 'max:6000'],
             'delivery_lat' => ['nullable', 'numeric', 'between:-90,90'],
             'delivery_lng' => ['nullable', 'numeric', 'between:-180,180'],
@@ -166,6 +167,8 @@ class OrderController extends Controller
             'items.*.sale_package_id' => ['nullable', 'integer', Rule::exists('catalog_product_sale_packages', 'id')],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:99999'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0', 'max:9999999'],
+            'items.*.selected_colors' => ['nullable', 'array'],
+            'items.*.selected_colors.*' => ['nullable', Rule::in(['azul', 'negro', 'rosa', 'blanco', 'amarillo', 'verde', 'naranja', 'rojo'])],
             'reference_links' => ['nullable', 'array'],
             'reference_links.*' => ['nullable', 'url', 'max:1000'],
             'reference_files' => ['nullable', 'array'],
@@ -208,31 +211,40 @@ class OrderController extends Controller
             }
 
             $price = ceil((float) $item['unit_price']);
+            $selectedColors = collect($item['selected_colors'] ?? [])
+                ->map(fn ($color) => trim((string) $color))
+                ->filter()
+                ->take($quantity)
+                ->values()
+                ->all();
 
             return ['item_type' => $item['item_type'], 'catalog_product_id' => $isBundle ? null : $record->id,
                 'catalog_bundle_id' => $isBundle ? $record->id : null, 'catalog_product_sale_package_id' => $salePackage?->id,
                 'product_name' => $record->name, 'contents_snapshot' => $contents,
                 'sale_package_name' => $salePackage?->name, 'sale_package_quantity' => $salePackage?->quantity,
+                'selected_colors' => $selectedColors ?: null,
                 'quantity' => $quantity, 'unit_price' => $price, 'line_total' => ceil($quantity * $price)];
         });
         $subtotal = round($items->sum('line_total'), 2);
         $discountValue = round((float) ($data['discount_value'] ?? 0), 2);
         $discountAmount = $data['discount_type'] === 'percent' ? round($subtotal * min($discountValue, 100) / 100, 2) : min($discountValue, $subtotal);
-        $shipping = $request->boolean('has_shipping') ? round((float) ($data['shipping_cost'] ?? 0), 2) : 0;
+        $hasShipping = $data['delivery_method'] !== 'pickup';
+        $shipping = $hasShipping ? round((float) ($data['shipping_cost'] ?? 0), 2) : 0;
         $total = max(0, round($subtotal - $discountAmount + $shipping, 2));
         $paymentReceived = round((float) ($data['payment_received'] ?? 0), 2);
         $advance = min(round((float) ($data['advance_payment'] ?? 0), 2) + $paymentReceived, $total);
-        $deliveryMapUrl = $this->deliveryMapUrl($data['delivery_map_url'] ?? null);
-        [$deliveryLat, $deliveryLng] = $this->deliveryCoordinates($data, $deliveryMapUrl);
+        $deliveryMapUrl = $data['delivery_method'] === 'cdmx' ? $this->deliveryMapUrl($data['delivery_map_url'] ?? null) : null;
+        [$deliveryLat, $deliveryLng] = $data['delivery_method'] === 'cdmx' ? $this->deliveryCoordinates($data, $deliveryMapUrl) : [null, null];
 
         $order->fill([
             'customer_id' => $customer->id, 'created_by' => $order->created_by ?: $request->user()->id,
             'ordered_at' => $data['ordered_at'], 'delivery_at' => $data['delivery_at'] ?? null,
-            'delivery_time' => $data['delivery_time'] ?? null, 'delivery_place' => $data['delivery_place'] ?? null,
+            'delivery_time' => $data['delivery_time'] ?? null, 'delivery_method' => $data['delivery_method'],
+            'delivery_place' => null,
             'delivery_map_url' => $deliveryMapUrl, 'delivery_lat' => $deliveryLat, 'delivery_lng' => $deliveryLng,
             'status' => $data['status'],
             'discount_type' => $data['discount_type'], 'discount_value' => $discountValue, 'subtotal' => $subtotal,
-            'discount_amount' => $discountAmount, 'has_shipping' => $request->boolean('has_shipping'), 'shipping_cost' => $shipping,
+            'discount_amount' => $discountAmount, 'has_shipping' => $hasShipping, 'shipping_cost' => $shipping,
             'total' => $total, 'advance_payment' => $advance, 'balance_due' => round($total - $advance, 2), 'observations' => $data['observations'] ?? null,
         ]);
         if (! $order->exists) {
