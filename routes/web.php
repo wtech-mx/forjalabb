@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DeliveryMapController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmailCampaignController;
+use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SalesReportController;
@@ -224,6 +225,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/reports/sales', [SalesReportController::class, 'index'])->middleware('can:orders.view')->name('reports.sales');
     Route::get('/reports/commissions', [CommissionReportController::class, 'index'])->middleware('can:orders.view')->name('reports.commissions');
     Route::get('/reports/commissions/pdf', [CommissionReportController::class, 'pdf'])->middleware('can:orders.view')->name('reports.commissions.pdf');
+    Route::resource('expenses', ExpenseController::class)->only('index')->middleware('can:orders.view');
+    Route::resource('expenses', ExpenseController::class)->only(['store', 'destroy'])->middleware('can:orders.manage');
     Route::get('/orders/{order}/pdf', [OrderController::class, 'pdf'])->middleware('can:orders.view')->name('orders.pdf');
     Route::post('/orders/{order}/whatsapp', [WhatsappController::class, 'send'])->middleware(['can:orders.manage', 'throttle:10,1'])->name('orders.whatsapp.send');
     Route::post('/orders/{order}/archive', [OrderController::class, 'archive'])->middleware('can:orders.manage')->name('orders.archive');

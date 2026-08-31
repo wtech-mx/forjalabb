@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Expense;
 use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -23,6 +24,10 @@ class SalesReportController extends Controller
             ->where('status', '!=', 'cancelled')
             ->whereBetween('ordered_at', [$start->toDateString(), $end->toDateString()])
             ->orderByDesc('ordered_at')
+            ->get();
+        $expenses = Expense::query()
+            ->whereBetween('spent_at', [$start->toDateString(), $end->toDateString()])
+            ->orderByDesc('spent_at')
             ->get();
 
         $productRows = [];
@@ -56,8 +61,12 @@ class SalesReportController extends Controller
             ->sortByDesc('revenue')
             ->values();
 
-        $totalSold = (float) $orders->sum('total');
-        $totalExpense = (float) $productRows->sum('expense');
+        $totalCustomerCharged = (float) $orders->sum('total');
+        $totalShippingCharged = (float) $orders->sum('shipping_cost');
+        $totalProductSales = max(0, $totalCustomerCharged - $totalShippingCharged);
+        $totalEstimatedExpense = (float) $productRows->sum('expense');
+        $totalManualExpense = (float) $expenses->sum('amount');
+        $totalExpense = $totalEstimatedExpense + $totalManualExpense;
         $totalPaid = (float) $orders->sum('advance_payment');
         $totalPending = (float) $orders->sum('balance_due');
 
@@ -70,9 +79,17 @@ class SalesReportController extends Controller
             if (! $dailyRows->has($key)) continue;
             $expense = (float) $order->items->sum(fn ($item) => $this->itemExpense($item));
             $row = $dailyRows->get($key);
-            $row['sales'] += (float) $order->total;
+            $row['sales'] += max(0, (float) $order->total - (float) $order->shipping_cost);
             $row['expense'] += $expense;
-            $row['profit'] += (float) $order->total - $expense;
+            $row['profit'] += max(0, (float) $order->total - (float) $order->shipping_cost) - $expense;
+            $dailyRows->put($key, $row);
+        }
+        foreach ($expenses as $expense) {
+            $key = $expense->spent_at->toDateString();
+            if (! $dailyRows->has($key)) continue;
+            $row = $dailyRows->get($key);
+            $row['expense'] += (float) $expense->amount;
+            $row['profit'] -= (float) $expense->amount;
             $dailyRows->put($key, $row);
         }
 
@@ -82,16 +99,22 @@ class SalesReportController extends Controller
             'start' => $start,
             'end' => $end,
             'orders' => $orders,
+            'expenses' => $expenses,
             'productRows' => $productRows,
             'summary' => [
                 'orders_count' => $orders->count(),
                 'completed_count' => $orders->where('balance_due', '<=', 0)->count(),
                 'pending_count' => $orders->where('balance_due', '>', 0)->count(),
-                'total_sold' => $totalSold,
+                'total_customer_charged' => $totalCustomerCharged,
+                'total_product_sales' => $totalProductSales,
+                'total_shipping_charged' => $totalShippingCharged,
+                'total_sold' => $totalProductSales,
                 'total_paid' => $totalPaid,
                 'total_pending' => $totalPending,
+                'total_estimated_expense' => $totalEstimatedExpense,
+                'total_manual_expense' => $totalManualExpense,
                 'total_expense' => $totalExpense,
-                'estimated_profit' => $totalSold - $totalExpense,
+                'estimated_profit' => $totalProductSales - $totalExpense,
             ],
             'chartData' => [
                 'daily' => $dailyRows->values(),

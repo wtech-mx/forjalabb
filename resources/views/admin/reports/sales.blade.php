@@ -38,16 +38,23 @@
         </div>
 
         <div class="row g-3 mb-4">
-            <div class="col-lg-3 col-6"><div class="panel-card h-100"><small class="text-secondary">Total vendido</small><h2 class="h3 fw-bold mb-0">${{ number_format($summary['total_sold'], 0) }}</h2></div></div>
-            <div class="col-lg-3 col-6"><div class="panel-card h-100"><small class="text-secondary">Total cobrado</small><h2 class="h3 fw-bold text-success mb-0">${{ number_format($summary['total_paid'], 0) }}</h2></div></div>
-            <div class="col-lg-3 col-6"><div class="panel-card h-100"><small class="text-secondary">Gastos estimados</small><h2 class="h3 fw-bold text-warning mb-0">${{ number_format($summary['total_expense'], 0) }}</h2></div></div>
-            <div class="col-lg-3 col-6"><div class="panel-card h-100"><small class="text-secondary">Utilidad estimada</small><h2 class="h3 fw-bold mb-0">${{ number_format($summary['estimated_profit'], 0) }}</h2></div></div>
+            <div class="col-lg-3 col-6"><div class="panel-card h-100"><small class="text-secondary">Total cobrado al cliente</small><h2 class="h3 fw-bold mb-0">${{ number_format($summary['total_customer_charged'], 0) }}</h2></div></div>
+            <div class="col-lg-3 col-6"><div class="panel-card h-100"><small class="text-secondary">Venta sin envio</small><h2 class="h3 fw-bold text-success mb-0">${{ number_format($summary['total_product_sales'], 0) }}</h2></div></div>
+            <div class="col-lg-3 col-6"><div class="panel-card h-100"><small class="text-secondary">Envio cobrado</small><h2 class="h3 fw-bold text-info mb-0">${{ number_format($summary['total_shipping_charged'], 0) }}</h2></div></div>
+            <div class="col-lg-3 col-6"><div class="panel-card h-100"><small class="text-secondary">Total cobrado / pagado</small><h2 class="h3 fw-bold text-success mb-0">${{ number_format($summary['total_paid'], 0) }}</h2></div></div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-lg-3 col-6"><div class="panel-card h-100"><small class="text-secondary">Gastos estimados</small><h2 class="h3 fw-bold text-warning mb-0">${{ number_format($summary['total_estimated_expense'], 0) }}</h2></div></div>
+            <div class="col-lg-3 col-6"><div class="panel-card h-100"><small class="text-secondary">Gastos reales</small><h2 class="h3 fw-bold text-danger mb-0">${{ number_format($summary['total_manual_expense'], 0) }}</h2></div></div>
+            <div class="col-lg-3 col-6"><div class="panel-card h-100"><small class="text-secondary">Gastos totales</small><h2 class="h3 fw-bold text-danger mb-0">${{ number_format($summary['total_expense'], 0) }}</h2></div></div>
+            <div class="col-lg-3 col-6"><div class="panel-card h-100"><small class="text-secondary">Utilidad aproximada</small><h2 class="h3 fw-bold mb-0">${{ number_format($summary['estimated_profit'], 0) }}</h2></div></div>
         </div>
 
         <div class="row g-4 mb-4 report-chart-grid">
             <div class="col-xl-8">
                 <div class="panel-card h-100 report-chart-card">
-                    <div class="report-chart-heading"><div><div class="eyebrow">Comportamiento del periodo</div><h2 class="h5 fw-bold mb-0">Ventas, gastos y utilidad</h2></div><i class="bi bi-graph-up-arrow"></i></div>
+                    <div class="report-chart-heading"><div><div class="eyebrow">Comportamiento del periodo</div><h2 class="h5 fw-bold mb-0">Venta sin envio, gastos y utilidad</h2></div><i class="bi bi-graph-up-arrow"></i></div>
                     <div class="report-chart-main"><canvas id="sales-timeline-chart" aria-label="Grafica de ventas, gastos y utilidad"></canvas></div>
                 </div>
             </div>
@@ -108,22 +115,51 @@
                     <h2 class="h5 fw-bold mb-3">Pedidos incluidos</h2>
                     <div class="table-responsive">
                         <table class="table align-middle">
-                            <thead><tr><th>Pedido</th><th>Cliente</th><th>Total</th><th>Saldo</th></tr></thead>
+                            <thead><tr><th>Pedido</th><th>Cliente</th><th>Total cliente</th><th>Envio</th><th>Venta sin envio</th><th>Saldo</th></tr></thead>
                             <tbody>
                                 @forelse($orders as $order)
                                     <tr>
                                         <td><a class="fw-bold text-dark" href="{{ route('admin.orders.show', $order) }}">{{ $order->folio }}</a><small class="d-block text-secondary">{{ $order->ordered_at->format('d/m/Y') }}</small></td>
                                         <td>{{ $order->customer->name }}</td>
                                         <td>${{ number_format($order->total, 0) }}</td>
+                                        <td>${{ number_format($order->shipping_cost, 0) }}</td>
+                                        <td class="fw-bold">${{ number_format(max(0, (float) $order->total - (float) $order->shipping_cost), 0) }}</td>
                                         <td class="fw-bold {{ $order->balance_due > 0 ? 'text-danger' : 'text-success' }}">${{ number_format($order->balance_due, 0) }}</td>
                                     </tr>
                                 @empty
-                                    <tr><td colspan="4" class="text-center text-secondary py-4">No hay pedidos en este periodo.</td></tr>
+                                    <tr><td colspan="6" class="text-center text-secondary py-4">No hay pedidos en este periodo.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="panel-card mt-4">
+            <div class="d-flex flex-wrap justify-content-between gap-2 align-items-center mb-3">
+                <div>
+                    <h2 class="h5 fw-bold mb-1">Gastos reales registrados</h2>
+                    <p class="text-secondary mb-0">Estos gastos se suman a los gastos estimados para calcular la utilidad aproximada.</p>
+                </div>
+                <a class="btn btn-outline-dark btn-sm" href="{{ route('admin.expenses.index', ['month' => $start->format('Y-m')]) }}"><i class="bi bi-wallet2 me-1"></i>Administrar gastos</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead><tr><th>Fecha</th><th>Concepto</th><th>Categoria</th><th class="text-end">Monto</th></tr></thead>
+                    <tbody>
+                        @forelse($expenses as $expense)
+                            <tr>
+                                <td class="text-secondary">{{ $expense->spent_at->format('d/m/Y') }}</td>
+                                <td><strong>{{ $expense->concept }}</strong>@if($expense->notes)<small class="d-block text-secondary">{{ $expense->notes }}</small>@endif</td>
+                                <td><span class="badge text-bg-light">{{ $expense->category }}</span></td>
+                                <td class="text-end fw-bold text-danger">${{ number_format($expense->amount, 0) }}</td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="4" class="text-center text-secondary py-4">No hay gastos reales registrados en este periodo.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -140,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     new Chart(document.getElementById('sales-timeline-chart'), {
         type: 'line',
         data: { labels: data.daily.map(x => x.label), datasets: [
-            { label: 'Ventas', data: data.daily.map(x => x.sales), borderColor: '#ed741d', backgroundColor: 'rgba(237,116,29,.12)', fill: true, tension: .35, pointRadius: 3 },
+            { label: 'Venta sin envio', data: data.daily.map(x => x.sales), borderColor: '#ed741d', backgroundColor: 'rgba(237,116,29,.12)', fill: true, tension: .35, pointRadius: 3 },
             { label: 'Gastos', data: data.daily.map(x => x.expense), borderColor: '#b94b55', backgroundColor: 'transparent', tension: .35, pointRadius: 2 },
             { label: 'Utilidad', data: data.daily.map(x => x.profit), borderColor: '#47763b', backgroundColor: 'transparent', tension: .35, pointRadius: 2 },
         ]},
