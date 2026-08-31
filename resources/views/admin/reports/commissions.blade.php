@@ -43,22 +43,16 @@
         </div>
 
         <div class="row g-3 mb-4">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="panel-card h-100">
                     <small class="text-secondary">Comisión a pagar</small>
                     <h2 class="h3 fw-bold text-success mb-0">${{ number_format($summary['total_commission'], 2) }}</h2>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="panel-card h-100">
                     <small class="text-secondary">Notas vendidas</small>
                     <h2 class="h3 fw-bold mb-0">{{ $summary['orders_count'] }}</h2>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="panel-card h-100">
-                    <small class="text-secondary">Porcentaje asignado</small>
-                    <h2 class="h3 fw-bold mb-0">{{ number_format($commissionPercentage, 2) }}%</h2>
                 </div>
             </div>
         </div>
@@ -79,8 +73,6 @@
                             <th>Nota</th>
                             <th>Cliente</th>
                             <th>Fecha</th>
-                            <th>Envío excluido</th>
-                            <th class="text-end">Comisión</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,23 +81,13 @@
                                 <td><a class="fw-bold text-dark" href="{{ route('admin.orders.show', $row['order']) }}">{{ $row['order']->folio }}</a></td>
                                 <td>{{ $row['order']->customer->name }}</td>
                                 <td class="text-secondary">{{ $row['order']->ordered_at->format('d/m/Y') }}</td>
-                                <td>${{ number_format($row['shipping'], 2) }}</td>
-                                <td class="text-end fw-bold text-success">${{ number_format($row['commission'], 2) }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td class="text-center text-secondary py-4" colspan="5">No hay notas vendidas en este rango.</td>
+                                <td class="text-center text-secondary py-4" colspan="3">No hay notas vendidas en este rango.</td>
                             </tr>
                         @endforelse
                     </tbody>
-                    @if ($rows->isNotEmpty())
-                        <tfoot>
-                            <tr>
-                                <th colspan="4" class="text-end">Total de comisión</th>
-                                <th class="text-end text-success">${{ number_format($summary['total_commission'], 2) }}</th>
-                            </tr>
-                        </tfoot>
-                    @endif
                 </table>
             </div>
         </div>

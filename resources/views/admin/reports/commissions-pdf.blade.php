@@ -9,7 +9,7 @@
         .muted { color: #6f6259; }
         .header { border-bottom: 2px solid #1f130d; padding-bottom: 14px; margin-bottom: 18px; }
         .summary { width: 100%; margin-bottom: 18px; border-collapse: collapse; }
-        .summary td { width: 33.33%; border: 1px solid #e8ded2; padding: 12px; vertical-align: top; }
+        .summary td { width: 50%; border: 1px solid #e8ded2; padding: 12px; vertical-align: top; }
         .label { color: #6f6259; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
         .value { font-size: 20px; font-weight: 700; margin-top: 4px; }
         table.data { width: 100%; border-collapse: collapse; }
@@ -36,10 +36,6 @@
                 <div class="label">Notas vendidas</div>
                 <div class="value">{{ $summary['orders_count'] }}</div>
             </td>
-            <td>
-                <div class="label">Porcentaje asignado</div>
-                <div class="value">{{ number_format($commissionPercentage, 2) }}%</div>
-            </td>
         </tr>
     </table>
 
@@ -51,8 +47,6 @@
                 <th>Nota</th>
                 <th>Cliente</th>
                 <th>Fecha</th>
-                <th class="right">Envío excluido</th>
-                <th class="right">Comisión</th>
             </tr>
         </thead>
         <tbody>
@@ -61,20 +55,12 @@
                     <td>{{ $row['order']->folio }}</td>
                     <td>{{ $row['order']->customer->name }}</td>
                     <td>{{ $row['order']->ordered_at->format('d/m/Y') }}</td>
-                    <td class="right">${{ number_format($row['shipping'], 2) }}</td>
-                    <td class="right">${{ number_format($row['commission'], 2) }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5">No hay notas vendidas en este rango.</td>
+                    <td colspan="3">No hay notas vendidas en este rango.</td>
                 </tr>
             @endforelse
-            @if ($rows->isNotEmpty())
-                <tr class="total-row">
-                    <td colspan="4" class="right">Total de comisión</td>
-                    <td class="right">${{ number_format($summary['total_commission'], 2) }}</td>
-                </tr>
-            @endif
         </tbody>
     </table>
 </body>
