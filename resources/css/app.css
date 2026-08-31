@@ -5489,3 +5489,75 @@ a {
         backdrop-filter: none;
     }
 }
+
+/* Keep mobile product panels from covering each other horizontally. */
+@media (max-width: 767.98px) {
+    .catalog-section,
+    .catalog-section .container,
+    .catalog-grid,
+    .catalog-card,
+    .catalog-card-link,
+    .season-package,
+    .tequila-feature,
+    .product-gallery-single,
+    .bundle-single,
+    .dynamic-product {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .tequila-feature,
+    .product-gallery-single,
+    .bundle-single,
+    .dynamic-product {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        overflow: clip;
+    }
+
+    .tequila-photo,
+    .tequila-copy,
+    .product-gallery-media,
+    .product-gallery-copy,
+    .bundle-single-media,
+    .bundle-single-copy,
+    .design-options-panel {
+        position: relative;
+        z-index: auto;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .tequila-copy,
+    .product-gallery-copy,
+    .bundle-single-copy,
+    .design-options-panel,
+    .finish-list,
+    .color-list,
+    .sale-package-picker,
+    .product-gallery-strip,
+    .dynamic-gallery-strip,
+    .bundle-single-gallery {
+        z-index: 3;
+    }
+
+    .catalog-section-priority > .container::before {
+        pointer-events: none;
+    }
+
+    .catalog-card,
+    .catalog-card-link,
+    .season-package-media,
+    .tequila-copy button,
+    .tequila-copy a,
+    .product-gallery-copy button,
+    .product-gallery-copy a,
+    .bundle-single-copy button,
+    .bundle-single-copy a,
+    .design-strip figure {
+        pointer-events: auto;
+    }
+}
