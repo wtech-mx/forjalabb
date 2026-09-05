@@ -16,9 +16,10 @@ class Order extends Model
     use HasFactory;
 
     public const DELIVERY_METHODS = [
-        'skydropx' => 'Skydropx / foráneo',
-        'cdmx' => 'Entrega CDMX',
-        'pickup' => 'Recoger en tienda',
+        'cdmx' => 'En casa',
+        'cod' => 'Contra entrega',
+        'skydropx' => 'Foráneo',
+        'pickup' => 'Tienda',
     ];
 
     public const STATUSES = [

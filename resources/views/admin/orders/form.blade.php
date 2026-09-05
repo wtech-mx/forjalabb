@@ -125,7 +125,7 @@
                                 </label>
                             @endforeach
                         </div>
-                        <div data-delivery-location-wrap class="{{ $deliveryMethod === 'cdmx' ? '' : 'd-none' }}">
+                        <div data-delivery-location-wrap class="{{ in_array($deliveryMethod, ['cdmx', 'cod'], true) ? '' : 'd-none' }}">
                         <label class="form-label">Ubicacion de Google Maps</label>
                         <textarea class="form-control mb-2" name="delivery_map_url" rows="3" placeholder="Pega aqui el link de Maps o el iframe completo" data-delivery-location-field>{{ old('delivery_map_url', $order->delivery_map_url) }}</textarea>
                         <div class="row g-2 mb-3">

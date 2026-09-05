@@ -2,8 +2,8 @@ const http = require('http');
 const QRCode = require('qrcode');
 const { Client, LocalAuth } = require('whatsapp-web.js');
 
-const host = process.env.WHATSAPP_HOST || '127.0.0.1';
-const port = Number(process.env.WHATSAPP_PORT || 3210);
+const host = process.env.WHATSAPP_HOST || (process.env.PORT ? '0.0.0.0' : '127.0.0.1');
+const port = Number(process.env.PORT || process.env.WHATSAPP_PORT || 3210);
 const apiToken = process.env.WHATSAPP_API_TOKEN || 'forjalab-local-whatsapp';
 let state = 'starting', qrImage = null, account = null, lastError = null;
 

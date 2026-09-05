@@ -11,6 +11,7 @@ use App\Models\Order;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -26,10 +27,16 @@ class OrderController extends Controller
         $search = trim((string) $request->query('q'));
         $showArchived = $request->boolean('archived');
         $deliveryDate = $request->date('delivery_date')?->format('Y-m-d');
+        $status = $request->query('status');
+
+        if (! array_key_exists((string) $status, Order::STATUSES)) {
+            $status = null;
+        }
 
         $query = Order::query()
             ->when($showArchived, fn ($query) => $query->whereNotNull('archived_at'), fn ($query) => $query->whereNull('archived_at'))
             ->when($deliveryDate, fn ($query) => $query->whereDate('delivery_at', $deliveryDate))
+            ->when($status, fn ($query) => $query->where('status', $status))
             ->when($search, function ($query) use ($search) {
                 $query->where(fn ($q) => $q->where('folio', 'like', "%{$search}%")
                     ->orWhereHas('customer', fn ($customer) => $customer->where('name', 'like', "%{$search}%")->orWhere('phone', 'like', "%{$search}%")));
@@ -48,6 +55,7 @@ class OrderController extends Controller
             'search' => $search,
             'showArchived' => $showArchived,
             'deliveryDate' => $deliveryDate,
+            'status' => $status,
         ]);
     }
 
@@ -60,12 +68,12 @@ class OrderController extends Controller
     {
         $order = DB::transaction(fn () => $this->saveOrder(new Order, $request));
 
-        return redirect()->route('admin.orders.show', $order)->with('status', 'Pedido creado correctamente. Ya puedes descargar su PDF.');
+        return redirect()->route('admin.orders.edit', $order)->with('status', 'Pedido creado correctamente.');
     }
 
-    public function show(Order $order): View
+    public function show(Order $order): RedirectResponse
     {
-        return view('admin.orders.show', ['order' => $order->load(['customer', 'items', 'references', 'creator', 'shipment.events.media'])]);
+        return redirect()->route('admin.orders.edit', $order);
     }
 
     public function edit(Order $order): View
@@ -77,7 +85,22 @@ class OrderController extends Controller
     {
         DB::transaction(fn () => $this->saveOrder($order, $request));
 
-        return redirect()->route('admin.orders.show', $order)->with('status', 'Pedido actualizado correctamente.');
+        return redirect()->route('admin.orders.edit', $order)->with('status', 'Pedido actualizado correctamente.');
+    }
+
+    public function updateStatus(Request $request, Order $order): JsonResponse
+    {
+        $data = $request->validate([
+            'status' => ['required', Rule::in(array_keys(Order::STATUSES))],
+        ]);
+
+        $order->update(['status' => $data['status']]);
+
+        return response()->json([
+            'message' => 'Estado del pedido actualizado.',
+            'status' => $order->status,
+            'label' => Order::STATUSES[$order->status],
+        ]);
     }
 
     public function archive(Order $order): RedirectResponse
@@ -91,7 +114,7 @@ class OrderController extends Controller
     {
         $order->forceFill(['archived_at' => null])->save();
 
-        return redirect()->route('admin.orders.show', $order)->with('status', 'Pedido restaurado correctamente.');
+        return redirect()->route('admin.orders.edit', $order)->with('status', 'Pedido restaurado correctamente.');
     }
 
     public function pdf(Order $order): Response
@@ -233,8 +256,9 @@ class OrderController extends Controller
         $total = max(0, round($subtotal - $discountAmount + $shipping, 2));
         $paymentReceived = round((float) ($data['payment_received'] ?? 0), 2);
         $advance = min(round((float) ($data['advance_payment'] ?? 0), 2) + $paymentReceived, $total);
-        $deliveryMapUrl = $data['delivery_method'] === 'cdmx' ? $this->deliveryMapUrl($data['delivery_map_url'] ?? null) : null;
-        [$deliveryLat, $deliveryLng] = $data['delivery_method'] === 'cdmx' ? $this->deliveryCoordinates($data, $deliveryMapUrl) : [null, null];
+        $needsLocation = in_array($data['delivery_method'], ['cdmx', 'cod'], true);
+        $deliveryMapUrl = $needsLocation ? $this->deliveryMapUrl($data['delivery_map_url'] ?? null) : null;
+        [$deliveryLat, $deliveryLng] = $needsLocation ? $this->deliveryCoordinates($data, $deliveryMapUrl) : [null, null];
 
         $order->fill([
             'customer_id' => $customer->id, 'created_by' => $order->created_by ?: $request->user()->id,
@@ -248,7 +272,7 @@ class OrderController extends Controller
             'total' => $total, 'advance_payment' => $advance, 'balance_due' => round($total - $advance, 2), 'observations' => $data['observations'] ?? null,
         ]);
         if (! $order->exists) {
-            $order->folio = 'PED-'.now()->format('Ymd').'-'.str_pad((string) ((Order::max('id') ?? 0) + 1), 4, '0', STR_PAD_LEFT);
+            $order->folio = 'P-'.str_pad((string) ((Order::max('id') ?? 0) + 1), 4, '0', STR_PAD_LEFT);
         }
         $order->save();
         $order->items()->delete();

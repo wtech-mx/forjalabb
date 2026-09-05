@@ -41,10 +41,19 @@
                     <label class="form-label">Fecha de entrega</label>
                     <input class="form-control form-control-lg" type="date" name="delivery_date" value="{{ $deliveryDate }}">
                 </div>
+                <div class="col-md-3">
+                    <label class="form-label"><i class="bi bi-flag-fill me-1"></i>Estado</label>
+                    <select class="form-select form-select-lg" name="status">
+                        <option value="">Todos los estados</option>
+                        @foreach(\App\Models\Order::STATUSES as $value => $label)
+                            <option value="{{ $value }}" @selected($status === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="col-md-auto">
                     <button class="btn btn-outline-dark w-100"><i class="bi bi-search me-1"></i>Buscar</button>
                 </div>
-                @if($search || $deliveryDate)
+                @if($search || $deliveryDate || $status)
                     <div class="col-md-auto">
                         <a class="btn btn-outline-secondary w-100" href="{{ route('admin.orders.index', $showArchived ? ['archived' => 1] : []) }}">Limpiar</a>
                     </div>
@@ -61,6 +70,7 @@
                             <th>Cliente</th>
                             <th>Pedido</th>
                             <th>Entrega</th>
+                            <th>Tipo</th>
                             <th>Estado</th>
                             <th>Total</th>
                             <th>Saldo</th>
@@ -70,9 +80,9 @@
                     <tbody>
                         @forelse($orders as $order)
                             <tr>
-                                <td><a class="order-folio" href="{{ route('admin.orders.show', $order) }}"><i class="bi bi-receipt"></i>{{ $order->folio }}</a></td>
+                                <td><a class="order-folio" href="{{ route('admin.orders.edit', $order) }}"><i class="bi bi-receipt"></i>{{ $order->folio }}</a></td>
                                 <td>
-                                    <div class="order-customer"><span>{{ strtoupper(mb_substr($order->customer->name, 0, 1)) }}</span><div><strong>{{ $order->customer->name }}</strong><small><i class="bi bi-telephone me-1"></i>{{ $order->customer->phone ?: 'Sin telefono' }}</small></div></div>
+                                    <div class="order-customer"><div><strong>{{ $order->customer->name }}</strong><small><i class="bi bi-telephone me-1"></i>{{ $order->customer->phone ?: 'Sin telefono' }}</small></div></div>
                                 </td>
                                 <td data-label="Pedido"><span class="order-date"><i class="bi bi-calendar3"></i>{{ $order->ordered_at->format('d/m/Y') }}</span></td>
                                 <td data-label="Entrega">
@@ -92,9 +102,10 @@
                                         <span class="order-muted-pill"><i class="bi bi-calendar-x"></i>Por definir</span>
                                     @endif
                                 </td>
+                                <td data-label="Tipo"><span class="badge text-bg-light">{{ \App\Models\Order::DELIVERY_METHODS[$order->delivery_method] ?? 'Por definir' }}</span></td>
                                 <td data-label="Estado">
                                     @php($statusIcon = ['pending'=>'hourglass-split','in_progress'=>'gear-wide-connected','ready'=>'bag-check-fill','delivered'=>'check-circle-fill','cancelled'=>'x-circle-fill'][$order->status] ?? 'circle')
-                                    <span class="order-status order-status-{{ $order->status }}"><i class="bi bi-{{ $statusIcon }}"></i>{{ \App\Models\Order::STATUSES[$order->status] }}</span>
+                                    <span class="order-status order-status-{{ $order->status }}" data-order-status="{{ $order->id }}"><i class="bi bi-{{ $statusIcon }}"></i><span>{{ \App\Models\Order::STATUSES[$order->status] }}</span></span>
                                     @if($order->archived_at)
                                         <small class="d-block text-secondary mt-1">Archivado {{ $order->archived_at->format('d/m/Y') }}</small>
                                     @endif
@@ -103,7 +114,10 @@
                                 <td data-label="Saldo"><span class="order-balance {{ $order->balance_due > 0 ? 'pending' : 'paid' }}"><i class="bi bi-{{ $order->balance_due > 0 ? 'exclamation-circle' : 'check-circle' }}"></i>${{ number_format($order->balance_due, 2) }}</span></td>
                                 <td class="text-end">
                                     <div class="d-inline-flex gap-2">
-                                        <a class="btn btn-sm btn-dark" href="{{ route('admin.orders.show', $order) }}"><i class="bi bi-eye me-1"></i>Ver</a>
+                                        @can('orders.manage')
+                                            <button class="btn btn-sm btn-outline-dark" type="button" data-order-status-button data-order-id="{{ $order->id }}" data-status="{{ $order->status }}" data-url="{{ route('admin.orders.status.update', $order) }}" data-order="{{ $order->folio }}"><i class="bi bi-arrow-repeat me-1"></i>Estado</button>
+                                            <a class="btn btn-sm btn-dark" href="{{ route('admin.orders.edit', $order) }}"><i class="bi bi-pencil-square me-1"></i>Editar</a>
+                                        @endcan
                                         @can('orders.manage')
                                             @if($showArchived)
                                                 <form method="POST" action="{{ route('admin.orders.restore', $order) }}">
@@ -122,7 +136,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-5 text-secondary">{{ $showArchived ? 'No hay pedidos archivados.' : 'Todavia no hay pedidos registrados.' }}</td>
+                                <td colspan="9" class="text-center py-5 text-secondary">{{ $showArchived ? 'No hay pedidos archivados.' : 'Todavia no hay pedidos registrados.' }}</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -132,4 +146,17 @@
         </div>
     </div>
 </section>
+@can('orders.manage')
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+    const statusLabels={!! json_encode(\App\Models\Order::STATUSES, JSON_UNESCAPED_UNICODE) !!};
+    const statusIcons={pending:'hourglass-split',in_progress:'gear-wide-connected',ready:'bag-check-fill',delivered:'check-circle-fill',cancelled:'x-circle-fill'};
+    document.querySelectorAll('[data-order-status-button]').forEach(button=>button.addEventListener('click',async()=>{
+        const result=await window.Swal.fire({title:`Cambiar estado · ${button.dataset.order}`,input:'select',inputOptions:statusLabels,inputValue:button.dataset.status,inputLabel:'Nuevo estado del pedido',showCancelButton:true,confirmButtonText:'Actualizar estado',cancelButtonText:'Cancelar',reverseButtons:true,customClass:{popup:'forjalab-swal',confirmButton:'btn btn-dark px-4',cancelButton:'btn btn-outline-secondary px-4'},buttonsStyling:false,showLoaderOnConfirm:true,allowOutsideClick:()=>!window.Swal.isLoading(),preConfirm:async status=>{try{const response=await fetch(button.dataset.url,{method:'PATCH',headers:{Accept:'application/json','Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content},body:JSON.stringify({status})});const payload=await response.json();if(!response.ok)throw new Error(Object.values(payload.errors||{}).flat()[0]||payload.message||'No se pudo actualizar.');return payload}catch(error){window.Swal.showValidationMessage(error.message)}}});
+        if(!result.isConfirmed)return;
+        const payload=result.value,badge=document.querySelector(`[data-order-status="${button.dataset.orderId}"]`);button.dataset.status=payload.status;if(badge){badge.className=`order-status order-status-${payload.status}`;badge.querySelector('i').className=`bi bi-${statusIcons[payload.status]||'circle'}`;badge.querySelector('span').textContent=payload.label}window.Swal.fire({title:'Estado actualizado',text:payload.message,icon:'success',timer:1600,showConfirmButton:false});
+    }));
+});
+</script>
+@endcan
 @endsection

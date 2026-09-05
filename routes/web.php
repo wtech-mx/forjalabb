@@ -231,6 +231,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/orders/{order}/whatsapp', [WhatsappController::class, 'send'])->middleware(['can:orders.manage', 'throttle:10,1'])->name('orders.whatsapp.send');
     Route::post('/orders/{order}/archive', [OrderController::class, 'archive'])->middleware('can:orders.manage')->name('orders.archive');
     Route::post('/orders/{order}/restore', [OrderController::class, 'restore'])->middleware('can:orders.manage')->name('orders.restore');
+    Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->middleware('can:orders.manage')->name('orders.status.update');
     Route::resource('orders', OrderController::class)->except(['index', 'show', 'destroy'])->middleware('can:orders.manage');
     Route::resource('orders', OrderController::class)->only(['index', 'show'])->middleware('can:orders.view');
     Route::get('/shipments', [ShipmentController::class, 'index'])->middleware('can:orders.view')->name('shipments.index');
