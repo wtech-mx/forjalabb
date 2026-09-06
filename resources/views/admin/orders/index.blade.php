@@ -28,6 +28,14 @@
             <article class="is-balance"><i class="bi bi-wallet2"></i><div><small>Saldo por cobrar</small><strong>${{ number_format($summary['balance'], 2) }}</strong></div></article>
         </div>
 
+        <div class="order-delivery-legend mb-4" aria-label="Guía de tipos de entrega">
+            <strong><i class="bi bi-tag-fill"></i>Tipo de entrega</strong>
+            @foreach(\App\Models\Order::DELIVERY_METHODS as $method => $label)
+                @php($legendMeta = \App\Models\Order::DELIVERY_METHOD_META[$method])
+                <span class="order-delivery-type order-delivery-type-{{ $legendMeta['class'] }}"><i class="bi bi-{{ $legendMeta['icon'] }}"></i><span>{{ $label }}</span></span>
+            @endforeach
+        </div>
+
         <div class="panel-card order-filter-card mb-4">
             <form class="row g-2 align-items-end" method="GET">
                 @if($showArchived)
@@ -37,9 +45,18 @@
                     <label class="form-label"><i class="bi bi-search me-1"></i>Buscar pedido</label>
                     <input class="form-control form-control-lg" name="q" value="{{ $search }}" placeholder="Folio, cliente o telefono">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label">Fecha de entrega</label>
                     <input class="form-control form-control-lg" type="date" name="delivery_date" value="{{ $deliveryDate }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label"><i class="bi bi-truck me-1"></i>Tipo de entrega</label>
+                    <select class="form-select form-select-lg" name="delivery_method">
+                        <option value="">Todos los tipos</option>
+                        @foreach(\App\Models\Order::DELIVERY_METHODS as $value => $label)
+                            <option value="{{ $value }}" @selected($deliveryMethod === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label"><i class="bi bi-flag-fill me-1"></i>Estado</label>
@@ -53,7 +70,7 @@
                 <div class="col-md-auto">
                     <button class="btn btn-outline-dark w-100"><i class="bi bi-search me-1"></i>Buscar</button>
                 </div>
-                @if($search || $deliveryDate || $status)
+                @if($search || $deliveryDate || $status || $deliveryMethod)
                     <div class="col-md-auto">
                         <a class="btn btn-outline-secondary w-100" href="{{ route('admin.orders.index', $showArchived ? ['archived' => 1] : []) }}">Limpiar</a>
                     </div>
@@ -150,6 +167,7 @@
 </section>
 <style>
 .order-delivery-type{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .65rem;font-size:.7rem;font-weight:850;white-space:nowrap;border-radius:999px}.order-delivery-type i{font-size:.75rem}.order-delivery-type-home{color:#084298;background:#cfe2ff}.order-delivery-type-cod{color:#842029;background:#f8d7da}.order-delivery-type-shipping{color:#4c2882;background:#e5d9f7}.order-delivery-type-pickup{color:#0f5132;background:#d1e7dd}.order-delivery-type-unknown{color:#41464b;background:#e2e3e5}
+.order-delivery-legend{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;padding:1rem 1.15rem;background:linear-gradient(135deg,#fff,#fff9ef);border:1px solid rgba(90,53,29,.13);border-radius:1.1rem;box-shadow:0 .45rem 1.2rem rgba(70,42,25,.06)}.order-delivery-legend>strong{display:inline-flex;align-items:center;gap:.5rem;margin-right:.25rem;color:var(--ink);font-size:1rem}.order-delivery-legend>strong i{color:var(--forge-brown)}.order-delivery-legend .order-delivery-type{padding:.5rem .72rem;font-size:.76rem}@media(max-width:575.98px){.order-delivery-legend>strong{width:100%;margin-bottom:.15rem}}
 </style>
 @can('orders.manage')
 <script>

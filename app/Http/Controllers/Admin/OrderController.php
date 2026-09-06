@@ -28,15 +28,20 @@ class OrderController extends Controller
         $showArchived = $request->boolean('archived');
         $deliveryDate = $request->date('delivery_date')?->format('Y-m-d');
         $status = $request->query('status');
+        $deliveryMethod = $request->query('delivery_method');
 
         if (! array_key_exists((string) $status, Order::STATUSES)) {
             $status = null;
+        }
+        if (! array_key_exists((string) $deliveryMethod, Order::DELIVERY_METHODS)) {
+            $deliveryMethod = null;
         }
 
         $query = Order::query()
             ->when($showArchived, fn ($query) => $query->whereNotNull('archived_at'), fn ($query) => $query->whereNull('archived_at'))
             ->when($deliveryDate, fn ($query) => $query->whereDate('delivery_at', $deliveryDate))
             ->when($status, fn ($query) => $query->where('status', $status))
+            ->when($deliveryMethod, fn ($query) => $query->where('delivery_method', $deliveryMethod))
             ->when($search, function ($query) use ($search) {
                 $query->where(fn ($q) => $q->where('folio', 'like', "%{$search}%")
                     ->orWhereHas('customer', fn ($customer) => $customer->where('name', 'like', "%{$search}%")->orWhere('phone', 'like', "%{$search}%")));
@@ -56,6 +61,7 @@ class OrderController extends Controller
             'showArchived' => $showArchived,
             'deliveryDate' => $deliveryDate,
             'status' => $status,
+            'deliveryMethod' => $deliveryMethod,
         ]);
     }
 
