@@ -216,6 +216,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/drive-gallery/google/callback', [DriveGalleryController::class, 'callback'])->middleware(['can:orders.manage', 'throttle:10,1'])->name('drive-gallery.google.callback');
     Route::get('/drive-gallery/files', [DriveGalleryController::class, 'files'])->middleware(['can:orders.view', 'throttle:60,1'])->name('drive-gallery.files');
     Route::post('/drive-gallery/files', [DriveGalleryController::class, 'upload'])->middleware(['can:orders.manage', 'throttle:20,1'])->name('drive-gallery.upload');
+    Route::post('/drive-gallery/folders', [DriveGalleryController::class, 'createFolder'])->middleware(['can:orders.manage', 'throttle:20,1'])->name('drive-gallery.folders.store');
+    Route::delete('/drive-gallery/items/{item}', [DriveGalleryController::class, 'trash'])->middleware(['can:orders.manage', 'throttle:30,1'])->name('drive-gallery.items.trash');
     Route::get('/drive-gallery/files/{file}/download', [DriveGalleryController::class, 'download'])->middleware(['can:orders.view', 'throttle:60,1'])->name('drive-gallery.download');
 
     Route::get('/settings', [SettingsController::class, 'index'])->middleware('can:settings.manage')->name('settings.index');

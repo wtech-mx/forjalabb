@@ -82,6 +82,29 @@ class GoogleDriveGalleryService
             ->json();
     }
 
+    public function createFolder(string $name, string $parentId): array
+    {
+        return Http::withToken($this->accessToken())
+            ->timeout(30)
+            ->post('https://www.googleapis.com/drive/v3/files?fields=id,name,mimeType,parents', [
+                'name' => $name,
+                'mimeType' => 'application/vnd.google-apps.folder',
+                'parents' => [$parentId],
+            ])
+            ->throw()
+            ->json();
+    }
+
+    public function moveToTrash(string $itemId): void
+    {
+        Http::withToken($this->accessToken())
+            ->timeout(30)
+            ->patch('https://www.googleapis.com/drive/v3/files/'.$itemId.'?fields=id,trashed', [
+                'trashed' => true,
+            ])
+            ->throw();
+    }
+
     private function accessToken(): string
     {
         $token = GoogleDriveToken::where('provider', 'google_drive')->first();

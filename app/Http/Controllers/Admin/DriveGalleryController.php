@@ -165,6 +165,60 @@ class DriveGalleryController extends Controller
         }
     }
 
+    public function createFolder(Request $request, GoogleDriveGalleryService $drive): JsonResponse
+    {
+        $data = $request->validate([
+            'parent_id' => ['required', 'string', 'max:200'],
+            'name' => ['required', 'string', 'max:120', 'not_regex:~[\\\\/]~'],
+        ]);
+
+        if (! in_array($data['parent_id'], $this->allowedFolderIds(), true)) {
+            return response()->json(['message' => 'La carpeta de destino no pertenece a esta galería.'], 422);
+        }
+
+        if (! $drive->connected()) {
+            return response()->json(['message' => 'Primero conecta tu cuenta de Google Drive.'], 503);
+        }
+
+        try {
+            $folder = $drive->createFolder(trim($data['name']), $data['parent_id']);
+            $this->clearGalleryCache();
+
+            return response()->json(['message' => 'La carpeta fue creada correctamente.', 'folder' => $folder], 201);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json(['message' => 'Google Drive rechazó la creación de la carpeta.'], 502);
+        }
+    }
+
+    public function trash(string $item, GoogleDriveGalleryService $drive): JsonResponse
+    {
+        if ($item === $this->folderId()) {
+            return response()->json(['message' => 'La carpeta principal no se puede eliminar.'], 422);
+        }
+
+        $allowedIds = array_merge($this->allowedFolderIds(), $this->allowedImageIds());
+        if (! in_array($item, $allowedIds, true)) {
+            return response()->json(['message' => 'El elemento no pertenece a esta galería.'], 404);
+        }
+
+        if (! $drive->connected()) {
+            return response()->json(['message' => 'Primero conecta tu cuenta de Google Drive.'], 503);
+        }
+
+        try {
+            $drive->moveToTrash($item);
+            $this->clearGalleryCache();
+
+            return response()->json(['message' => 'El elemento se envió a la papelera de Google Drive.']);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json(['message' => 'Google Drive no pudo enviar el elemento a la papelera.'], 502);
+        }
+    }
+
     public function download(string $file): StreamedResponse
     {
         $metadata = $this->driveRequest('https://www.googleapis.com/drive/v3/files/'.$file, [
@@ -238,7 +292,39 @@ class DriveGalleryController extends Controller
             }
         }
 
+        Cache::put('drive_gallery.folder_ids', array_keys($visited), now()->addMinutes(15));
+
         return array_values(array_unique($imageIds));
+    }
+
+    private function allowedFolderIds(): array
+    {
+        $ids = Cache::get('drive_gallery.folder_ids');
+
+        if (! is_array($ids)) {
+            $this->galleryImageIds();
+            $ids = Cache::get('drive_gallery.folder_ids', [$this->folderId()]);
+        }
+
+        return $ids;
+    }
+
+    private function allowedImageIds(): array
+    {
+        $ids = Cache::get('drive_gallery.image_ids');
+
+        if (! is_array($ids)) {
+            $ids = $this->galleryImageIds();
+            Cache::put('drive_gallery.image_ids', $ids, now()->addMinutes(15));
+        }
+
+        return $ids;
+    }
+
+    private function clearGalleryCache(): void
+    {
+        Cache::forget('drive_gallery.image_ids');
+        Cache::forget('drive_gallery.folder_ids');
     }
 
     private function driveError(HttpResponse $response): string
