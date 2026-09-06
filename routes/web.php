@@ -195,6 +195,8 @@ Route::post('/analytics/events', [AnalyticsController::class, 'store'])
     ->name('analytics.events');
 Route::view('/polita_devoluciones', 'returns-policy')->name('returns.policy');
 Route::redirect('/politica_devoluciones', '/polita_devoluciones', 301);
+Route::view('/aviso-de-privacidad', 'privacy-policy')->name('privacy.policy');
+Route::view('/terminos-y-condiciones', 'terms-of-service')->name('terms.service');
 Route::post('/prospectos', [LeadController::class, 'store'])->middleware('throttle:10,1')->name('leads.store');
 Route::get('/registro-tag/{token}', [PublicTagIntakeController::class, 'edit'])->name('tags.intake.edit');
 Route::put('/registro-tag/{token}', [PublicTagIntakeController::class, 'update'])->middleware('throttle:20,1')->name('tags.intake.update');
