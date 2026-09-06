@@ -11,9 +11,11 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DriveGalleryController extends Controller
 {
+    private const DEFAULT_FOLDER_ID = '1QXjXh40eUZHRX2Pkq2ZWRxzP-ZYf1B6i';
+
     public function index(): View
     {
-        $folderId = config('services.drive_gallery.folder_id');
+        $folderId = $this->folderId();
 
         return view('admin.drive-gallery.index', [
             'folderUrl' => 'https://drive.google.com/drive/folders/'.$folderId,
@@ -23,7 +25,7 @@ class DriveGalleryController extends Controller
     public function files(): JsonResponse
     {
         $folders = [[
-            'id' => config('services.drive_gallery.folder_id'),
+            'id' => $this->folderId(),
             'path' => 'Principal',
         ]];
         $visited = [];
@@ -45,7 +47,7 @@ class DriveGalleryController extends Controller
             }
 
             foreach ($response->json('files', []) as $file) {
-                if (($file['mimeType'] ?? '') === 'application/vnd.google-apps.folder') {
+                if (($file['mimeType'] ?? '') === 'application/vnd.google-apps.folder' && filled($file['id'] ?? null)) {
                     $path = $folder['path'].' / '.$file['name'];
                     $folders[] = ['id' => $file['id'], 'path' => $path];
                     $directories->push(['id' => $file['id'], 'name' => $file['name'], 'path' => $path, 'parent' => $folder['path']]);
@@ -116,7 +118,7 @@ class DriveGalleryController extends Controller
 
     private function belongsToGallery(array $parentIds): bool
     {
-        $root = config('services.drive_gallery.folder_id');
+        $root = $this->folderId();
         $visited = [];
 
         while ($parentIds !== [] && count($visited) < 100) {
@@ -144,5 +146,10 @@ class DriveGalleryController extends Controller
     private function driveError(HttpResponse $response): string
     {
         return (string) ($response->json('error.message') ?: 'Google Drive no pudo entregar la galería.');
+    }
+
+    private function folderId(): string
+    {
+        return trim((string) config('services.drive_gallery.folder_id')) ?: self::DEFAULT_FOLDER_ID;
     }
 }

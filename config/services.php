@@ -64,7 +64,7 @@ return [
 
     'drive_gallery' => [
         'api_key' => env('GOOGLE_DRIVE_API_KEY'),
-        'folder_id' => env('GOOGLE_DRIVE_GALLERY_FOLDER_ID', '1QXjXh40eUZHRX2Pkq2ZWRxzP-ZYf1B6i'),
+        'folder_id' => env('GOOGLE_DRIVE_GALLERY_FOLDER_ID') ?: '1QXjXh40eUZHRX2Pkq2ZWRxzP-ZYf1B6i',
     ],
 
     'whatsapp_web' => [
