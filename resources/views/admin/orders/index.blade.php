@@ -70,7 +70,7 @@
                             <th>Cliente</th>
                             <th>Pedido</th>
                             <th>Entrega</th>
-                            <th>Tipo</th>
+                            <th>Tipo de entrega</th>
                             <th>Estado</th>
                             <th>Total</th>
                             <th>Saldo</th>
@@ -102,7 +102,8 @@
                                         <span class="order-muted-pill"><i class="bi bi-calendar-x"></i>Por definir</span>
                                     @endif
                                 </td>
-                                <td data-label="Tipo"><span class="badge text-bg-light">{{ \App\Models\Order::DELIVERY_METHODS[$order->delivery_method] ?? 'Por definir' }}</span></td>
+                                @php($deliveryMeta = \App\Models\Order::DELIVERY_METHOD_META[$order->delivery_method] ?? ['icon' => 'question-circle-fill', 'class' => 'unknown'])
+                                <td data-label="Tipo de entrega"><span class="order-delivery-type order-delivery-type-{{ $deliveryMeta['class'] }}" data-order-delivery-type="{{ $order->id }}"><i class="bi bi-{{ $deliveryMeta['icon'] }}"></i><span>{{ \App\Models\Order::DELIVERY_METHODS[$order->delivery_method] ?? 'Por definir' }}</span></span></td>
                                 <td data-label="Estado">
                                     @php($statusIcon = ['pending'=>'hourglass-split','in_progress'=>'gear-wide-connected','ready'=>'bag-check-fill','delivered'=>'check-circle-fill','cancelled'=>'x-circle-fill'][$order->status] ?? 'circle')
                                     <span class="order-status order-status-{{ $order->status }}" data-order-status="{{ $order->id }}"><i class="bi bi-{{ $statusIcon }}"></i><span>{{ \App\Models\Order::STATUSES[$order->status] }}</span></span>
@@ -116,6 +117,7 @@
                                     <div class="d-inline-flex gap-2">
                                         @can('orders.manage')
                                             <button class="btn btn-sm btn-outline-dark" type="button" data-order-status-button data-order-id="{{ $order->id }}" data-status="{{ $order->status }}" data-url="{{ route('admin.orders.status.update', $order) }}" data-order="{{ $order->folio }}"><i class="bi bi-arrow-repeat me-1"></i>Estado</button>
+                                            <button class="btn btn-sm btn-outline-primary" type="button" data-order-delivery-button data-order-id="{{ $order->id }}" data-delivery-method="{{ $order->delivery_method }}" data-url="{{ route('admin.orders.delivery-method.update', $order) }}" data-order="{{ $order->folio }}"><i class="bi bi-truck me-1"></i>Tipo</button>
                                             <a class="btn btn-sm btn-dark" href="{{ route('admin.orders.edit', $order) }}"><i class="bi bi-pencil-square me-1"></i>Editar</a>
                                         @endcan
                                         @can('orders.manage')
@@ -146,15 +148,26 @@
         </div>
     </div>
 </section>
+<style>
+.order-delivery-type{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .65rem;font-size:.7rem;font-weight:850;white-space:nowrap;border-radius:999px}.order-delivery-type i{font-size:.75rem}.order-delivery-type-home{color:#084298;background:#cfe2ff}.order-delivery-type-cod{color:#842029;background:#f8d7da}.order-delivery-type-shipping{color:#4c2882;background:#e5d9f7}.order-delivery-type-pickup{color:#0f5132;background:#d1e7dd}.order-delivery-type-unknown{color:#41464b;background:#e2e3e5}
+</style>
 @can('orders.manage')
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
     const statusLabels={!! json_encode(\App\Models\Order::STATUSES, JSON_UNESCAPED_UNICODE) !!};
     const statusIcons={pending:'hourglass-split',in_progress:'gear-wide-connected',ready:'bag-check-fill',delivered:'check-circle-fill',cancelled:'x-circle-fill'};
+    const deliveryLabels={!! json_encode(\App\Models\Order::DELIVERY_METHODS, JSON_UNESCAPED_UNICODE) !!};
+    const deliveryMeta={!! json_encode(\App\Models\Order::DELIVERY_METHOD_META, JSON_UNESCAPED_UNICODE) !!};
     document.querySelectorAll('[data-order-status-button]').forEach(button=>button.addEventListener('click',async()=>{
         const result=await window.Swal.fire({title:`Cambiar estado · ${button.dataset.order}`,input:'select',inputOptions:statusLabels,inputValue:button.dataset.status,inputLabel:'Nuevo estado del pedido',showCancelButton:true,confirmButtonText:'Actualizar estado',cancelButtonText:'Cancelar',reverseButtons:true,customClass:{popup:'forjalab-swal',confirmButton:'btn btn-dark px-4',cancelButton:'btn btn-outline-secondary px-4'},buttonsStyling:false,showLoaderOnConfirm:true,allowOutsideClick:()=>!window.Swal.isLoading(),preConfirm:async status=>{try{const response=await fetch(button.dataset.url,{method:'PATCH',headers:{Accept:'application/json','Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content},body:JSON.stringify({status})});const payload=await response.json();if(!response.ok)throw new Error(Object.values(payload.errors||{}).flat()[0]||payload.message||'No se pudo actualizar.');return payload}catch(error){window.Swal.showValidationMessage(error.message)}}});
         if(!result.isConfirmed)return;
         const payload=result.value,badge=document.querySelector(`[data-order-status="${button.dataset.orderId}"]`);button.dataset.status=payload.status;if(badge){badge.className=`order-status order-status-${payload.status}`;badge.querySelector('i').className=`bi bi-${statusIcons[payload.status]||'circle'}`;badge.querySelector('span').textContent=payload.label}window.Swal.fire({title:'Estado actualizado',text:payload.message,icon:'success',timer:1600,showConfirmButton:false});
+    }));
+    document.querySelectorAll('[data-order-delivery-button]').forEach(button=>button.addEventListener('click',async()=>{
+        const options=Object.fromEntries(Object.entries(deliveryLabels).map(([value,label])=>[value,`${label}`]));
+        const result=await window.Swal.fire({title:`Tipo de entrega · ${button.dataset.order}`,input:'select',inputOptions:options,inputValue:button.dataset.deliveryMethod,inputLabel:'¿Cómo se entregará este pedido?',showCancelButton:true,confirmButtonText:'Actualizar tipo',cancelButtonText:'Cancelar',reverseButtons:true,customClass:{popup:'forjalab-swal',confirmButton:'btn btn-primary px-4',cancelButton:'btn btn-outline-secondary px-4'},buttonsStyling:false,showLoaderOnConfirm:true,allowOutsideClick:()=>!window.Swal.isLoading(),preConfirm:async delivery_method=>{try{const response=await fetch(button.dataset.url,{method:'PATCH',headers:{Accept:'application/json','Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content},body:JSON.stringify({delivery_method})});const payload=await response.json();if(!response.ok)throw new Error(Object.values(payload.errors||{}).flat()[0]||payload.message||'No se pudo actualizar.');return payload}catch(error){window.Swal.showValidationMessage(error.message)}}});
+        if(!result.isConfirmed)return;
+        const payload=result.value,badge=document.querySelector(`[data-order-delivery-type="${button.dataset.orderId}"]`),meta=deliveryMeta[payload.delivery_method]||{icon:'question-circle-fill',class:'unknown'};button.dataset.deliveryMethod=payload.delivery_method;if(badge){badge.className=`order-delivery-type order-delivery-type-${meta.class}`;badge.querySelector('i').className=`bi bi-${meta.icon}`;badge.querySelector('span').textContent=payload.label}window.Swal.fire({title:'Tipo actualizado',text:payload.message,icon:'success',timer:1600,showConfirmButton:false});
     }));
 });
 </script>

@@ -103,6 +103,27 @@ class OrderController extends Controller
         ]);
     }
 
+    public function updateDeliveryMethod(Request $request, Order $order): JsonResponse
+    {
+        $data = $request->validate([
+            'delivery_method' => ['required', Rule::in(array_keys(Order::DELIVERY_METHODS))],
+        ]);
+
+        $order->update([
+            'delivery_method' => $data['delivery_method'],
+            'has_shipping' => $data['delivery_method'] !== 'pickup',
+        ]);
+        $meta = Order::DELIVERY_METHOD_META[$order->delivery_method];
+
+        return response()->json([
+            'message' => 'Tipo de entrega actualizado.',
+            'delivery_method' => $order->delivery_method,
+            'label' => Order::DELIVERY_METHODS[$order->delivery_method],
+            'icon' => $meta['icon'],
+            'class' => $meta['class'],
+        ]);
+    }
+
     public function archive(Order $order): RedirectResponse
     {
         $order->forceFill(['archived_at' => now()])->save();

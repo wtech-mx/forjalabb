@@ -22,6 +22,13 @@ class Order extends Model
         'pickup' => 'Tienda',
     ];
 
+    public const DELIVERY_METHOD_META = [
+        'cdmx' => ['icon' => 'house-door-fill', 'color' => '#0d6efd', 'class' => 'home'],
+        'cod' => ['icon' => 'cash-coin', 'color' => '#dc3545', 'class' => 'cod'],
+        'skydropx' => ['icon' => 'truck', 'color' => '#6f42c1', 'class' => 'shipping'],
+        'pickup' => ['icon' => 'shop-window', 'color' => '#198754', 'class' => 'pickup'],
+    ];
+
     public const STATUSES = [
         'pending' => 'Pendiente',
         'in_progress' => 'En producción',

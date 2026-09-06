@@ -39,6 +39,14 @@
             @endif
         </div>
 
+        <div class="delivery-type-legend mb-4" aria-label="Tipos de entrega">
+            <strong><i class="bi bi-tags-fill"></i> Tipo de entrega</strong>
+            @foreach(\App\Models\Order::DELIVERY_METHODS as $method => $label)
+                @php($methodMeta = \App\Models\Order::DELIVERY_METHOD_META[$method])
+                <span class="delivery-type-badge delivery-type-{{ $methodMeta['class'] }}"><i class="bi bi-{{ $methodMeta['icon'] }}"></i>{{ $label }}</span>
+            @endforeach
+        </div>
+
         <div class="row g-4">
             <div class="col-lg-8">
                 <div class="panel-card p-0 overflow-hidden">
@@ -49,10 +57,12 @@
                 <div class="panel-card delivery-route-list">
                     <h2 class="h5 fw-bold mb-3">Entregas del dia</h2>
                     @forelse($orders as $order)
+                        @php($deliveryMeta = \App\Models\Order::DELIVERY_METHOD_META[$order->delivery_method] ?? ['icon' => 'question-circle-fill', 'class' => 'unknown'])
                         <article class="delivery-route-item {{ filled($order->delivery_lat) && filled($order->delivery_lng) ? '' : 'missing-pin' }}">
                             <div>
                                 <strong>{{ $order->delivery_time ? \Illuminate\Support\Carbon::parse($order->delivery_time)->format('H:i') : 'Sin horario' }}</strong>
                                 <span>{{ $order->customer->name }}</span>
+                                <span class="delivery-type-badge delivery-type-{{ $deliveryMeta['class'] }}"><i class="bi bi-{{ $deliveryMeta['icon'] }}"></i>{{ \App\Models\Order::DELIVERY_METHODS[$order->delivery_method] ?? 'Por definir' }}</span>
                                 <small>{{ $order->folio }} · {{ $order->delivery_place ?: 'Sin direccion' }}</small>
                                 @if($order->balance_due > 0)
                                     <small class="text-danger fw-bold">Debe ${{ number_format($order->balance_due, 0) }}</small>
@@ -83,6 +93,11 @@
     .delivery-route-item strong{font-size:1.05rem}
     .delivery-route-item small{color:#6f665f}
     .delivery-route-item.missing-pin{border-style:dashed;background:#fff8ef}
+    .delivery-type-legend{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;padding:.85rem 1rem;background:#fff;border:1px solid rgba(32,22,14,.1);border-radius:1rem;box-shadow:0 .4rem 1rem rgba(32,22,14,.05)}
+    .delivery-type-legend>strong{display:inline-flex;align-items:center;gap:.45rem;margin-right:.25rem;color:#40342b}
+    .delivery-type-badge{display:inline-flex;align-items:center;align-self:start;gap:.38rem;width:max-content;padding:.34rem .58rem;font-size:.7rem;font-weight:850;border-radius:999px}
+    .delivery-type-home{color:#084298;background:#cfe2ff}.delivery-type-cod{color:#842029;background:#f8d7da}.delivery-type-shipping{color:#4c2882;background:#e5d9f7}.delivery-type-pickup{color:#0f5132;background:#d1e7dd}.delivery-type-unknown{color:#41464b;background:#e2e3e5}
+    .delivery-map-pin{display:grid;place-items:center;width:2.25rem;height:2.25rem;color:#fff;border:3px solid #fff;border-radius:50% 50% 50% 0;box-shadow:0 5px 14px rgba(0,0,0,.32);transform:rotate(-45deg)}.delivery-map-pin i{font-size:1rem;transform:rotate(45deg)}
     .delivery-pin-label{padding:.2rem .45rem;color:#1b120b;font-weight:800;background:#fff8ec;border:1px solid rgba(32,22,14,.18);border-radius:.5rem;box-shadow:0 8px 20px rgba(32,22,14,.14)}
     .delivery-pin-label::before{display:none}
     .location-sharing-status{display:flex;align-items:center;gap:.55rem;color:#6f665f;font-size:.9rem}
@@ -91,7 +106,7 @@
     .location-sharing-status.is-error{color:#b02a37}.location-sharing-status.is-error .status-dot{background:#dc3545}
     .driver-pin{display:grid;place-items:center;width:2.15rem;height:2.15rem;border:3px solid #fff;border-radius:50%;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.3)}
     .driver-pin i{font-size:1rem}.driver-pin.is-inactive{filter:grayscale(1);opacity:.7}
-    @media(max-width:767.98px){.delivery-map-canvas{height:480px;min-height:380px}.delivery-route-list{max-height:none}}
+    @media(max-width:767.98px){.delivery-map-canvas{height:480px;min-height:380px}.delivery-route-list{max-height:none}.delivery-type-legend>strong{width:100%}}
 </style>
 @push('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -121,15 +136,21 @@
         const bounds = [];
         pins.forEach((pin) => {
             bounds.push([pin.lat, pin.lng]);
-            const marker = L.marker([pin.lat, pin.lng]).addTo(map).bindPopup(`
+            const deliveryIcon = L.divIcon({
+                className: '',
+                html: `<span class="delivery-map-pin" style="background:${pin.delivery_color}"><i class="bi bi-${pin.delivery_icon}"></i></span>`,
+                iconSize: [36, 36], iconAnchor: [18, 34], popupAnchor: [0, -34],
+            });
+            const marker = L.marker([pin.lat, pin.lng], { icon: deliveryIcon }).addTo(map).bindPopup(`
                 <strong>${escapeHtml(pin.time)} · ${escapeHtml(pin.customer)}</strong><br>
+                <span style="display:inline-flex;align-items:center;gap:.3rem;margin:.35rem 0;color:${pin.delivery_color};font-weight:800"><i class="bi bi-${pin.delivery_icon}"></i>${escapeHtml(pin.delivery_label)}</span><br>
                 ${escapeHtml(pin.folio)}<br>
                 ${escapeHtml(pin.place)}<br>
                 ${pin.balance > 0 ? `<span style="color:#dc3545;font-weight:700">Debe $${Math.round(pin.balance).toLocaleString('es-MX')}</span><br>` : ''}
                 <a href="${pin.url}">Ver pedido</a>
                 ${pin.maps_url ? ` · <a href="${pin.maps_url}" target="_blank" rel="noopener">Maps</a>` : ''}
             `);
-            marker.bindTooltip(`${pin.time} · ${pin.customer}`, {
+            marker.bindTooltip(`<i class="bi bi-${pin.delivery_icon}" style="color:${pin.delivery_color}"></i> ${escapeHtml(pin.time)} · ${escapeHtml(pin.customer)}`, {
                 permanent: true,
                 direction: 'top',
                 offset: [0, -12],

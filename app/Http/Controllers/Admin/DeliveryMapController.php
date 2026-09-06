@@ -38,6 +38,10 @@ class DeliveryMapController extends Controller
                 'url' => route('admin.orders.show', $order),
                 'maps_url' => $order->delivery_maps_link,
                 'balance' => (float) $order->balance_due,
+                'delivery_method' => $order->delivery_method,
+                'delivery_label' => Order::DELIVERY_METHODS[$order->delivery_method] ?? 'Por definir',
+                'delivery_icon' => Order::DELIVERY_METHOD_META[$order->delivery_method]['icon'] ?? 'question-circle-fill',
+                'delivery_color' => Order::DELIVERY_METHOD_META[$order->delivery_method]['color'] ?? '#6c757d',
             ])
             ->values();
 
