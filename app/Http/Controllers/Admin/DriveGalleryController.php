@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Client\Response as HttpResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -76,6 +77,8 @@ class DriveGalleryController extends Controller
                 'download_url' => route('admin.drive-gallery.download', $file['id']),
             ])->values();
 
+        Cache::put('drive_gallery.image_ids', $files->pluck('id')->all(), now()->addMinutes(15));
+
         return response()->json([
             'files' => $files,
             'folders' => $directories->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)->values(),
@@ -90,7 +93,14 @@ class DriveGalleryController extends Controller
         ]);
         abort_unless($metadata->successful(), 404);
         abort_unless(str_starts_with((string) $metadata->json('mimeType'), 'image/'), 404);
-        abort_unless($this->belongsToGallery($metadata->json('parents', [])), 404);
+        $allowedIds = Cache::get('drive_gallery.image_ids');
+
+        if (! is_array($allowedIds)) {
+            $allowedIds = $this->galleryImageIds();
+            Cache::put('drive_gallery.image_ids', $allowedIds, now()->addMinutes(15));
+        }
+
+        abort_unless(in_array($file, $allowedIds, true), 404);
 
         $download = $this->driveRequest('https://www.googleapis.com/drive/v3/files/'.$file, ['alt' => 'media'], true);
         abort_unless($download->successful(), 502);
@@ -122,31 +132,34 @@ class DriveGalleryController extends Controller
         ]);
     }
 
-    private function belongsToGallery(array $parentIds): bool
+    private function galleryImageIds(): array
     {
-        $root = $this->folderId();
+        $folderIds = [$this->folderId()];
         $visited = [];
+        $imageIds = [];
 
-        while ($parentIds !== [] && count($visited) < 100) {
-            $parentId = array_shift($parentIds);
-
-            if ($parentId === $root) {
-                return true;
-            }
-
-            if (isset($visited[$parentId])) {
+        while ($folderIds !== [] && count($visited) < 100) {
+            $folderId = array_shift($folderIds);
+            if (isset($visited[$folderId])) {
                 continue;
             }
 
-            $visited[$parentId] = true;
-            $parent = $this->driveRequest('https://www.googleapis.com/drive/v3/files/'.$parentId, ['fields' => 'id,parents']);
+            $visited[$folderId] = true;
+            $response = $this->folderContents($folderId);
+            if (! $response->successful()) {
+                continue;
+            }
 
-            if ($parent->successful()) {
-                array_push($parentIds, ...$parent->json('parents', []));
+            foreach ($response->json('files', []) as $item) {
+                if (($item['mimeType'] ?? '') === 'application/vnd.google-apps.folder' && filled($item['id'] ?? null)) {
+                    $folderIds[] = $item['id'];
+                } elseif (str_starts_with($item['mimeType'] ?? '', 'image/') && filled($item['id'] ?? null)) {
+                    $imageIds[] = $item['id'];
+                }
             }
         }
 
-        return false;
+        return array_values(array_unique($imageIds));
     }
 
     private function driveError(HttpResponse $response): string
