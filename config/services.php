@@ -65,6 +65,9 @@ return [
     'drive_gallery' => [
         'api_key' => env('GOOGLE_DRIVE_API_KEY'),
         'folder_id' => env('GOOGLE_DRIVE_GALLERY_FOLDER_ID') ?: '1QXjXh40eUZHRX2Pkq2ZWRxzP-ZYf1B6i',
+        'client_id' => env('GOOGLE_DRIVE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_DRIVE_CLIENT_SECRET'),
+        'redirect_uri' => env('GOOGLE_DRIVE_REDIRECT_URI', rtrim((string) env('APP_URL'), '/').'/admin/drive-gallery/google/callback'),
     ],
 
     'whatsapp_web' => [

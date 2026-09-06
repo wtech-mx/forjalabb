@@ -210,7 +210,10 @@ Route::post('/admin/logout', [AuthController::class, 'logout'])
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', DashboardController::class)->name('dashboard');
     Route::get('/drive-gallery', [DriveGalleryController::class, 'index'])->middleware('can:orders.view')->name('drive-gallery.index');
+    Route::get('/drive-gallery/google/connect', [DriveGalleryController::class, 'connect'])->middleware(['can:orders.manage', 'throttle:10,1'])->name('drive-gallery.google.connect');
+    Route::get('/drive-gallery/google/callback', [DriveGalleryController::class, 'callback'])->middleware(['can:orders.manage', 'throttle:10,1'])->name('drive-gallery.google.callback');
     Route::get('/drive-gallery/files', [DriveGalleryController::class, 'files'])->middleware(['can:orders.view', 'throttle:60,1'])->name('drive-gallery.files');
+    Route::post('/drive-gallery/files', [DriveGalleryController::class, 'upload'])->middleware(['can:orders.manage', 'throttle:20,1'])->name('drive-gallery.upload');
     Route::get('/drive-gallery/files/{file}/download', [DriveGalleryController::class, 'download'])->middleware(['can:orders.view', 'throttle:60,1'])->name('drive-gallery.download');
 
     Route::get('/settings', [SettingsController::class, 'index'])->middleware('can:settings.manage')->name('settings.index');

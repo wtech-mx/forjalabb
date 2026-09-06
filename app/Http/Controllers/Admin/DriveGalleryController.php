@@ -3,24 +3,68 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\GoogleDriveGalleryService;
 use Illuminate\Http\Client\Response as HttpResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 class DriveGalleryController extends Controller
 {
     private const DEFAULT_FOLDER_ID = '1QXjXh40eUZHRX2Pkq2ZWRxzP-ZYf1B6i';
 
-    public function index(): View
+    public function index(GoogleDriveGalleryService $drive): View
     {
         $folderId = $this->folderId();
 
         return view('admin.drive-gallery.index', [
             'folderUrl' => 'https://drive.google.com/drive/folders/'.$folderId,
+            'oauthConfigured' => $drive->configured(),
+            'driveConnected' => $drive->connected(),
         ]);
+    }
+
+    public function connect(Request $request, GoogleDriveGalleryService $drive): RedirectResponse
+    {
+        if (! $drive->configured()) {
+            return to_route('admin.drive-gallery.index')->with('error', 'Faltan las credenciales OAuth de Google Drive en el servidor.');
+        }
+
+        $state = bin2hex(random_bytes(32));
+        $request->session()->put('google_drive_oauth_state', $state);
+
+        return redirect()->away($drive->authorizationUrl($state));
+    }
+
+    public function callback(Request $request, GoogleDriveGalleryService $drive): RedirectResponse
+    {
+        $expectedState = (string) $request->session()->pull('google_drive_oauth_state', '');
+        $receivedState = (string) $request->query('state', '');
+
+        if ($expectedState === '' || $receivedState === '' || ! hash_equals($expectedState, $receivedState)) {
+            return to_route('admin.drive-gallery.index')->with('error', 'La conexión con Google expiró o no superó la validación de seguridad. Intenta nuevamente.');
+        }
+
+        if ($request->filled('error')) {
+            return to_route('admin.drive-gallery.index')->with('error', 'Google Drive no autorizó la conexión.');
+        }
+
+        $request->validate(['code' => ['required', 'string']]);
+
+        try {
+            $drive->exchangeCode($request->user(), (string) $request->query('code'));
+
+            return to_route('admin.drive-gallery.index')->with('success', 'Google Drive quedó conectado correctamente. Ya puedes cargar imágenes.');
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return to_route('admin.drive-gallery.index')->with('error', 'No fue posible conectar Google Drive: '.$exception->getMessage());
+        }
     }
 
     public function files(): JsonResponse
@@ -78,12 +122,47 @@ class DriveGalleryController extends Controller
             ])->values();
 
         Cache::put('drive_gallery.image_ids', $files->pluck('id')->all(), now()->addMinutes(15));
+        Cache::put('drive_gallery.folder_ids', array_keys($visited), now()->addMinutes(15));
 
         return response()->json([
             'files' => $files,
             'folders' => $directories->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)->values(),
             'count' => $files->count(),
         ]);
+    }
+
+    public function upload(Request $request, GoogleDriveGalleryService $drive): JsonResponse
+    {
+        $data = $request->validate([
+            'folder_id' => ['required', 'string', 'max:200'],
+            'images' => ['required', 'array', 'min:1', 'max:20'],
+            'images.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:20480'],
+        ]);
+        $allowedFolders = Cache::get('drive_gallery.folder_ids', [$this->folderId()]);
+
+        if (! in_array($data['folder_id'], $allowedFolders, true)) {
+            return response()->json(['message' => 'La carpeta seleccionada no pertenece a esta galería.'], 422);
+        }
+
+        if (! $drive->connected()) {
+            return response()->json(['message' => 'Primero conecta tu cuenta de Google Drive.'], 503);
+        }
+
+        try {
+            $uploaded = collect($request->file('images'))->map(
+                fn ($image) => $drive->upload($image, $data['folder_id'])
+            );
+            Cache::forget('drive_gallery.image_ids');
+
+            return response()->json([
+                'message' => $uploaded->count().' imagen'.($uploaded->count() === 1 ? '' : 'es').' cargada'.($uploaded->count() === 1 ? '' : 's').' correctamente.',
+                'count' => $uploaded->count(),
+            ]);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json(['message' => 'Google Drive rechazó la carga: '.$exception->getMessage()], 502);
+        }
     }
 
     public function download(string $file): StreamedResponse
