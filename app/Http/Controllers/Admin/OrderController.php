@@ -293,7 +293,7 @@ class OrderController extends Controller
             'total' => $total, 'advance_payment' => $advance, 'balance_due' => round($total - $advance, 2), 'observations' => $data['observations'] ?? null,
         ]);
         if (! $order->exists) {
-            $order->folio = 'P-'.str_pad((string) ((Order::max('id') ?? 0) + 1), 4, '0', STR_PAD_LEFT);
+            $order->folio = 'P'.((Order::max('id') ?? 0) + 1);
         }
         $order->save();
         $order->items()->delete();
