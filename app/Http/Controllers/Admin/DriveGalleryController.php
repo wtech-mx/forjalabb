@@ -24,6 +24,12 @@ class DriveGalleryController extends Controller
 
     public function files(): JsonResponse
     {
+        if (blank(config('services.drive_gallery.api_key'))) {
+            return response()->json([
+                'message' => 'Google Drive no está configurado en este servidor. Agrega GOOGLE_DRIVE_API_KEY al archivo .env y limpia la caché de Laravel.',
+            ], 503);
+        }
+
         $folders = [[
             'id' => $this->folderId(),
             'path' => 'Principal',
