@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\CommissionReportController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DeliveryMapController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DriveGalleryController;
 use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\OrderController;
@@ -208,6 +209,9 @@ Route::post('/admin/logout', [AuthController::class, 'logout'])
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', DashboardController::class)->name('dashboard');
+    Route::get('/drive-gallery', [DriveGalleryController::class, 'index'])->middleware('can:orders.view')->name('drive-gallery.index');
+    Route::get('/drive-gallery/files', [DriveGalleryController::class, 'files'])->middleware(['can:orders.view', 'throttle:60,1'])->name('drive-gallery.files');
+    Route::get('/drive-gallery/files/{file}/download', [DriveGalleryController::class, 'download'])->middleware(['can:orders.view', 'throttle:60,1'])->name('drive-gallery.download');
 
     Route::get('/settings', [SettingsController::class, 'index'])->middleware('can:settings.manage')->name('settings.index');
     Route::post('/settings/database/download', [SettingsController::class, 'download'])->middleware(['can:settings.manage', 'throttle:5,1'])->name('settings.database.download');

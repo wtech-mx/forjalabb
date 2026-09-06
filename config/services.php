@@ -62,6 +62,11 @@ return [
         'store_url' => env('GOOGLE_MERCHANT_STORE_URL', env('APP_URL')),
     ],
 
+    'drive_gallery' => [
+        'api_key' => env('GOOGLE_DRIVE_API_KEY'),
+        'folder_id' => env('GOOGLE_DRIVE_GALLERY_FOLDER_ID', '1QXjXh40eUZHRX2Pkq2ZWRxzP-ZYf1B6i'),
+    ],
+
     'whatsapp_web' => [
         'url' => env('WHATSAPP_WEB_URL', 'http://127.0.0.1:3210'),
         'token' => env('WHATSAPP_API_TOKEN', 'forjalab-local-whatsapp'),
