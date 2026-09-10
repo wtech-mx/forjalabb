@@ -191,12 +191,20 @@ class ShipmentController extends Controller
         $this->ensureEligible($order);
 
         try {
-            $assignedIds = Shipment::query()
-                ->where('order_id', '!=', $order->id)
-                ->whereNotNull('skydropx_shipment_id')
-                ->pluck('skydropx_shipment_id');
-            $guides = $this->normalizeSkydropxShipments($skydropx->shipments())
-                ->reject(fn (array $guide) => $assignedIds->contains($guide['id']))
+            $guides = $this->normalizeSkydropxShipments($skydropx->shipments());
+            $assignments = Shipment::query()
+                ->with('order:id,folio')
+                ->whereIn('skydropx_shipment_id', $guides->pluck('id'))
+                ->get()
+                ->keyBy('skydropx_shipment_id');
+            $guides = $guides->map(function (array $guide) use ($assignments) {
+                $assignment = $assignments->get($guide['id']);
+                $guide['assigned'] = (bool) $assignment;
+                $guide['assigned_order'] = $assignment?->order?->folio;
+
+                return $guide;
+            })
+                ->sortBy(fn (array $guide) => ($guide['assigned'] ? '1' : '0').'|'.($guide['created_at'] ?? ''))
                 ->values();
 
             return response()->json(['guides' => $guides]);
