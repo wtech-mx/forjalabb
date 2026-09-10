@@ -7,7 +7,7 @@
     <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-4">
         <div><div class="eyebrow">Logística integrada</div><h2 class="h4 fw-bold mt-2 mb-1"><i class="bi bi-box-seam-fill text-primary me-2"></i>Guía y seguimiento Skydropx</h2><p class="text-secondary mb-0">Cotiza, vincula la guía y administra el seguimiento sin salir del pedido.</p></div>
         @if($shipment)
-            <div class="d-flex gap-2 flex-wrap"><span class="shipment-inline-status"><i class="bi bi-activity"></i>{{ \App\Models\Shipment::STATUSES[$shipment->status] ?? $shipment->status }}</span><a class="btn btn-sm btn-outline-primary" href="{{ $shipment->public_url }}" target="_blank" rel="noopener"><i class="bi bi-eye me-1"></i>Vista del cliente</a></div>
+            <div class="d-flex gap-2 flex-wrap"><span class="shipment-inline-status"><i class="bi bi-activity"></i>{{ \App\Models\Shipment::STATUSES[$shipment->status] ?? $shipment->status }}</span>@if($shipment->label_url)<a class="btn btn-sm btn-dark" href="{{ $shipment->label_url }}" target="_blank" rel="noopener"><i class="bi bi-file-earmark-arrow-down-fill me-1"></i>Descargar guía</a>@endif<a class="btn btn-sm btn-outline-primary" href="{{ $shipment->public_url }}" target="_blank" rel="noopener"><i class="bi bi-eye me-1"></i>Vista del cliente</a></div>
         @endif
     </div>
 
