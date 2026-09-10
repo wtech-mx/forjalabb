@@ -254,12 +254,15 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/shipments/create', [ShipmentController::class, 'selectOrder'])->middleware('can:orders.manage')->name('shipments.select-order');
     Route::get('/shipments/postal-code/{postalCode}', [ShipmentController::class, 'postalCode'])->middleware('can:orders.manage')->name('shipments.postal-code');
     Route::post('/orders/{order}/shipment/quote', [ShipmentController::class, 'draftQuote'])->middleware('can:orders.manage')->name('shipments.draft-quote');
+    Route::get('/orders/{order}/shipment/available-guides', [ShipmentController::class, 'availableGuides'])->middleware('can:orders.manage')->name('shipments.available-guides');
+    Route::post('/orders/{order}/shipment/assign-guide', [ShipmentController::class, 'assignGuide'])->middleware('can:orders.manage')->name('shipments.assign-guide');
     Route::get('/orders/{order}/shipment/create', [ShipmentController::class, 'create'])->middleware('can:orders.manage')->name('shipments.create');
     Route::post('/orders/{order}/shipment', [ShipmentController::class, 'store'])->middleware('can:orders.manage')->name('shipments.store');
     Route::get('/shipments/{shipment}', [ShipmentController::class, 'show'])->middleware('can:orders.view')->name('shipments.show');
     Route::put('/shipments/{shipment}', [ShipmentController::class, 'update'])->middleware('can:orders.manage')->name('shipments.update');
     Route::post('/shipments/{shipment}/events', [ShipmentController::class, 'addEvent'])->middleware('can:orders.manage')->name('shipments.events.store');
     Route::post('/shipments/{shipment}/quote', [ShipmentController::class, 'quote'])->middleware('can:orders.manage')->name('shipments.quote');
+    Route::post('/shipments/{shipment}/quote-rates', [ShipmentController::class, 'quoteRates'])->middleware('can:orders.manage')->name('shipments.quote-rates');
     Route::post('/shipments/{shipment}/guide', [ShipmentController::class, 'generateGuide'])->middleware('can:orders.manage')->name('shipments.guide');
 
     Route::resource('customers', CustomerController::class)->only(['index'])->middleware('can:customers.view');

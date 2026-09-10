@@ -131,9 +131,18 @@ class ShipmentController extends Controller
                 $response=$skydropx->createShipment($rate['rate_id']); $created=data_get($response,'data.0',data_get($response,'data',$response));
                 $shipment->update(['skydropx_rate_id'=>$rate['rate_id'],'skydropx_shipment_id'=>$created['id']??null,'carrier'=>$rate['rate_carrier'],'quoted_service'=>$rate['rate_service'],'quoted_amount'=>$rate['rate_price'],'tracking_number'=>$created['master_tracking_number']??$created['tracking_number']??$created['tracking_code']??null,'tracking_url'=>$created['tracking_url']??null,'label_url'=>$created['label_url']??$created['label']??null,'status'=>'ready']);
                 $shipment->events()->create(['phase'=>'carrier','title'=>'Guía de envío generada','description'=>$rate['rate_carrier'].' · '.$rate['rate_service'],'occurred_at'=>now(),'is_public'=>true]);
-            } catch(Throwable $e) { report($e); return redirect()->route('admin.shipments.show',$shipment)->withErrors(['skydropx'=>'El seguimiento se creó, pero la guía no pudo generarse: '.$e->getMessage()]); }
+            } catch(Throwable $e) {
+                report($e);
+                $route = $request->input('return_to') === 'order_edit' ? 'admin.orders.edit' : 'admin.shipments.show';
+                $parameter = $route === 'admin.orders.edit' ? $order : $shipment;
+
+                return redirect()->route($route, $parameter)->withErrors(['skydropx'=>'El seguimiento se creó, pero la guía no pudo generarse: '.$e->getMessage()]);
+            }
         }
-        return redirect()->route('admin.shipments.show', $shipment)->with('status', 'Envío preparado. Ya puedes compartir el enlace de seguimiento.');
+        $route = $request->input('return_to') === 'order_edit' ? 'admin.orders.edit' : 'admin.shipments.show';
+        $parameter = $route === 'admin.orders.edit' ? $order : $shipment;
+
+        return redirect()->route($route, $parameter)->with('status', 'Envío preparado. Ya puedes compartir el enlace de seguimiento.');
     }
 
     public function postalCode(string $postalCode, SkydropxService $skydropx): JsonResponse
@@ -154,7 +163,97 @@ class ShipmentController extends Controller
         } catch (Throwable $e) { report($e); return response()->json(['message'=>'Skydropx no pudo cotizar: '.$e->getMessage()], 422); }
     }
 
-    public function generateGuide(Request $request, Shipment $shipment, SkydropxService $skydropx): RedirectResponse
+    public function quoteRates(Shipment $shipment, SkydropxService $skydropx): JsonResponse
+    {
+        abort_unless($shipment->method === 'skydropx', 422, 'El método debe ser Skydropx.');
+        foreach (['destination_postal_code', 'destination_state', 'destination_city', 'destination_neighborhood', 'parcel_weight', 'parcel_length', 'parcel_width', 'parcel_height'] as $field) {
+            abort_if(blank($shipment->{$field}), 422, 'Completa y guarda el destino, peso y dimensiones antes de cotizar.');
+        }
+
+        try {
+            $response = $skydropx->quote([
+                'address_from' => ['country_code' => 'MX', 'postal_code' => config('services.skydropx.origin_postal_code'), 'area_level1' => config('services.skydropx.origin_state'), 'area_level2' => config('services.skydropx.origin_city'), 'area_level3' => config('services.skydropx.origin_neighborhood')],
+                'address_to' => ['country_code' => 'MX', 'postal_code' => $shipment->destination_postal_code, 'area_level1' => $shipment->destination_state, 'area_level2' => $shipment->destination_city, 'area_level3' => $shipment->destination_neighborhood],
+                'parcels' => [['length' => (int) $shipment->parcel_length, 'width' => (int) $shipment->parcel_width, 'height' => (int) $shipment->parcel_height, 'weight' => (float) $shipment->parcel_weight]],
+            ]);
+            $shipment->update(['quote_response' => $response]);
+
+            return response()->json(['rates' => $skydropx->rates($response)]);
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json(['message' => 'Skydropx no pudo cotizar: '.$e->getMessage()], 422);
+        }
+    }
+
+    public function availableGuides(Order $order, SkydropxService $skydropx): JsonResponse
+    {
+        $this->ensureEligible($order);
+
+        try {
+            $assignedIds = Shipment::query()
+                ->where('order_id', '!=', $order->id)
+                ->whereNotNull('skydropx_shipment_id')
+                ->pluck('skydropx_shipment_id');
+            $guides = $this->normalizeSkydropxShipments($skydropx->shipments())
+                ->reject(fn (array $guide) => $assignedIds->contains($guide['id']))
+                ->values();
+
+            return response()->json(['guides' => $guides]);
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json(['message' => 'No se pudieron consultar las guías de Skydropx: '.$e->getMessage()], 422);
+        }
+    }
+
+    public function assignGuide(Request $request, Order $order, SkydropxService $skydropx): JsonResponse
+    {
+        $this->ensureEligible($order);
+        $data = $request->validate(['guide_id' => ['required', 'string', 'max:160']]);
+
+        if (Shipment::where('skydropx_shipment_id', $data['guide_id'])->where('order_id', '!=', $order->id)->exists()) {
+            return response()->json(['message' => 'Esta guía ya está vinculada con otro pedido.'], 422);
+        }
+
+        try {
+            $guide = $this->normalizeSkydropxShipments($skydropx->shipments())->firstWhere('id', $data['guide_id']);
+            if (! $guide) return response()->json(['message' => 'La guía ya no está disponible en Skydropx.'], 404);
+
+            $shipment = $order->shipment ?: $order->shipment()->create([
+                'public_token' => Str::random(48),
+                'method' => 'skydropx',
+                'status' => 'preparing',
+                'destination_address' => $order->customer?->address,
+            ]);
+            $shipment->update([
+                'method' => 'skydropx',
+                'status' => $this->localStatusForGuide($guide['status']),
+                'skydropx_shipment_id' => $guide['id'],
+                'carrier' => $guide['carrier'],
+                'tracking_number' => $guide['tracking_number'],
+                'tracking_url' => $guide['tracking_url'],
+                'label_url' => $guide['label_url'],
+                'quoted_amount' => $guide['total'],
+                'quoted_service' => $guide['service'],
+            ]);
+            $shipment->events()->create([
+                'phase' => 'carrier',
+                'title' => 'Guía existente vinculada',
+                'description' => $guide['carrier'].($guide['tracking_number'] ? ' · '.$guide['tracking_number'] : ''),
+                'occurred_at' => now(),
+                'is_public' => true,
+            ]);
+
+            return response()->json(['message' => 'La guía quedó vinculada al pedido '.$order->folio.'.']);
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json(['message' => 'No se pudo vincular la guía: '.$e->getMessage()], 422);
+        }
+    }
+
+    public function generateGuide(Request $request, Shipment $shipment, SkydropxService $skydropx): JsonResponse|RedirectResponse
     {
         abort_unless($shipment->method === 'skydropx', 422);
         abort_if(filled($shipment->skydropx_shipment_id), 409, 'Este envío ya tiene una guía generada.');
@@ -163,8 +262,10 @@ class ShipmentController extends Controller
             $response=$skydropx->createShipment($data['rate_id']); $created=data_get($response,'data.0',data_get($response,'data',$response));
             $shipment->update(['skydropx_rate_id'=>$data['rate_id'],'skydropx_shipment_id'=>$created['id']??null,'carrier'=>$data['carrier'],'quoted_service'=>$data['service'],'quoted_amount'=>$data['price'],'tracking_number'=>$created['master_tracking_number']??$created['tracking_number']??$created['tracking_code']??null,'tracking_url'=>$created['tracking_url']??null,'label_url'=>$created['label_url']??$created['label']??null,'status'=>'ready']);
             $shipment->events()->create(['phase'=>'carrier','title'=>'Guía de envío generada','description'=>$data['carrier'].' · '.$data['service'],'occurred_at'=>now(),'is_public'=>true]);
+            if ($request->expectsJson()) return response()->json(['message' => 'Guía generada correctamente con Skydropx.']);
+
             return back()->with('status','Guía generada correctamente con Skydropx.');
-        } catch(Throwable $e){report($e);return back()->withErrors(['skydropx'=>'No se pudo generar la guía: '.$e->getMessage()]);}
+        } catch(Throwable $e){report($e);if ($request->expectsJson()) return response()->json(['message' => 'No se pudo generar la guía: '.$e->getMessage()], 422);return back()->withErrors(['skydropx'=>'No se pudo generar la guía: '.$e->getMessage()]);}
     }
 
     public function show(Shipment $shipment): View
@@ -278,6 +379,7 @@ class ShipmentController extends Controller
             return [
                 'id' => $shipment['id'] ?? $attributes['id'] ?? '',
                 'carrier' => $carrier,
+                'service' => $attributes['service_name'] ?? data_get($attributes, 'rate.provider_service_name') ?? data_get($attributes, 'rate.service_name') ?? null,
                 'status' => $status,
                 'active' => ! in_array($status, ['delivered', 'cancelled', 'canceled', 'error'], true),
                 'tracking_number' => $tracking,
@@ -318,6 +420,16 @@ class ShipmentController extends Controller
             str_contains($name, 'ups') => 'https://www.ups.com/track?tracknum='.urlencode($tracking),
             str_contains($name, 'paquetexpress') => 'https://www.paquetexpress.com.mx/rastreo/'.urlencode($tracking),
             default => null,
+        };
+    }
+
+    private function localStatusForGuide(string $status): string
+    {
+        return match ($status) {
+            'delivered' => 'delivered',
+            'in_transit', 'shipped', 'out_for_delivery' => 'in_transit',
+            'exception', 'error', 'cancelled', 'canceled' => 'exception',
+            default => 'ready',
         };
     }
 }

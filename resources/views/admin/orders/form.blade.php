@@ -33,6 +33,12 @@
                 <div class="eyebrow">{{ $order->exists ? $order->folio : 'Captura de venta' }}</div>
                 <h1 class="fw-bold mt-2 mb-0">{{ $order->exists ? 'Editar pedido' : 'Nuevo pedido' }}</h1>
             </div>
+            @if($order->exists)
+                <div class="d-flex gap-2 flex-wrap align-items-center">
+                    @if($order->shipment)<a class="btn btn-outline-primary" href="#shipment-panel"><i class="bi bi-box-seam-fill me-2"></i>Ir al seguimiento</a>@endif
+                    <a class="btn btn-outline-dark" href="{{ route('admin.orders.index') }}"><i class="bi bi-arrow-left me-2"></i>Pedidos</a>
+                </div>
+            @endif
         </div>
 
         <form class="order-editor" method="POST" enctype="multipart/form-data" action="{{ $order->exists ? route('admin.orders.update', $order) : route('admin.orders.store') }}" data-order-form data-create-customer="{{ old('new_customer_name') ? '1' : '0' }}">
@@ -166,6 +172,10 @@
                 </div>
             </div>
         </form>
+
+        @if($order->exists && ($order->delivery_method === 'skydropx' || $order->shipment))
+            @include('admin.orders.partials.shipment-panel', ['shipment' => $order->shipment])
+        @endif
     </div>
 </section>
 

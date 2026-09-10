@@ -84,7 +84,7 @@ class OrderController extends Controller
 
     public function edit(Order $order): View
     {
-        return $this->form($order->load(['items', 'references']));
+        return $this->form($order->load(['items', 'references', 'shipment']));
     }
 
     public function update(Request $request, Order $order): RedirectResponse
