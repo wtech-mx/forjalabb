@@ -25,6 +25,7 @@ use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PublicTagController;
 use App\Http\Controllers\PublicTagIntakeController;
 use App\Http\Controllers\PublicShipmentController;
+use App\Http\Controllers\PublicShipmentCaptureController;
 use App\Models\CatalogBundle;
 use App\Models\CatalogProduct;
 use Illuminate\Support\Facades\Route;
@@ -204,6 +205,8 @@ Route::get('/registro-tag/{token}/qr', [PublicTagIntakeController::class, 'qr'])
 Route::get('/correo/open/{token}.gif', [EmailTrackingController::class, 'open'])->middleware('throttle:120,1')->name('mailing.track.open');
 Route::get('/correo/click/{token}', [EmailTrackingController::class, 'click'])->middleware(['signed', 'throttle:120,1'])->name('mailing.track.click');
 Route::get('/seguimiento/{token}', PublicShipmentController::class)->name('shipments.public');
+Route::get('/capturar-pedido/{token}', [PublicShipmentCaptureController::class, 'show'])->name('shipments.capture');
+Route::post('/capturar-pedido/{token}', [PublicShipmentCaptureController::class, 'store'])->middleware('throttle:15,1')->name('shipments.capture.store');
 
 Route::post('/admin/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
@@ -260,6 +263,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/orders/{order}/shipment/create', [ShipmentController::class, 'create'])->middleware('can:orders.manage')->name('shipments.create');
     Route::post('/orders/{order}/shipment', [ShipmentController::class, 'store'])->middleware('can:orders.manage')->name('shipments.store');
     Route::get('/shipments/{shipment}', [ShipmentController::class, 'show'])->middleware('can:orders.view')->name('shipments.show');
+    Route::get('/shipments/{shipment}/capture-qr', [ShipmentController::class, 'captureQr'])->middleware('can:orders.view')->name('shipments.capture-qr');
     Route::put('/shipments/{shipment}', [ShipmentController::class, 'update'])->middleware('can:orders.manage')->name('shipments.update');
     Route::post('/shipments/{shipment}/events', [ShipmentController::class, 'addEvent'])->middleware('can:orders.manage')->name('shipments.events.store');
     Route::post('/shipments/{shipment}/quote', [ShipmentController::class, 'quote'])->middleware('can:orders.manage')->name('shipments.quote');

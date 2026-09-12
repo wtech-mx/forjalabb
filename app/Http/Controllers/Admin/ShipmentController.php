@@ -6,9 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Shipment;
 use App\Services\SkydropxService;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
@@ -279,6 +284,19 @@ class ShipmentController extends Controller
     public function show(Shipment $shipment): View
     {
         return view('admin.shipments.show', ['shipment' => $shipment->load(['order.customer', 'order.items', 'events.media'])]);
+    }
+
+    public function captureQr(Shipment $shipment): Response
+    {
+        abort_if(blank($shipment->capture_token), 404);
+        $renderer = new ImageRenderer(new RendererStyle(420), new SvgImageBackEnd);
+        $svg = (new Writer($renderer))->writeString($shipment->capture_url);
+
+        return response($svg, 200, [
+            'Content-Type' => 'image/svg+xml',
+            'Content-Disposition' => 'inline; filename="captura-'.$shipment->order->folio.'-qr.svg"',
+            'Cache-Control' => 'private, no-store',
+        ]);
     }
 
     public function update(Request $request, Shipment $shipment): RedirectResponse

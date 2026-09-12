@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     @php
-        $isPrivatePage = request()->routeIs('admin.*', 'login', 'shipments.public');
+        $isPrivatePage = request()->routeIs('admin.*', 'login', 'shipments.public', 'shipments.capture*');
         $seoTitle = trim($__env->yieldContent('title', 'ForjaLab | Productos personalizados en CDMX'));
         $seoDescription = trim($__env->yieldContent('meta_description', 'ForjaLab crea productos personalizados en CDMX: placas QR para mascotas y motociclistas, corte laser, impresion 3D, sublimacion y DTF.'));
         $seoCanonical = trim($__env->yieldContent('canonical', url()->current()));
