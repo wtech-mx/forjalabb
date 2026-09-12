@@ -263,13 +263,38 @@ if (orderForm) {
             const name = `${itemName()} ${packageName()}`.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
             return name.includes('tarro cervecero') || (name.includes('tequilero') && (name.includes('blanco') || !packageName()));
         };
+        const itemColorStyles = {
+            azul: '#2563eb',
+            negro: '#1f2937',
+            rosa: '#ec4899',
+            blanco: '#ffffff',
+            amarillo: '#facc15',
+            verde: '#22c55e',
+            naranja: '#f97316',
+            rojo: '#dc2626',
+        };
         const colorSelect = (value = '', piece = 1) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'order-color-select';
+            const swatch = document.createElement('span');
+            swatch.className = 'order-color-swatch';
+            swatch.setAttribute('aria-hidden', 'true');
             const select = document.createElement('select');
             select.className = 'form-select form-select-sm';
             select.name = `items[${row.dataset.itemIndex}][selected_colors][]`;
             select.disabled = true;
             select.innerHTML = `<option value="">Pieza ${piece}: color</option>${itemColorOptions.map((color) => `<option value="${color}" ${color === value ? 'selected' : ''}>${color.charAt(0).toUpperCase() + color.slice(1)}</option>`).join('')}`;
-            return select;
+            const paintSelection = () => {
+                const color = itemColorStyles[select.value];
+                wrapper.classList.toggle('has-color', Boolean(color));
+                wrapper.dataset.color = select.value || '';
+                swatch.style.backgroundColor = color || '#ded6cd';
+                select.style.setProperty('--selected-color', color || 'transparent');
+            };
+            select.addEventListener('change', paintSelection);
+            wrapper.append(swatch, select);
+            paintSelection();
+            return wrapper;
         };
         const syncColorInputs = () => {
             const colors = [...colorInputs.querySelectorAll('select')].map((select) => select.value);
@@ -279,9 +304,9 @@ if (orderForm) {
             colorCard.classList.toggle('d-none', !enabled);
 
             for (let index = 0; index < amount; index += 1) {
-                const select = colorSelect(colors[index] ?? saved.selected_colors?.[index] ?? '', index + 1);
-                select.disabled = !enabled;
-                colorInputs.append(select);
+                const selector = colorSelect(colors[index] ?? saved.selected_colors?.[index] ?? '', index + 1);
+                selector.querySelector('select').disabled = !enabled;
+                colorInputs.append(selector);
             }
         };
         if (saved.item_type && saved.item_id) product.value = `${saved.item_type}:${saved.item_id}`;
