@@ -57,6 +57,7 @@
                         <label class="form-label fw-bold" for="confirmation">Escribe <code>RESTAURAR</code> para confirmar</label>
                         <input class="form-control mb-3" id="confirmation" name="confirmation" autocomplete="off" required placeholder="RESTAURAR">
                         <button class="btn btn-danger" type="submit"><i class="bi bi-arrow-repeat me-2"></i>Restaurar base de datos</button>
+                        <small class="d-block text-secondary mt-2"><i class="bi bi-hourglass-split me-1"></i>La importación puede tardar varios minutos. No cierres esta ventana ni vuelvas a presionar el botón.</small>
                     </form>
                 </article>
             </div>

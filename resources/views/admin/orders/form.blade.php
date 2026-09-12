@@ -35,6 +35,7 @@
             </div>
             @if($order->exists)
                 <div class="d-flex gap-2 flex-wrap align-items-center">
+                    <a class="btn btn-success" href="{{ route('admin.orders.receipt', $order) }}"><i class="bi bi-receipt-cutoff me-2"></i>Descargar recibo del cliente</a>
                     @if($order->shipment)<a class="btn btn-outline-primary" href="#shipment-panel"><i class="bi bi-box-seam-fill me-2"></i>Ir al seguimiento</a>@endif
                     <a class="btn btn-outline-dark" href="{{ route('admin.orders.index') }}"><i class="bi bi-arrow-left me-2"></i>Pedidos</a>
                 </div>

@@ -39,7 +39,13 @@ if (flashData) {
 
 document.addEventListener('submit', async (event) => {
     const form = event.target.closest('form[data-confirm]');
-    if (!form || form.dataset.confirmed === 'true') return;
+    if (!form) return;
+    if (form.dataset.submitting === 'true') {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return;
+    }
+    if (form.dataset.confirmed === 'true') return;
     event.preventDefault();
     event.stopImmediatePropagation();
 
@@ -50,6 +56,13 @@ document.addEventListener('submit', async (event) => {
     if (!confirmed) return;
 
     form.dataset.confirmed = 'true';
+    form.dataset.submitting = 'true';
+    const submitButton = form.querySelector('[type="submit"]');
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.dataset.originalHtml = submitButton.innerHTML;
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Procesando...';
+    }
     HTMLFormElement.prototype.submit.call(form);
 }, true);
 

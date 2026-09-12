@@ -222,7 +222,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/settings', [SettingsController::class, 'index'])->middleware('can:settings.manage')->name('settings.index');
     Route::post('/settings/database/download', [SettingsController::class, 'download'])->middleware(['can:settings.manage', 'throttle:5,1'])->name('settings.database.download');
-    Route::post('/settings/database/restore', [SettingsController::class, 'restore'])->middleware(['can:settings.manage', 'throttle:2,1'])->name('settings.database.restore');
+    Route::post('/settings/database/restore', [SettingsController::class, 'restore'])->middleware(['can:settings.manage', 'throttle:10,1'])->name('settings.database.restore');
     Route::get('/settings/whatsapp/status', [WhatsappController::class, 'status'])->middleware(['can:settings.manage', 'throttle:60,1'])->name('settings.whatsapp.status');
     Route::post('/settings/whatsapp/logout', [WhatsappController::class, 'logout'])->middleware(['can:settings.manage', 'throttle:5,1'])->name('settings.whatsapp.logout');
     Route::get('/whatsapp', [WhatsappController::class, 'index'])->middleware('can:orders.view')->name('whatsapp.index');
@@ -239,6 +239,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('expenses', ExpenseController::class)->only('index')->middleware('can:orders.view');
     Route::resource('expenses', ExpenseController::class)->only(['store', 'destroy'])->middleware('can:orders.manage');
     Route::get('/orders/{order}/pdf', [OrderController::class, 'pdf'])->middleware('can:orders.view')->name('orders.pdf');
+    Route::get('/orders/{order}/receipt', [OrderController::class, 'receipt'])->middleware('can:orders.view')->name('orders.receipt');
     Route::post('/orders/{order}/whatsapp', [WhatsappController::class, 'send'])->middleware(['can:orders.manage', 'throttle:10,1'])->name('orders.whatsapp.send');
     Route::post('/orders/{order}/archive', [OrderController::class, 'archive'])->middleware('can:orders.manage')->name('orders.archive');
     Route::post('/orders/{order}/restore', [OrderController::class, 'restore'])->middleware('can:orders.manage')->name('orders.restore');

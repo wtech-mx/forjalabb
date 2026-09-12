@@ -168,6 +168,37 @@ class OrderController extends Controller
         ]);
     }
 
+    public function receipt(Order $order): Response
+    {
+        $order->load(['customer', 'items.product', 'items.bundle', 'references', 'shipment']);
+        $order->items->each(function ($item) {
+            $path = $item->item_type === 'bundle'
+                ? $item->bundle?->cover_photo_path
+                : ($item->product?->cover_photo_path ?: $item->product?->image_path);
+            $item->pdf_image_source = $this->pdfImageSource($path);
+        });
+        $order->references->each(function ($reference) {
+            $reference->pdf_image_source = $reference->type === 'image'
+                ? $this->pdfImageSource($reference->path)
+                : null;
+        });
+
+        $logoSource = $this->pdfImageDataUri('icon-192.png');
+        $options = new Options;
+        $options->set('isRemoteEnabled', true);
+        $options->set('chroot', public_path());
+        $dompdf = new Dompdf($options);
+        $deliveryMethods = Order::DELIVERY_METHODS;
+        $dompdf->loadHtml(view('admin.orders.customer-receipt', compact('order', 'logoSource', 'deliveryMethods'))->render(), 'UTF-8');
+        $dompdf->setPaper('letter');
+        $dompdf->render();
+
+        return response($dompdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="recibo-'.$order->folio.'.pdf"',
+        ]);
+    }
+
     private function pdfImageSource(?string $path): ?string
     {
         if (blank($path)) return null;
@@ -177,6 +208,16 @@ class OrderController extends Controller
         if (! $absolutePath || ! is_file($absolutePath)) return null;
 
         return 'file:///'.str_replace('\\', '/', $absolutePath);
+    }
+
+    private function pdfImageDataUri(string $path): ?string
+    {
+        $absolutePath = public_path(ltrim($path, '/\\'));
+        if (! is_file($absolutePath)) return null;
+
+        $mimeType = mime_content_type($absolutePath) ?: 'image/png';
+
+        return 'data:'.$mimeType.';base64,'.base64_encode(file_get_contents($absolutePath));
     }
 
     private function form(Order $order): View
