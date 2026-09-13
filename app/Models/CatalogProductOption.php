@@ -16,6 +16,7 @@ class CatalogProductOption extends Model
     public const GROUPS = [
         'tipo' => 'Tipo de producto',
         'color' => 'Color',
+        'talla' => 'Talla',
         'diseno' => 'Diseno',
     ];
 

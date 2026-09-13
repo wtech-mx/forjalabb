@@ -21,6 +21,7 @@ use Illuminate\Support\Str;
     'friends_profit',
     'public_profit',
     'stock',
+    'minimum_stock',
     'cover_photo_path',
     'presentation_mode',
     'badge',
@@ -69,6 +70,7 @@ class CatalogProduct extends Model
             'friends_profit' => 'decimal:2',
             'public_profit' => 'decimal:2',
             'stock' => 'integer',
+            'minimum_stock' => 'integer',
         ];
     }
 
@@ -90,6 +92,16 @@ class CatalogProduct extends Model
     public function photos(): HasMany
     {
         return $this->hasMany(CatalogProductPhoto::class)->orderBy('sort_order');
+    }
+
+    public function inventoryMovements(): HasMany
+    {
+        return $this->hasMany(InventoryMovement::class)->latest();
+    }
+
+    public function variants(): HasMany
+    {
+        return $this->hasMany(CatalogProductVariant::class)->orderBy('color')->orderBy('size');
     }
 
     #[Scope]

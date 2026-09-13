@@ -22,6 +22,7 @@
             @endcan
             <a class="{{ request()->routeIs('admin.mailing.*') ? 'active' : '' }}" href="{{ route('admin.mailing.index') }}"><i class="bi bi-envelope-paper-heart-fill"></i><span><strong>Mailing</strong><small>Editor y mini campañas</small></span></a>
             @can('catalog.view')
+                <a class="{{ request()->routeIs('admin.inventory.*') ? 'active' : '' }}" href="{{ route('admin.inventory.index') }}"><i class="bi bi-boxes"></i><span><strong>Inventario</strong><small>Existencias y movimientos</small></span></a>
                 <a class="{{ request()->routeIs('admin.catalog.*') ? 'active' : '' }}" href="{{ route('admin.catalog.index') }}"><i class="bi bi-bag-heart-fill"></i><span><strong>Catalogo</strong><small>Productos y precios</small></span></a>
                 <a class="{{ request()->routeIs('admin.packages.*') ? 'active' : '' }}" href="{{ route('admin.packages.index') }}"><i class="bi bi-box-seam-fill"></i><span><strong>Paquetes</strong><small>Combos de productos</small></span></a>
                 <a href="{{ route('catalog.magazine.priced') }}" target="_blank"><i class="bi bi-tags-fill"></i><span><strong>Revista con precios</strong><small>Catálogo para venta directa</small></span></a>

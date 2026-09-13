@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CatalogProduct;
 use App\Models\CatalogProductSalePackage;
+use App\Models\CatalogProductVariant;
 use App\Models\CatalogBundle;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Services\InventoryService;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Http\RedirectResponse;
@@ -22,6 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class OrderController extends Controller
 {
+    public function __construct(private InventoryService $inventory) {}
     public function index(Request $request): View
     {
         $search = trim((string) $request->query('q'));
@@ -100,7 +103,10 @@ class OrderController extends Controller
             'status' => ['required', Rule::in(array_keys(Order::STATUSES))],
         ]);
 
-        $order->update(['status' => $data['status']]);
+        DB::transaction(function () use ($order, $data, $request) {
+            $order->update(['status' => $data['status']]);
+            $this->inventory->syncOrder($order, $request->user());
+        });
 
         return response()->json([
             'message' => 'Estado del pedido actualizado.',
@@ -226,7 +232,10 @@ class OrderController extends Controller
             'order' => $order,
             'customers' => Customer::orderBy('name')->get(),
             'products' => CatalogProduct::active()
-                ->with(['salePackages:id,catalog_product_id,name,quantity,unit_public_price,public_price,is_default,sort_order'])
+                ->with([
+                    'salePackages:id,catalog_product_id,name,quantity,unit_public_price,public_price,is_default,sort_order',
+                    'variants' => fn ($query) => $query->where('is_active', true)->orderBy('color')->orderBy('size'),
+                ])
                 ->orderBy('name')
                 ->get(['id', 'name', 'public_price']),
             // En pedidos administrativos se muestran todos los paquetes, incluso si no están publicados.
@@ -259,7 +268,9 @@ class OrderController extends Controller
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:99999'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0', 'max:9999999'],
             'items.*.selected_colors' => ['nullable', 'array'],
-            'items.*.selected_colors.*' => ['nullable', Rule::in(['azul', 'negro', 'rosa', 'blanco', 'amarillo', 'verde', 'naranja', 'rojo'])],
+            'items.*.selected_colors.*' => ['nullable', 'string', 'max:80'],
+            'items.*.selected_variant_ids' => ['nullable', 'array'],
+            'items.*.selected_variant_ids.*' => ['nullable', 'integer', Rule::exists('catalog_product_variants', 'id')],
             'reference_links' => ['nullable', 'array'],
             'reference_links.*' => ['nullable', 'url', 'max:1000'],
             'reference_files' => ['nullable', 'array'],
@@ -288,7 +299,9 @@ class OrderController extends Controller
         $bundles = CatalogBundle::with('items.product')->whereIn('id', $bundleIds)->get()->keyBy('id');
         $salePackageIds = collect($data['items'])->where('item_type', 'product')->pluck('sale_package_id')->filter();
         $salePackages = CatalogProductSalePackage::whereIn('id', $salePackageIds)->get()->keyBy('id');
-        $items = collect($data['items'])->map(function ($item) use ($products, $bundles, $salePackages) {
+        $variantIds = collect($data['items'])->pluck('selected_variant_ids')->flatten()->filter()->unique();
+        $variants = CatalogProductVariant::whereIn('id', $variantIds)->get()->keyBy('id');
+        $items = collect($data['items'])->map(function ($item) use ($products, $bundles, $salePackages, $variants) {
             $isBundle = $item['item_type'] === 'bundle';
             $record = $isBundle ? $bundles->get($item['item_id']) : $products->get($item['item_id']);
             abort_unless($record, 422, 'Uno de los productos o paquetes ya no está disponible.');
@@ -302,7 +315,12 @@ class OrderController extends Controller
             }
 
             $price = ceil((float) $item['unit_price']);
-            $selectedColors = collect($item['selected_colors'] ?? [])
+            $selectedVariantIds = collect($item['selected_variant_ids'] ?? [])->filter()->map(fn ($id) => (int) $id)->take($quantity)->values();
+            if (! $isBundle && $record->variants()->where('is_active', true)->exists()) {
+                abort_unless($selectedVariantIds->count() === $quantity, 422, "Selecciona una variante para cada pieza de {$record->name}.");
+                abort_unless($selectedVariantIds->every(fn ($id) => (int) $variants->get($id)?->catalog_product_id === (int) $record->id), 422, 'Una variante no pertenece al producto seleccionado.');
+            }
+            $selectedColors = ($selectedVariantIds->isNotEmpty() ? $selectedVariantIds->map(fn ($id) => $variants->get($id)?->color) : collect($item['selected_colors'] ?? []))
                 ->map(fn ($color) => trim((string) $color))
                 ->filter()
                 ->take($quantity)
@@ -314,6 +332,7 @@ class OrderController extends Controller
                 'product_name' => $record->name, 'contents_snapshot' => $contents,
                 'sale_package_name' => $salePackage?->name, 'sale_package_quantity' => $salePackage?->quantity,
                 'selected_colors' => $selectedColors ?: null,
+                'selected_variant_ids' => $selectedVariantIds->all() ?: null,
                 'quantity' => $quantity, 'unit_price' => $price, 'line_total' => ceil($quantity * $price)];
         });
         $subtotal = round($items->sum('line_total'), 2);
@@ -345,6 +364,8 @@ class OrderController extends Controller
         $order->save();
         $order->items()->delete();
         $order->items()->createMany($items->all());
+        $order->unsetRelation('items');
+        $this->inventory->syncOrder($order, $request->user());
         $this->syncReferences($order, $request);
 
         return $order;

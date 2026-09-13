@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\DriveGalleryController;
 use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SalesReportController;
 use App\Http\Controllers\Admin\SettingsController;
@@ -250,6 +251,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::patch('/orders/{order}/delivery-method', [OrderController::class, 'updateDeliveryMethod'])->middleware('can:orders.manage')->name('orders.delivery-method.update');
     Route::resource('orders', OrderController::class)->except(['index', 'show', 'destroy'])->middleware('can:orders.manage');
     Route::resource('orders', OrderController::class)->only(['index', 'show'])->middleware('can:orders.view');
+    Route::get('/inventory', [InventoryController::class, 'index'])->middleware('can:catalog.view')->name('inventory.index');
+    Route::post('/inventory/{product}/adjust', [InventoryController::class, 'adjust'])->middleware('can:catalog.manage')->name('inventory.adjust');
+    Route::get('/inventory/{product}/variants', [InventoryController::class, 'variants'])->middleware('can:catalog.view')->name('inventory.variants');
+    Route::put('/inventory/{product}/variants', [InventoryController::class, 'syncVariants'])->middleware('can:catalog.manage')->name('inventory.variants.update');
     Route::get('/shipments', [ShipmentController::class, 'index'])->middleware('can:orders.view')->name('shipments.index');
     Route::get('/shipping-quote', [ShipmentController::class, 'quickQuoteView'])->middleware('can:orders.view')->name('shipments.quick-quote');
     Route::post('/shipping-quote', [ShipmentController::class, 'quickQuote'])->middleware('can:orders.view')->name('shipments.quick-quote.calculate');

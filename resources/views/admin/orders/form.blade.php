@@ -9,6 +9,7 @@
         'quantity' => $item->quantity,
         'unit_price' => $item->unit_price,
         'selected_colors' => $item->selected_colors ?? [],
+        'selected_variant_ids' => $item->selected_variant_ids ?? [],
     ])->all() : []);
 
     $productPackageMap = $products->mapWithKeys(fn ($product) => [
@@ -19,6 +20,13 @@
             'unit_price' => (float) $package->unit_public_price,
             'total_price' => (float) $package->public_price,
             'is_default' => (bool) $package->is_default,
+        ])->values(),
+    ]);
+
+    $productVariantMap = $products->mapWithKeys(fn ($product) => [
+        $product->id => $product->variants->map(fn ($variant) => [
+            'id' => $variant->id, 'label' => $variant->label, 'color' => $variant->color,
+            'size' => $variant->size, 'sku' => $variant->sku, 'stock' => $variant->stock,
         ])->values(),
     ]);
 
@@ -217,8 +225,8 @@
         </div>
         <div class="order-item-color-card d-none" data-color-card>
             <div>
-                <strong>Colores por pieza</strong>
-                <small>Selecciona un color por cada pieza del tarro cervecero o tequileros blancos.</small>
+                <strong><i class="bi bi-grid-3x3-gap-fill me-1"></i>Variantes por pieza</strong>
+                <small>Selecciona el color y la talla exactos de cada pieza.</small>
             </div>
             <div class="order-item-colors" data-color-inputs></div>
         </div>
@@ -230,5 +238,6 @@
     </div>
 </template>
 <script type="application/json" id="orderProductPackages">{!! json_encode($productPackageMap) !!}</script>
+<script type="application/json" id="orderProductVariants">{!! json_encode($productVariantMap) !!}</script>
 <script type="application/json" id="savedOrderItems">{!! json_encode($savedItems) !!}</script>
 @endsection

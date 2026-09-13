@@ -1,10 +1,11 @@
-import 'bootstrap';
+import * as bootstrap from 'bootstrap';
 import Chart from 'chart.js/auto';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
 window.Chart = Chart;
 window.Swal = Swal;
+window.bootstrap = bootstrap;
 
 window.ForjaConfirm = async (message, options = {}) => {
     const result = await Swal.fire({
@@ -218,7 +219,7 @@ if (orderForm) {
     const itemsContainer = orderForm.querySelector('[data-order-items]');
     const template = document.querySelector('#orderItemTemplate');
     const productPackages = JSON.parse(document.querySelector('#orderProductPackages')?.textContent || '{}');
-    const itemColorOptions = ['azul', 'negro', 'rosa', 'blanco', 'amarillo', 'verde', 'naranja', 'rojo'];
+    const productVariants = JSON.parse(document.querySelector('#orderProductVariants')?.textContent || '{}');
     let itemIndex = 0;
     const money = (value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value || 0);
     const calculate = () => {
@@ -257,12 +258,7 @@ if (orderForm) {
         const price = row.querySelector('[data-unit-price]');
         const colorCard = row.querySelector('[data-color-card]');
         const colorInputs = row.querySelector('[data-color-inputs]');
-        const itemName = () => product.selectedOptions[0]?.dataset.name?.toLowerCase() || '';
-        const packageName = () => salePackage.selectedOptions[0]?.dataset.packageName?.toLowerCase() || '';
-        const needsColorBreakdown = () => {
-            const name = `${itemName()} ${packageName()}`.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-            return name.includes('tarro cervecero') || (name.includes('tequilero') && (name.includes('blanco') || !packageName()));
-        };
+        const availableVariants = () => product.selectedOptions[0]?.dataset.type === 'product' ? (productVariants[product.selectedOptions[0].dataset.id] || []) : [];
         const itemColorStyles = {
             azul: '#2563eb',
             negro: '#1f2937',
@@ -272,8 +268,12 @@ if (orderForm) {
             verde: '#22c55e',
             naranja: '#f97316',
             rojo: '#dc2626',
+            gris: '#9ca3af',
+            transparente: 'transparent',
+            satinado: '#d1d5db',
         };
-        const colorSelect = (value = '', piece = 1) => {
+        const colorValue = (name = '') => name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/a$/, (match) => match);
+        const variantSelect = (value = '', piece = 1, variants = []) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'order-color-select';
             const swatch = document.createElement('span');
@@ -281,13 +281,22 @@ if (orderForm) {
             swatch.setAttribute('aria-hidden', 'true');
             const select = document.createElement('select');
             select.className = 'form-select form-select-sm';
-            select.name = `items[${row.dataset.itemIndex}][selected_colors][]`;
+            select.name = `items[${row.dataset.itemIndex}][selected_variant_ids][]`;
             select.disabled = true;
-            select.innerHTML = `<option value="">Pieza ${piece}: color</option>${itemColorOptions.map((color) => `<option value="${color}" ${color === value ? 'selected' : ''}>${color.charAt(0).toUpperCase() + color.slice(1)}</option>`).join('')}`;
+            select.append(new Option(`Pieza ${piece}: elige color y talla`, ''));
+            variants.forEach((variant) => {
+                const label = `${variant.label || variant.sku} — ${variant.stock} disponible${Number(variant.stock) === 1 ? '' : 's'}`;
+                const option = new Option(label, variant.id, false, String(variant.id) === String(value));
+                option.dataset.color = variant.color || '';
+                option.disabled = Number(variant.stock) <= 0 && String(variant.id) !== String(value);
+                select.add(option);
+            });
             const paintSelection = () => {
-                const color = itemColorStyles[select.value];
-                wrapper.classList.toggle('has-color', Boolean(color));
-                wrapper.dataset.color = select.value || '';
+                const colorName = select.selectedOptions[0]?.dataset.color || '';
+                const normalized = colorValue(colorName).replace('roja', 'rojo').replace('negra', 'negro').replace('blanca', 'blanco');
+                const color = itemColorStyles[normalized];
+                wrapper.classList.toggle('has-color', Boolean(colorName));
+                wrapper.dataset.color = normalized;
                 swatch.style.backgroundColor = color || '#ded6cd';
                 select.style.setProperty('--selected-color', color || 'transparent');
             };
@@ -297,14 +306,19 @@ if (orderForm) {
             return wrapper;
         };
         const syncColorInputs = () => {
-            const colors = [...colorInputs.querySelectorAll('select')].map((select) => select.value);
+            const selections = [...colorInputs.querySelectorAll('select')].map((select) => select.value);
             const amount = Math.max(1, Number.parseInt(quantity.value, 10) || 1);
-            const enabled = needsColorBreakdown();
+            const variants = availableVariants();
+            const enabled = variants.length > 0;
             colorInputs.innerHTML = '';
             colorCard.classList.toggle('d-none', !enabled);
 
             for (let index = 0; index < amount; index += 1) {
-                const selector = colorSelect(colors[index] ?? saved.selected_colors?.[index] ?? '', index + 1);
+                let savedValue = selections[index] ?? saved.selected_variant_ids?.[index] ?? '';
+                if (!savedValue && saved.selected_colors?.[index]) {
+                    savedValue = variants.find((variant) => variant.color?.toLowerCase() === saved.selected_colors[index].toLowerCase())?.id || '';
+                }
+                const selector = variantSelect(savedValue, index + 1, variants);
                 selector.querySelector('select').disabled = !enabled;
                 colorInputs.append(selector);
             }
@@ -359,7 +373,7 @@ if (orderForm) {
         if (saved.unit_price) price.value = saved.unit_price;
         quantity.value = saved.quantity ?? quantity.value ?? 1;
         syncColorInputs();
-        product.addEventListener('change', () => { saved.sale_package_id = null; saved.unit_price = null; saved.selected_colors = []; syncItem(); syncPriceFromPackage(true); syncColorInputs(); calculate(); });
+        product.addEventListener('change', () => { saved.sale_package_id = null; saved.unit_price = null; saved.selected_colors = []; saved.selected_variant_ids = []; syncItem(); syncPriceFromPackage(true); syncColorInputs(); calculate(); });
         salePackage.addEventListener('change', () => { saved.unit_price = null; syncPriceFromPackage(true); syncColorInputs(); calculate(); });
         quantity.addEventListener('input', syncColorInputs);
         row.querySelectorAll('input').forEach((input) => input.addEventListener('input', calculate));
