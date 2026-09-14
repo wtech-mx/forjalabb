@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\CatalogProduct;
 use App\Models\InventoryMovement;
 use App\Models\CatalogProductVariant;
+use App\Models\InventoryOrderAllocation;
+use App\Models\InventoryVariantOrderAllocation;
 use App\Services\InventoryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,11 +23,11 @@ class InventoryController extends Controller
         $query = CatalogProduct::query()->with('photos')->withCount([
             'variants' => fn($query) => $query->where('is_active', true),
             'variants as low_variants_count' => fn($query) => $query->where('is_active', true)->whereColumn('stock', '<=', 'minimum_stock')->where('stock', '>', 0),
-            'variants as out_variants_count' => fn($query) => $query->where('is_active', true)->where('stock', 0),
+            'variants as out_variants_count' => fn($query) => $query->where('is_active', true)->where('stock', '<=', 0),
         ])->orderBy('name');
         if ($request->filled('q')) $query->where('name', 'like', '%'.$request->string('q')->trim().'%');
         if ($request->query('status') === 'low') $query->where(fn ($level) => $level->whereHas('variants', fn ($variant) => $variant->where('is_active', true)->whereColumn('stock', '<=', 'minimum_stock')->where('stock', '>', 0))->orWhere(fn ($generic) => $generic->whereDoesntHave('variants', fn ($variant) => $variant->where('is_active', true))->whereColumn('stock', '<=', 'minimum_stock')->where('stock', '>', 0)));
-        if ($request->query('status') === 'out') $query->where(fn ($level) => $level->whereHas('variants', fn ($variant) => $variant->where('is_active', true)->where('stock', 0))->orWhere(fn ($generic) => $generic->whereDoesntHave('variants', fn ($variant) => $variant->where('is_active', true))->where('stock', 0)));
+        if ($request->query('status') === 'out') $query->where(fn ($level) => $level->whereHas('variants', fn ($variant) => $variant->where('is_active', true)->where('stock', '<=', 0))->orWhere(fn ($generic) => $generic->whereDoesntHave('variants', fn ($variant) => $variant->where('is_active', true))->where('stock', '<=', 0)));
 
         return view('admin.inventory.index', [
             'products' => $query->paginate(18)->withQueryString(),
@@ -34,7 +36,7 @@ class InventoryController extends Controller
                 'products' => CatalogProduct::count(),
                 'units' => (int) CatalogProduct::sum('stock'),
                 'low' => CatalogProductVariant::where('is_active', true)->whereColumn('stock', '<=', 'minimum_stock')->where('stock', '>', 0)->count() + CatalogProduct::whereDoesntHave('variants', fn ($query) => $query->where('is_active', true))->whereColumn('stock', '<=', 'minimum_stock')->where('stock', '>', 0)->count(),
-                'out' => CatalogProductVariant::where('is_active', true)->where('stock', 0)->count() + CatalogProduct::whereDoesntHave('variants', fn ($query) => $query->where('is_active', true))->where('stock', 0)->count(),
+                'out' => CatalogProductVariant::where('is_active', true)->where('stock', '<=', 0)->count() + CatalogProduct::whereDoesntHave('variants', fn ($query) => $query->where('is_active', true))->where('stock', '<=', 0)->count(),
             ],
         ]);
     }
@@ -59,7 +61,7 @@ class InventoryController extends Controller
     {
         $data = $request->validate([
             'variants' => ['required','array','min:1'], 'variants.*.id' => ['nullable','integer'], 'variants.*.sku' => ['nullable','string','max:80'],
-            'variants.*.color' => ['nullable','string','max:80'], 'variants.*.size' => ['nullable','string','max:40'], 'variants.*.stock' => ['required','integer','min:0','max:999999'],
+            'variants.*.color' => ['nullable','string','max:80'], 'variants.*.size' => ['nullable','string','max:40'], 'variants.*.stock' => ['required','integer','between:-999999,999999'],
             'variants.*.minimum_stock' => ['required','integer','min:0','max:999999'], 'variants.*.is_active' => ['nullable','boolean'],
         ]);
         DB::transaction(function () use ($data, $product, $request) {
@@ -77,7 +79,10 @@ class InventoryController extends Controller
                 if ($difference !== 0) InventoryMovement::create(['catalog_product_id'=>$product->id,'catalog_product_variant_id'=>$variant->id,'created_by'=>$request->user()?->id,'type'=>$difference>0?'manual_entry':'manual_out','quantity'=>$difference,'balance_after'=>$variant->stock,'note'=>'Ajuste en matriz · '.$variant->label]);
             }
             $product->variants()->whereNotIn('id', $kept)->update(['is_active'=>false]);
-            $product->update(['stock'=>(int)$product->variants()->where('is_active',true)->sum('stock')]);
+            $allocated = (int) InventoryOrderAllocation::where('catalog_product_id', $product->id)->sum('quantity');
+            $allocatedToVariants = (int) InventoryVariantOrderAllocation::whereHas('variant', fn ($query) => $query->where('catalog_product_id', $product->id))->sum('quantity');
+            $unassigned = max(0, $allocated - $allocatedToVariants);
+            $product->update(['stock'=>(int)$product->variants()->where('is_active',true)->sum('stock') - $unassigned]);
         });
         return back()->with('status','Matriz de variantes actualizada correctamente.');
     }

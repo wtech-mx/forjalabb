@@ -316,8 +316,7 @@ class OrderController extends Controller
 
             $price = ceil((float) $item['unit_price']);
             $selectedVariantIds = collect($item['selected_variant_ids'] ?? [])->filter()->map(fn ($id) => (int) $id)->take($quantity)->values();
-            if (! $isBundle && $record->variants()->where('is_active', true)->exists()) {
-                abort_unless($selectedVariantIds->count() === $quantity, 422, "Selecciona una variante para cada pieza de {$record->name}.");
+            if (! $isBundle && $selectedVariantIds->isNotEmpty()) {
                 abort_unless($selectedVariantIds->every(fn ($id) => (int) $variants->get($id)?->catalog_product_id === (int) $record->id), 422, 'Una variante no pertenece al producto seleccionado.');
             }
             $selectedColors = ($selectedVariantIds->isNotEmpty() ? $selectedVariantIds->map(fn ($id) => $variants->get($id)?->color) : collect($item['selected_colors'] ?? []))

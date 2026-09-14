@@ -11,7 +11,6 @@ use App\Models\Order;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 
 class InventoryService
 {
@@ -33,7 +32,6 @@ class InventoryService
             $movement = $oldQuantity - $newQuantity;
             if ($movement === 0) continue;
             $newBalance = (int) $product->stock + $movement;
-            if ($newBalance < 0) throw ValidationException::withMessages(['inventory' => "Inventario insuficiente de {$product->name}. Disponible: {$product->stock}; requerido adicional: ".abs($movement).'.']);
             $product->update(['stock' => $newBalance]);
             $productMovements[$product->id] = ['movement'=>$movement, 'balance'=>$newBalance];
             if ($newQuantity > 0) InventoryOrderAllocation::updateOrCreate(['order_id'=>$order->id,'catalog_product_id'=>$product->id], ['quantity'=>$newQuantity]);
@@ -50,7 +48,6 @@ class InventoryService
             $movement = $oldQuantity - $newQuantity;
             if ($movement === 0) continue;
             $newBalance = (int) $variant->stock + $movement;
-            if ($newBalance < 0) throw ValidationException::withMessages(['inventory' => "Inventario insuficiente de {$variant->product?->name} ({$variant->label}). Disponible: {$variant->stock}."]);
             $variant->update(['stock' => $newBalance]);
             InventoryMovement::create(['catalog_product_id'=>$variant->catalog_product_id,'catalog_product_variant_id'=>$variant->id,'order_id'=>$order->id,'created_by'=>$user?->id,'type'=>$movement<0?'order_out':'order_return','quantity'=>$movement,'balance_after'=>$newBalance,'note'=>($movement<0?'Salida':'Devolución').' de '.$variant->label.' · '.$order->folio]);
             $variantMovementByProduct[$variant->catalog_product_id] = (int) $variantMovementByProduct->get($variant->catalog_product_id, 0) + $movement;
@@ -70,7 +67,6 @@ class InventoryService
         return DB::transaction(function () use ($product, $quantity, $note, $user) {
             $product = CatalogProduct::whereKey($product->id)->lockForUpdate()->firstOrFail();
             $newBalance = (int) $product->stock + $quantity;
-            if ($newBalance < 0) throw ValidationException::withMessages(['quantity' => 'La salida supera las existencias disponibles.']);
             $product->update(['stock' => $newBalance]);
             return InventoryMovement::create(['catalog_product_id'=>$product->id,'created_by'=>$user?->id,'type'=>$quantity>0?'manual_entry':'manual_out','quantity'=>$quantity,'balance_after'=>$newBalance,'note'=>$note]);
         });

@@ -283,12 +283,12 @@ if (orderForm) {
             select.className = 'form-select form-select-sm';
             select.name = `items[${row.dataset.itemIndex}][selected_variant_ids][]`;
             select.disabled = true;
-            select.append(new Option(`Pieza ${piece}: elige color y talla`, ''));
+            select.append(new Option(`Pieza ${piece}: sin variante (saldo general)`, ''));
             variants.forEach((variant) => {
-                const label = `${variant.label || variant.sku} — ${variant.stock} disponible${Number(variant.stock) === 1 ? '' : 's'}`;
+                const balance = Number(variant.stock);
+                const label = `${variant.label || variant.sku} — ${balance < 0 ? `${Math.abs(balance)} pendiente${Math.abs(balance) === 1 ? '' : 's'}` : `${balance} disponible${balance === 1 ? '' : 's'}`}`;
                 const option = new Option(label, variant.id, false, String(variant.id) === String(value));
                 option.dataset.color = variant.color || '';
-                option.disabled = Number(variant.stock) <= 0 && String(variant.id) !== String(value);
                 select.add(option);
             });
             const paintSelection = () => {
