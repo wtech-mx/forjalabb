@@ -69,7 +69,6 @@
                         </div>
                         <div data-existing-customer>
                             <label class="form-label">Buscar o seleccionar cliente</label>
-                            <input class="form-control mb-2" type="search" placeholder="Escribe nombre, teléfono o correo" data-customer-search>
                             <select class="form-select" name="customer_id" data-customer-select>
                                 <option value="">Selecciona un cliente</option>
                                 @foreach($customers as $customer)

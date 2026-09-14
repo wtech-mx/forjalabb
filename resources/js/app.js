@@ -2,6 +2,11 @@ import * as bootstrap from 'bootstrap';
 import Chart from 'chart.js/auto';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+import $ from 'jquery';
+import select2 from 'select2';
+import 'select2/dist/css/select2.min.css';
+
+select2(window, $);
 
 window.Chart = Chart;
 window.Swal = Swal;
@@ -457,18 +462,27 @@ if (orderForm) {
     syncDeliveryLocation();
     syncMapPreview();
     const customerToggle = orderForm.querySelector('[data-new-customer-toggle]');
+    const customerSelect = orderForm.querySelector('[data-customer-select]');
+    $(customerSelect).select2({
+        width: '100%',
+        placeholder: 'Busca por nombre, teléfono o correo',
+        allowClear: true,
+        language: { noResults: () => 'No encontramos clientes' },
+        matcher: (params, data) => {
+            const term = (params.term || '').toLowerCase().trim();
+            if (!term) return data;
+            return (data.element?.dataset.search || data.text || '').includes(term) ? data : null;
+        },
+    });
     customerToggle.addEventListener('click', (event) => {
         const newBlock = orderForm.querySelector('[data-new-customer]');
         const creating = newBlock.classList.contains('d-none');
         newBlock.classList.toggle('d-none', !creating);
         orderForm.querySelector('[data-existing-customer]').classList.toggle('d-none', creating);
         newBlock.querySelectorAll('input').forEach((input) => input.disabled = !creating);
-        orderForm.querySelector('[data-customer-select]').disabled = creating;
+        customerSelect.disabled = creating;
+        $(customerSelect).trigger('change.select2');
         event.currentTarget.innerHTML = creating ? '<i class="bi bi-search me-1"></i>Buscar cliente' : '<i class="bi bi-person-plus me-1"></i>Crear cliente';
-    });
-    orderForm.querySelector('[data-customer-search]').addEventListener('input', (event) => {
-        const search = event.target.value.toLowerCase().trim();
-        orderForm.querySelectorAll('[data-customer-select] option[data-search]').forEach((option) => option.hidden = !option.dataset.search.includes(search));
     });
     if (orderForm.dataset.createCustomer === '1') customerToggle.click();
     orderForm.querySelectorAll('[data-phone-10]').forEach((input) => {
