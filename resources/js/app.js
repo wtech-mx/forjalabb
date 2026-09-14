@@ -389,6 +389,38 @@ if (orderForm) {
     orderForm.querySelector('[data-shipping-toggle]').addEventListener('change', (event) => { orderForm.querySelector('[data-shipping-wrap]').classList.toggle('d-none', !event.target.checked); calculate(); });
     const deliveryMethodInputs = orderForm.querySelectorAll('[data-delivery-method]');
     const deliveryLocationWrap = orderForm.querySelector('[data-delivery-location-wrap]');
+    const deliveryMapPreview = orderForm.querySelector('[data-delivery-map-preview]');
+    const deliveryMapFrame = orderForm.querySelector('[data-delivery-map-frame]');
+    const deliveryMapLink = orderForm.querySelector('[data-delivery-map-link]');
+    const mapUrlInput = orderForm.querySelector('[name="delivery_map_url"]');
+    const mapLatInput = orderForm.querySelector('[name="delivery_lat"]');
+    const mapLngInput = orderForm.querySelector('[name="delivery_lng"]');
+    const mapCoordinatesFromUrl = (value) => {
+        const decoded = String(value || '').replace(/&amp;/g, '&');
+        for (const pattern of [/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/, /[?&]q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/, /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/]) {
+            const match = decoded.match(pattern);
+            if (match) return [match[1], match[2]];
+        }
+        return [];
+    };
+    const syncMapPreview = () => {
+        if (!deliveryMapPreview || !deliveryMapFrame) return;
+        let lat = mapLatInput?.value.trim();
+        let lng = mapLngInput?.value.trim();
+        if ((!lat || !lng) && mapUrlInput?.value) [lat, lng] = mapCoordinatesFromUrl(mapUrlInput.value);
+        const iframeMatch = mapUrlInput?.value.match(/<iframe[^>]+src=["']([^"']+)["']/i);
+        const candidate = iframeMatch?.[1]?.replace(/&amp;/g, '&') || mapUrlInput?.value.trim() || '';
+        let pastedEmbed = '';
+        try {
+            const parsed = new URL(candidate);
+            if (['www.google.com', 'maps.google.com'].includes(parsed.hostname) && parsed.pathname.startsWith('/maps/embed')) pastedEmbed = parsed.href;
+        } catch (_) {}
+        const embed = lat && lng ? `https://www.google.com/maps?q=${encodeURIComponent(`${lat},${lng}`)}&z=16&output=embed` : pastedEmbed;
+        deliveryMapPreview.classList.toggle('d-none', !embed);
+        if (!embed) return;
+        deliveryMapFrame.src = embed;
+        if (deliveryMapLink) deliveryMapLink.href = lat && lng ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${lat},${lng}`)}` : (mapUrlInput.value || '#');
+    };
     const syncDeliveryLocation = () => {
         const method = orderForm.querySelector('[data-delivery-method]:checked')?.value || 'pickup';
         const needsLocation = ['cdmx', 'cod'].includes(method);
@@ -421,7 +453,9 @@ if (orderForm) {
             syncDeliveryLocation();
         });
     });
+    [mapUrlInput, mapLatInput, mapLngInput].filter(Boolean).forEach((field) => field.addEventListener('input', syncMapPreview));
     syncDeliveryLocation();
+    syncMapPreview();
     const customerToggle = orderForm.querySelector('[data-new-customer-toggle]');
     customerToggle.addEventListener('click', (event) => {
         const newBlock = orderForm.querySelector('[data-new-customer]');

@@ -58,7 +58,7 @@ class OrderController extends Controller
         ];
 
         return view('admin.orders.index', [
-            'orders' => $query->with('customer')->orderByRaw('delivery_at is null')->orderBy('delivery_at')->latest('ordered_at')->paginate(15)->withQueryString(),
+            'orders' => $query->with('customer')->orderByDesc('ordered_at')->orderByDesc('id')->paginate(15)->withQueryString(),
             'summary' => $summary,
             'search' => $search,
             'showArchived' => $showArchived,

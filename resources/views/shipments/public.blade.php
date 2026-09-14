@@ -8,6 +8,7 @@
         'pending' => ['label' => 'Pedido recibido', 'icon' => 'receipt-cutoff'],
         'in_progress' => ['label' => 'En producción', 'icon' => 'tools'],
         'ready' => ['label' => 'Listo para entregar', 'icon' => 'box-seam-fill'],
+        'shipped' => ['label' => 'Enviado', 'icon' => 'truck-front-fill'],
         'delivered' => ['label' => 'Entregado', 'icon' => 'check-circle-fill'],
     ];
     $stepKeys = array_keys($steps);

@@ -32,6 +32,12 @@
 
     $deliveryTime = old('delivery_time', $order->delivery_time ? \Illuminate\Support\Carbon::parse($order->delivery_time)->format('H:i') : '');
     $deliveryMethod = old('delivery_method', $order->delivery_method ?: ($order->delivery_map_url || $order->delivery_lat ? 'cdmx' : ($order->has_shipping ? 'skydropx' : 'pickup')));
+    $mapLat = old('delivery_lat', $order->delivery_lat);
+    $mapLng = old('delivery_lng', $order->delivery_lng);
+    $savedMapUrl = old('delivery_map_url', $order->delivery_map_url);
+    $deliveryMapEmbed = ($mapLat !== null && $mapLng !== null)
+        ? 'https://www.google.com/maps?q='.rawurlencode($mapLat.','.$mapLng).'&z=16&output=embed'
+        : (Str::startsWith((string) $savedMapUrl, ['https://www.google.com/maps/embed', 'https://maps.google.com/maps/embed']) ? $savedMapUrl : null);
     $referenceLinks = old('reference_links', ['', '']);
 @endphp
 <section class="admin-section">
@@ -153,6 +159,10 @@
                             <div class="col-12">
                                 <small class="text-secondary">Si el link de Maps trae coordenadas, se llenan al guardar. Si es link corto, pega latitud y longitud.</small>
                             </div>
+                        </div>
+                        <div class="order-map-preview {{ $deliveryMapEmbed ? '' : 'd-none' }}" data-delivery-map-preview>
+                            <div class="order-map-preview-heading"><span><i class="bi bi-geo-alt-fill me-1"></i>Vista previa de la entrega</span><a href="{{ $order->delivery_maps_link ?: '#' }}" target="_blank" rel="noopener" data-delivery-map-link><i class="bi bi-box-arrow-up-right me-1"></i>Abrir Maps</a></div>
+                            <iframe src="{{ $deliveryMapEmbed ?: 'about:blank' }}" title="Ubicación de entrega en Google Maps" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen data-delivery-map-frame></iframe>
                         </div>
                         </div>
                         <label class="form-label">Estado</label>

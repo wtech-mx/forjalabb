@@ -33,7 +33,7 @@ class ShipmentController extends Controller
         return view('admin.shipments.select-order', [
             'orders' => Order::with('customer')
                 ->where('has_shipping', true)
-                ->whereIn('status', ['in_progress', 'ready', 'delivered'])
+                ->whereIn('status', ['in_progress', 'ready', 'shipped', 'delivered'])
                 ->whereDoesntHave('shipment')
                 ->latest('ordered_at')
                 ->paginate(20),
@@ -381,7 +381,7 @@ class ShipmentController extends Controller
     private function ensureEligible(Order $order): void
     {
         abort_unless($order->has_shipping, 422, 'El pedido no tiene envío habilitado.');
-        abort_unless(in_array($order->status, ['in_progress','ready','delivered'], true), 422, 'El envío se habilita cuando el pedido entra a producción.');
+        abort_unless(in_array($order->status, ['in_progress','ready','shipped','delivered'], true), 422, 'El envío se habilita cuando el pedido entra a producción.');
     }
 
     private function normalizeSkydropxShipments(array $response)

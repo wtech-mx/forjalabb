@@ -122,7 +122,7 @@
                                 @php($deliveryMeta = \App\Models\Order::DELIVERY_METHOD_META[$order->delivery_method] ?? ['icon' => 'question-circle-fill', 'class' => 'unknown'])
                                 <td data-label="Tipo de entrega"><span class="order-delivery-type order-delivery-type-{{ $deliveryMeta['class'] }}" data-order-delivery-type="{{ $order->id }}"><i class="bi bi-{{ $deliveryMeta['icon'] }}"></i><span>{{ \App\Models\Order::DELIVERY_METHODS[$order->delivery_method] ?? 'Por definir' }}</span></span></td>
                                 <td data-label="Estado">
-                                    @php($statusIcon = ['pending'=>'hourglass-split','in_progress'=>'gear-wide-connected','ready'=>'bag-check-fill','delivered'=>'check-circle-fill','cancelled'=>'x-circle-fill'][$order->status] ?? 'circle')
+                                    @php($statusIcon = ['pending'=>'hourglass-split','in_progress'=>'gear-wide-connected','ready'=>'bag-check-fill','shipped'=>'truck-front-fill','delivered'=>'check-circle-fill','cancelled'=>'x-circle-fill'][$order->status] ?? 'circle')
                                     <span class="order-status order-status-{{ $order->status }}" data-order-status="{{ $order->id }}"><i class="bi bi-{{ $statusIcon }}"></i><span>{{ \App\Models\Order::STATUSES[$order->status] }}</span></span>
                                     @if($order->archived_at)
                                         <small class="d-block text-secondary mt-1">Archivado {{ $order->archived_at->format('d/m/Y') }}</small>
@@ -173,7 +173,7 @@
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
     const statusLabels={!! json_encode(\App\Models\Order::STATUSES, JSON_UNESCAPED_UNICODE) !!};
-    const statusIcons={pending:'hourglass-split',in_progress:'gear-wide-connected',ready:'bag-check-fill',delivered:'check-circle-fill',cancelled:'x-circle-fill'};
+    const statusIcons={pending:'hourglass-split',in_progress:'gear-wide-connected',ready:'bag-check-fill',shipped:'truck-front-fill',delivered:'check-circle-fill',cancelled:'x-circle-fill'};
     const deliveryLabels={!! json_encode(\App\Models\Order::DELIVERY_METHODS, JSON_UNESCAPED_UNICODE) !!};
     const deliveryMeta={!! json_encode(\App\Models\Order::DELIVERY_METHOD_META, JSON_UNESCAPED_UNICODE) !!};
     document.querySelectorAll('[data-order-status-button]').forEach(button=>button.addEventListener('click',async()=>{

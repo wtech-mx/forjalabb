@@ -33,6 +33,7 @@ class Order extends Model
         'pending' => 'Pendiente',
         'in_progress' => 'En producción',
         'ready' => 'Listo para entregar',
+        'shipped' => 'Enviado',
         'delivered' => 'Entregado',
         'cancelled' => 'Cancelado',
     ];
