@@ -428,7 +428,7 @@ if (orderForm) {
     };
     const syncDeliveryLocation = () => {
         const method = orderForm.querySelector('[data-delivery-method]:checked')?.value || 'pickup';
-        const needsLocation = ['cdmx', 'cod'].includes(method);
+        const needsLocation = ['cdmx', 'cod', 'skydropx'].includes(method);
         const shippingToggle = orderForm.querySelector('[data-shipping-toggle]');
         const shippingWrap = orderForm.querySelector('[data-shipping-wrap]');
 

@@ -355,7 +355,7 @@ class OrderController extends Controller
         $total = max(0, round($subtotal - $discountAmount + $shipping, 2));
         $paymentReceived = round((float) ($data['payment_received'] ?? 0), 2);
         $advance = min(round((float) ($data['advance_payment'] ?? 0), 2) + $paymentReceived, $total);
-        $needsLocation = in_array($data['delivery_method'], ['cdmx', 'cod'], true);
+        $needsLocation = in_array($data['delivery_method'], ['cdmx', 'cod', 'skydropx'], true);
         $deliveryMapUrl = $needsLocation ? $this->deliveryMapUrl($data['delivery_map_url'] ?? null) : null;
         [$deliveryLat, $deliveryLng] = $needsLocation ? $this->deliveryCoordinates($data, $deliveryMapUrl) : [null, null];
 
