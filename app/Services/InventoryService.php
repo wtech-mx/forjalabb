@@ -72,6 +72,24 @@ class InventoryService
         });
     }
 
+    public function adjustVariant(CatalogProduct $product, CatalogProductVariant $variant, int $quantity, string $note, ?User $user = null): InventoryMovement
+    {
+        return DB::transaction(function () use ($product, $variant, $quantity, $note, $user) {
+            $product = CatalogProduct::whereKey($product->id)->lockForUpdate()->firstOrFail();
+            $variant = CatalogProductVariant::whereKey($variant->id)->where('catalog_product_id', $product->id)->lockForUpdate()->firstOrFail();
+            $variantBalance = (int) $variant->stock + $quantity;
+            $productBalance = (int) $product->stock + $quantity;
+            $variant->update(['stock' => $variantBalance]);
+            $product->update(['stock' => $productBalance]);
+
+            return InventoryMovement::create([
+                'catalog_product_id' => $product->id, 'catalog_product_variant_id' => $variant->id,
+                'created_by' => $user?->id, 'type' => $quantity > 0 ? 'manual_entry' : 'manual_out',
+                'quantity' => $quantity, 'balance_after' => $variantBalance, 'note' => $note.' · '.$variant->label,
+            ]);
+        });
+    }
+
     private function requirements(Order $order): Collection
     {
         $requirements = collect();

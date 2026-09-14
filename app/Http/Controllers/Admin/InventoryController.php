@@ -20,7 +20,7 @@ class InventoryController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = CatalogProduct::query()->with('photos')->withCount([
+        $query = CatalogProduct::query()->with(['photos', 'variants' => fn ($query) => $query->where('is_active', true)->orderBy('color')->orderBy('size')])->withCount([
             'variants' => fn($query) => $query->where('is_active', true),
             'variants as low_variants_count' => fn($query) => $query->where('is_active', true)->whereColumn('stock', '<=', 'minimum_stock')->where('stock', '>', 0),
             'variants as out_variants_count' => fn($query) => $query->where('is_active', true)->where('stock', '<=', 0),
@@ -43,13 +43,16 @@ class InventoryController extends Controller
 
     public function adjust(Request $request, CatalogProduct $product, InventoryService $inventory): JsonResponse
     {
-        $data = $request->validate(['quantity' => ['required', 'integer', 'not_in:0', 'between:-999999,999999'], 'note' => ['required', 'string', 'max:255'], 'minimum_stock' => ['nullable', 'integer', 'min:0', 'max:999999']]);
+        $data = $request->validate(['variant_id' => ['nullable', 'integer', 'exists:catalog_product_variants,id'], 'quantity' => ['required', 'integer', 'not_in:0', 'between:-999999,999999'], 'note' => ['required', 'string', 'max:255'], 'minimum_stock' => ['nullable', 'integer', 'min:0', 'max:999999']]);
         $movement = DB::transaction(function () use ($data, $product, $inventory, $request) {
-            if (array_key_exists('minimum_stock', $data)) $product->update(['minimum_stock' => $data['minimum_stock']]);
-            return $inventory->adjust($product, (int) $data['quantity'], $data['note'], $request->user());
+            $variant = filled($data['variant_id'] ?? null) ? $product->variants()->findOrFail($data['variant_id']) : null;
+            if (array_key_exists('minimum_stock', $data)) ($variant ?: $product)->update(['minimum_stock' => $data['minimum_stock']]);
+            return $variant
+                ? $inventory->adjustVariant($product, $variant, (int) $data['quantity'], $data['note'], $request->user())
+                : $inventory->adjust($product, (int) $data['quantity'], $data['note'], $request->user());
         });
 
-        return response()->json(['message' => 'Inventario actualizado correctamente.', 'stock' => $movement->balance_after, 'minimum_stock' => (int) $product->fresh()->minimum_stock]);
+        return response()->json(['message' => 'Inventario actualizado correctamente.', 'stock' => (int) $product->fresh()->stock, 'selected_stock' => $movement->balance_after, 'minimum_stock' => (int) ($movement->variant?->fresh()->minimum_stock ?? $product->fresh()->minimum_stock)]);
     }
 
     public function variants(CatalogProduct $product): View
