@@ -101,17 +101,30 @@ class OrderController extends Controller
     {
         $data = $request->validate([
             'status' => ['required', Rule::in(array_keys(Order::STATUSES))],
+            'payment_received' => ['nullable', 'numeric', 'min:0', 'max:9999999'],
         ]);
 
         DB::transaction(function () use ($order, $data, $request) {
-            $order->update(['status' => $data['status']]);
+            $attributes = ['status' => $data['status']];
+            $paymentReceived = round((float) ($data['payment_received'] ?? 0), 2);
+            if ($paymentReceived > 0) {
+                $paidTotal = min((float) $order->total, (float) $order->advance_payment + $paymentReceived);
+                $attributes['advance_payment'] = $paidTotal;
+                $attributes['balance_due'] = max(0, round((float) $order->total - $paidTotal, 2));
+            }
+            $order->update($attributes);
             $this->inventory->syncOrder($order, $request->user());
         });
 
         return response()->json([
-            'message' => 'Estado del pedido actualizado.',
+            'message' => $order->status === 'delivered'
+                ? (((float) $order->balance_due > 0) ? 'Pedido entregado. Conserva saldo pendiente.' : 'Pedido entregado y completamente liquidado.')
+                : 'Estado del pedido actualizado.',
             'status' => $order->status,
             'label' => Order::STATUSES[$order->status],
+            'balance_due' => (float) $order->balance_due,
+            'paid_total' => (float) $order->advance_payment,
+            'total' => (float) $order->total,
         ]);
     }
 

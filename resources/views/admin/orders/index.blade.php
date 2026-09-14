@@ -129,7 +129,7 @@
                                     @endif
                                 </td>
                                 <td data-label="Total" class="fw-bold">${{ number_format($order->total, 2) }}</td>
-                                <td data-label="Saldo"><span class="order-balance {{ $order->balance_due > 0 ? 'pending' : 'paid' }}"><i class="bi bi-{{ $order->balance_due > 0 ? 'exclamation-circle' : 'check-circle' }}"></i>${{ number_format($order->balance_due, 2) }}</span></td>
+                                <td data-label="Saldo"><span class="order-balance {{ $order->balance_due > 0 ? 'pending' : 'paid' }}" data-order-balance="{{ $order->id }}"><i class="bi bi-{{ $order->balance_due > 0 ? 'exclamation-circle' : 'check-circle' }}"></i><span>${{ number_format($order->balance_due, 2) }}</span></span></td>
                                 <td class="text-end">
                                     <div class="d-inline-flex gap-2">
                                         @can('orders.manage')
@@ -176,10 +176,34 @@ document.addEventListener('DOMContentLoaded',()=>{
     const statusIcons={pending:'hourglass-split',in_progress:'gear-wide-connected',ready:'bag-check-fill',shipped:'truck-front-fill',delivered:'check-circle-fill',cancelled:'x-circle-fill'};
     const deliveryLabels={!! json_encode(\App\Models\Order::DELIVERY_METHODS, JSON_UNESCAPED_UNICODE) !!};
     const deliveryMeta={!! json_encode(\App\Models\Order::DELIVERY_METHOD_META, JSON_UNESCAPED_UNICODE) !!};
+    document.querySelectorAll('[data-order-status-button]').forEach(button=>button.addEventListener('click',async event=>{
+        event.stopImmediatePropagation();
+        const selected=await window.Swal.fire({title:`Cambiar estado · ${button.dataset.order}`,input:'select',inputOptions:statusLabels,inputValue:button.dataset.status,inputLabel:'Nuevo estado del pedido',showCancelButton:true,confirmButtonText:'Continuar',cancelButtonText:'Cancelar',reverseButtons:true,customClass:{popup:'forjalab-swal',confirmButton:'btn btn-dark px-4',cancelButton:'btn btn-outline-secondary px-4'},buttonsStyling:false});
+        if(!selected.isConfirmed)return;
+        const status=selected.value;
+        let payment_received=0;
+        if(status==='delivered'){
+            const pendingText=document.querySelector(`[data-order-balance="${button.dataset.orderId}"] span`)?.textContent||'$0.00';
+            const payment=await window.Swal.fire({title:'Registrar pago al entregar',html:`<p class="text-secondary">Puede quedar entregado aunque todavía tenga saldo.</p><p class="fw-bold">Saldo actual: ${pendingText}</p>`,input:'number',inputValue:0,inputAttributes:{min:'0',step:'0.01'},inputLabel:'¿Cuánto pagó el cliente ahora?',showCancelButton:true,confirmButtonText:'Marcar como entregado',cancelButtonText:'Volver',reverseButtons:true,customClass:{popup:'forjalab-swal',confirmButton:'btn btn-success px-4',cancelButton:'btn btn-outline-secondary px-4'},buttonsStyling:false,inputValidator:value=>Number(value)<0?'El pago no puede ser negativo.':undefined});
+            if(!payment.isConfirmed)return;
+            payment_received=Number(payment.value)||0;
+        }
+        window.Swal.fire({title:'Guardando cambio…',allowOutsideClick:false,didOpen:()=>window.Swal.showLoading()});
+        try{
+            const response=await fetch(button.dataset.url,{method:'PATCH',headers:{Accept:'application/json','Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content},body:JSON.stringify({status,payment_received})});
+            const payload=await response.json();
+            if(!response.ok)throw new Error(Object.values(payload.errors||{}).flat()[0]||payload.message||'No se pudo actualizar.');
+            const badge=document.querySelector(`[data-order-status="${button.dataset.orderId}"]`),balance=document.querySelector(`[data-order-balance="${button.dataset.orderId}"]`);
+            button.dataset.status=payload.status;
+            if(badge){badge.className=`order-status order-status-${payload.status}`;badge.querySelector('i').className=`bi bi-${statusIcons[payload.status]||'circle'}`;badge.querySelector('span').textContent=payload.label}
+            if(balance){const paid=Number(payload.balance_due)<=0;balance.className=`order-balance ${paid?'paid':'pending'}`;balance.querySelector('i').className=`bi bi-${paid?'check-circle':'exclamation-circle'}`;balance.querySelector('span').textContent=new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(payload.balance_due)}
+            window.Swal.fire({title:'Pedido actualizado',text:payload.message,icon:'success',timer:2100,showConfirmButton:false});
+        }catch(error){window.Swal.fire({title:'No se pudo actualizar',text:error.message,icon:'error',confirmButtonText:'Entendido'})}
+    },{capture:true}));
     document.querySelectorAll('[data-order-status-button]').forEach(button=>button.addEventListener('click',async()=>{
         const result=await window.Swal.fire({title:`Cambiar estado · ${button.dataset.order}`,input:'select',inputOptions:statusLabels,inputValue:button.dataset.status,inputLabel:'Nuevo estado del pedido',showCancelButton:true,confirmButtonText:'Actualizar estado',cancelButtonText:'Cancelar',reverseButtons:true,customClass:{popup:'forjalab-swal',confirmButton:'btn btn-dark px-4',cancelButton:'btn btn-outline-secondary px-4'},buttonsStyling:false,showLoaderOnConfirm:true,allowOutsideClick:()=>!window.Swal.isLoading(),preConfirm:async status=>{try{const response=await fetch(button.dataset.url,{method:'PATCH',headers:{Accept:'application/json','Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content},body:JSON.stringify({status})});const payload=await response.json();if(!response.ok)throw new Error(Object.values(payload.errors||{}).flat()[0]||payload.message||'No se pudo actualizar.');return payload}catch(error){window.Swal.showValidationMessage(error.message)}}});
         if(!result.isConfirmed)return;
-        const payload=result.value,badge=document.querySelector(`[data-order-status="${button.dataset.orderId}"]`);button.dataset.status=payload.status;if(badge){badge.className=`order-status order-status-${payload.status}`;badge.querySelector('i').className=`bi bi-${statusIcons[payload.status]||'circle'}`;badge.querySelector('span').textContent=payload.label}window.Swal.fire({title:'Estado actualizado',text:payload.message,icon:'success',timer:1600,showConfirmButton:false});
+        const payload=result.value,badge=document.querySelector(`[data-order-status="${button.dataset.orderId}"]`),balance=document.querySelector(`[data-order-balance="${button.dataset.orderId}"]`);button.dataset.status=payload.status;if(badge){badge.className=`order-status order-status-${payload.status}`;badge.querySelector('i').className=`bi bi-${statusIcons[payload.status]||'circle'}`;badge.querySelector('span').textContent=payload.label}if(balance){const paid=Number(payload.balance_due)<=0;balance.className=`order-balance ${paid?'paid':'pending'}`;balance.querySelector('i').className=`bi bi-${paid?'check-circle':'exclamation-circle'}`;balance.querySelector('span').textContent=new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(payload.balance_due)}window.Swal.fire({title:payload.status==='delivered'?'Pedido entregado y liquidado':'Estado actualizado',text:payload.message,icon:'success',timer:1900,showConfirmButton:false});
     }));
     document.querySelectorAll('[data-order-delivery-button]').forEach(button=>button.addEventListener('click',async()=>{
         const options=Object.fromEntries(Object.entries(deliveryLabels).map(([value,label])=>[value,`${label}`]));
