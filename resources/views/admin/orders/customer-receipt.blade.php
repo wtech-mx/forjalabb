@@ -115,6 +115,8 @@
     </table></td>
 </tr></table>
 
+@include('admin.orders.partials.bank-details')
+
 <div class="notice">Este recibo resume tu pedido y sus pagos registrados. No es un comprobante fiscal. Conserva el folio para cualquier aclaración.</div>
 <div class="footer">ForjaLab · Gracias por tu compra · WhatsApp 55 6444 2949 · forjalab.com.mx</div>
 </body>
