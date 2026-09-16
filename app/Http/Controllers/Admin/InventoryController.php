@@ -8,6 +8,7 @@ use App\Models\InventoryMovement;
 use App\Models\CatalogProductVariant;
 use App\Models\InventoryOrderAllocation;
 use App\Models\InventoryVariantOrderAllocation;
+use App\Models\Order;
 use App\Services\InventoryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,9 +30,14 @@ class InventoryController extends Controller
         if ($request->query('status') === 'low') $query->where(fn ($level) => $level->whereHas('variants', fn ($variant) => $variant->where('is_active', true)->whereColumn('stock', '<=', 'minimum_stock')->where('stock', '>', 0))->orWhere(fn ($generic) => $generic->whereDoesntHave('variants', fn ($variant) => $variant->where('is_active', true))->whereColumn('stock', '<=', 'minimum_stock')->where('stock', '>', 0)));
         if ($request->query('status') === 'out') $query->where(fn ($level) => $level->whereHas('variants', fn ($variant) => $variant->where('is_active', true)->where('stock', '<=', 0))->orWhere(fn ($generic) => $generic->whereDoesntHave('variants', fn ($variant) => $variant->where('is_active', true))->where('stock', '<=', 0)));
 
+        $pendingNeeds = $this->pendingNeeds();
+
         return view('admin.inventory.index', [
             'products' => $query->paginate(18)->withQueryString(),
-            'recentMovements' => InventoryMovement::with(['product', 'variant', 'order', 'creator'])->latest()->limit(15)->get(),
+            'pendingNeeds' => $pendingNeeds,
+            'pendingOrdersCount' => Order::query()->whereNull('archived_at')->where('status', 'pending')->count(),
+            'pendingUnits' => (int) $pendingNeeds->sum('required'),
+            'purchaseUnits' => (int) $pendingNeeds->sum('shortage'),
             'stats' => [
                 'products' => CatalogProduct::count(),
                 'units' => (int) CatalogProduct::sum('stock'),
@@ -39,6 +45,80 @@ class InventoryController extends Controller
                 'out' => CatalogProductVariant::where('is_active', true)->where('stock', '<=', 0)->count() + CatalogProduct::whereDoesntHave('variants', fn ($query) => $query->where('is_active', true))->where('stock', '<=', 0)->count(),
             ],
         ]);
+    }
+
+    private function pendingNeeds()
+    {
+        $productAllocations = InventoryOrderAllocation::query()
+            ->with(['product.variants' => fn ($query) => $query->where('is_active', true), 'order.customer'])
+            ->whereHas('order', fn ($query) => $query->whereNull('archived_at')->where('status', 'pending'))
+            ->get();
+
+        $variantAllocations = InventoryVariantOrderAllocation::query()
+            ->with(['variant.product', 'order.customer'])
+            ->whereHas('order', fn ($query) => $query->whereNull('archived_at')->where('status', 'pending'))
+            ->get();
+
+        $rows = $variantAllocations
+            ->groupBy('catalog_product_variant_id')
+            ->map(function ($allocations) {
+                $variant = $allocations->first()->variant;
+                $required = (int) $allocations->sum('quantity');
+                $remaining = (int) $variant->stock;
+
+                return [
+                    'product' => $variant->product?->name ?? 'Producto eliminado',
+                    'variant' => $variant->label ?: 'Presentacion general',
+                    'required' => $required,
+                    'available_before' => $remaining + $required,
+                    'remaining' => $remaining,
+                    'shortage' => max(0, -$remaining),
+                    'needs_assignment' => false,
+                    'orders' => $allocations->pluck('order.folio')->filter()->unique()->values(),
+                ];
+            });
+
+        $variantQuantities = $variantAllocations
+            ->groupBy(fn ($allocation) => $allocation->order_id.':'.$allocation->variant?->catalog_product_id)
+            ->map(fn ($allocations) => (int) $allocations->sum('quantity'));
+
+        foreach ($productAllocations as $allocation) {
+            $product = $allocation->product;
+            if (! $product) {
+                continue;
+            }
+
+            $assigned = (int) $variantQuantities->get($allocation->order_id.':'.$product->id, 0);
+            $unassigned = max(0, (int) $allocation->quantity - $assigned);
+
+            if ($product->variants->isNotEmpty() && $unassigned === 0) {
+                continue;
+            }
+
+            $key = $product->variants->isEmpty() ? 'product:'.$product->id : 'unassigned:'.$product->id;
+            $existing = $rows->get($key);
+            $required = (int) ($existing['required'] ?? 0) + ($product->variants->isEmpty() ? (int) $allocation->quantity : $unassigned);
+            $remaining = (int) $product->stock;
+            $needsAssignment = $product->variants->isNotEmpty();
+            $orders = collect($existing['orders'] ?? [])->push($allocation->order?->folio)->filter()->unique()->values();
+
+            $rows->put($key, [
+                'product' => $product->name,
+                'variant' => $needsAssignment ? 'Sin color o variante asignada' : 'Inventario general',
+                'required' => $required,
+                'available_before' => $needsAssignment ? null : $remaining + $required,
+                'remaining' => $needsAssignment ? null : $remaining,
+                'shortage' => $needsAssignment ? 0 : max(0, -$remaining),
+                'needs_assignment' => $needsAssignment,
+                'orders' => $orders,
+            ]);
+        }
+
+        return $rows->sortBy(fn (array $row) => implode('|', [
+            $row['shortage'] > 0 ? '0' : ($row['needs_assignment'] ? '1' : '2'),
+            mb_strtolower($row['product']),
+            mb_strtolower($row['variant']),
+        ]))->values();
     }
 
     public function adjust(Request $request, CatalogProduct $product, InventoryService $inventory): JsonResponse

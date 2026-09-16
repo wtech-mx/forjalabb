@@ -34,11 +34,48 @@
             </article>
         @empty <div class="panel-card text-center text-secondary">No encontramos productos.</div> @endforelse
     </div><div class="mt-4">{{ $products->links() }}</div></div>
-    <aside class="col-xl-4"><div class="panel-card inventory-history"><div class="d-flex align-items-center gap-2 mb-3"><i class="bi bi-clock-history"></i><h2 class="h5 fw-bold mb-0">Movimientos recientes</h2></div>
-        @forelse($recentMovements as $movement)<article><span class="movement-icon {{ $movement->quantity>0?'in':'out' }}"><i class="bi bi-arrow-{{ $movement->quantity>0?'down':'up' }}"></i></span><div><strong>{{ $movement->product?->name }}@if($movement->variant) · {{ $movement->variant->label }}@endif</strong><small>{{ $movement->note }}</small><time>{{ $movement->created_at->format('d/m/Y H:i') }}@if($movement->order) · {{ $movement->order->folio }}@endif</time></div><b class="{{ $movement->quantity>0?'text-success':'text-danger' }}">{{ $movement->quantity>0?'+':'' }}{{ $movement->quantity }}</b></article>
-        @empty <p class="text-secondary">Los nuevos movimientos aparecerán aquí.</p> @endforelse
+    <aside class="col-xl-4"><div class="panel-card inventory-forecast">
+        <div class="d-flex align-items-center gap-2 mb-2"><i class="bi bi-clipboard2-check-fill"></i><h2 class="h5 fw-bold mb-0">Necesidades de pedidos</h2></div>
+        <p class="text-secondary small">Proyección de los pedidos pendientes. Las piezas ya están apartadas del inventario actual.</p>
+        <div class="inventory-forecast-summary">
+            <span><small>Pedidos</small><strong>{{ $pendingOrdersCount }}</strong></span>
+            <span><small>Piezas apartadas</small><strong>{{ $pendingUnits }}</strong></span>
+            <span class="{{ $purchaseUnits > 0 ? 'is-danger' : 'is-ok' }}"><small>Por comprar</small><strong>{{ $purchaseUnits }}</strong></span>
+        </div>
+        <div class="inventory-forecast-list">
+            @forelse($pendingNeeds as $need)
+                <article class="inventory-need {{ $need['needs_assignment'] ? 'needs-review' : ($need['shortage'] > 0 ? 'needs-purchase' : 'has-stock') }}">
+                    <div class="inventory-need-heading">
+                        <div><strong>{{ $need['product'] }}</strong><small>{{ $need['variant'] }}</small></div>
+                        @if($need['needs_assignment'])
+                            <span class="badge text-bg-warning">Revisar</span>
+                        @elseif($need['shortage'] > 0)
+                            <span class="badge text-bg-danger">Comprar {{ $need['shortage'] }}</span>
+                        @else
+                            <span class="badge text-bg-success">Sobran {{ $need['remaining'] }}</span>
+                        @endif
+                    </div>
+                    @if($need['needs_assignment'])
+                        <p>Hay {{ $need['required'] }} pieza{{ $need['required'] === 1 ? '' : 's' }} sin color o variante. Asígnala en el pedido para calcular la compra.</p>
+                    @else
+                        <div class="inventory-need-numbers">
+                            <span><small>Había</small><b>{{ $need['available_before'] }}</b></span>
+                            <span><small>Pendientes</small><b>-{{ $need['required'] }}</b></span>
+                            <span><small>Resultado</small><b>{{ $need['remaining'] }}</b></span>
+                        </div>
+                    @endif
+                    <small class="inventory-need-orders"><i class="bi bi-receipt me-1"></i>{{ $need['orders']->join(', ') }}</small>
+                </article>
+            @empty
+                <div class="inventory-forecast-empty"><i class="bi bi-check-circle-fill"></i><strong>Sin pedidos pendientes</strong><span>No hay piezas por apartar o comprar.</span></div>
+            @endforelse
+        </div>
     </div></aside></div>
 </div></section>
+
+<style>
+.inventory-forecast{position:sticky;top:1rem}.inventory-forecast>div:first-child>i{color:#ed741d;font-size:1.35rem}.inventory-forecast-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem;margin:1rem 0}.inventory-forecast-summary span{padding:.7rem .45rem;text-align:center;background:#fff8ed;border:1px solid var(--line);border-radius:.65rem}.inventory-forecast-summary small,.inventory-forecast-summary strong{display:block}.inventory-forecast-summary small{color:var(--muted);font-size:.7rem}.inventory-forecast-summary strong{font-size:1.25rem}.inventory-forecast-summary .is-danger{color:#b42318;background:#fff2f0}.inventory-forecast-summary .is-ok{color:#21713d;background:#eef9f1}.inventory-forecast-list{display:grid;gap:.75rem;max-height:70vh;overflow:auto;padding-right:.15rem}.inventory-need{padding:.85rem;border:1px solid var(--line);border-left:4px solid #4d8a58;border-radius:.7rem;background:#fff}.inventory-need.needs-purchase{border-left-color:#dc3545;background:#fffafa}.inventory-need.needs-review{border-left-color:#e0a000;background:#fffaf0}.inventory-need-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem}.inventory-need-heading strong,.inventory-need-heading small{display:block}.inventory-need-heading small{color:var(--muted)}.inventory-need p{margin:.7rem 0;color:#725b48;font-size:.82rem}.inventory-need-numbers{display:grid;grid-template-columns:repeat(3,1fr);gap:.35rem;margin:.7rem 0}.inventory-need-numbers span{padding:.4rem;text-align:center;background:#f8f5f0;border-radius:.45rem}.inventory-need-numbers small,.inventory-need-numbers b{display:block}.inventory-need-numbers small{font-size:.65rem;color:var(--muted)}.inventory-need-orders{display:block;color:var(--muted);overflow-wrap:anywhere}.inventory-forecast-empty{display:grid;justify-items:center;gap:.25rem;padding:2rem 1rem;text-align:center;color:#347044;background:#f1faf3;border-radius:.75rem}.inventory-forecast-empty i{font-size:2rem}.inventory-forecast-empty span{font-size:.82rem;color:var(--muted)}@media(max-width:1199.98px){.inventory-forecast{position:static}.inventory-forecast-list{max-height:none}}
+</style>
 
 @can('inventory.manage')
 <div class="modal fade" id="inventoryAdjustModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
