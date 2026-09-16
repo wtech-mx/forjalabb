@@ -52,69 +52,64 @@ class InventoryController extends Controller
 
     private function pendingNeeds()
     {
-        $productAllocations = InventoryOrderAllocation::query()
-            ->with(['product.variants' => fn ($query) => $query->where('is_active', true), 'order.customer'])
-            ->whereHas('order', fn ($query) => $query->whereNull('archived_at')->where('status', 'pending'))
+        $orders = Order::query()
+            ->with([
+                'items.product.variants',
+                'items.bundle.items.product.variants',
+            ])
+            ->whereNull('archived_at')
+            ->where('status', 'pending')
             ->get();
+        $rows = collect();
 
-        $variantAllocations = InventoryVariantOrderAllocation::query()
-            ->with(['variant.product', 'order.customer'])
-            ->whereHas('order', fn ($query) => $query->whereNull('archived_at')->where('status', 'pending'))
-            ->get();
-
-        $rows = $variantAllocations
-            ->groupBy('catalog_product_variant_id')
-            ->map(function ($allocations) {
-                $variant = $allocations->first()->variant;
-                $required = (int) $allocations->sum('quantity');
-                $remaining = (int) $variant->stock;
-
-                return [
-                    'product' => $variant->product?->name ?? 'Producto eliminado',
-                    'variant' => $variant->label ?: 'Presentacion general',
-                    'required' => $required,
-                    'available_before' => $remaining + $required,
-                    'remaining' => $remaining,
-                    'shortage' => max(0, -$remaining),
-                    'needs_assignment' => false,
-                    'orders' => $allocations->pluck('order.folio')->filter()->unique()->values(),
-                ];
-            });
-
-        $variantQuantities = $variantAllocations
-            ->groupBy(fn ($allocation) => $allocation->order_id.':'.$allocation->variant?->catalog_product_id)
-            ->map(fn ($allocations) => (int) $allocations->sum('quantity'));
-
-        foreach ($productAllocations as $allocation) {
-            $product = $allocation->product;
-            if (! $product) {
-                continue;
+        $addNeed = function (CatalogProduct $product, int $quantity, string $folio, ?CatalogProductVariant $variant = null, bool $needsAssignment = false) use ($rows) {
+            if ($quantity <= 0) {
+                return;
             }
 
-            $assigned = (int) $variantQuantities->get($allocation->order_id.':'.$product->id, 0);
-            $unassigned = max(0, (int) $allocation->quantity - $assigned);
-
-            if ($product->variants->isNotEmpty() && $unassigned === 0) {
-                continue;
-            }
-
-            $key = $product->variants->isEmpty() ? 'product:'.$product->id : 'unassigned:'.$product->id;
+            $key = $variant ? 'variant:'.$variant->id : ($needsAssignment ? 'unassigned:' : 'product:').$product->id;
             $existing = $rows->get($key);
-            $required = (int) ($existing['required'] ?? 0) + ($product->variants->isEmpty() ? (int) $allocation->quantity : $unassigned);
-            $remaining = (int) $product->stock;
-            $needsAssignment = $product->variants->isNotEmpty();
-            $orders = collect($existing['orders'] ?? [])->push($allocation->order?->folio)->filter()->unique()->values();
+            $required = (int) ($existing['required'] ?? 0) + $quantity;
+            $available = $needsAssignment ? null : (int) ($variant?->stock ?? $product->stock);
+            $remaining = $needsAssignment ? null : $available - $required;
 
             $rows->put($key, [
                 'product' => $product->name,
-                'variant' => $needsAssignment ? 'Sin color o variante asignada' : 'Inventario general',
+                'variant' => $variant?->label ?: ($needsAssignment ? 'Sin color o variante asignada' : 'Inventario general'),
                 'required' => $required,
-                'available_before' => $needsAssignment ? null : $remaining + $required,
-                'remaining' => $needsAssignment ? null : $remaining,
+                'available_before' => $available,
+                'remaining' => $remaining,
                 'shortage' => $needsAssignment ? 0 : max(0, -$remaining),
                 'needs_assignment' => $needsAssignment,
-                'orders' => $orders,
+                'orders' => collect($existing['orders'] ?? [])->push($folio)->filter()->unique()->values(),
             ]);
+        };
+
+        foreach ($orders as $order) {
+            foreach ($order->items as $item) {
+                if ($item->product) {
+                    $selected = collect($item->selected_variant_ids ?? [])->filter()->countBy();
+                    foreach ($selected as $variantId => $quantity) {
+                        $variant = $item->product->variants->firstWhere('id', (int) $variantId);
+                        if ($variant) {
+                            $addNeed($item->product, (int) $quantity, $order->folio, $variant);
+                        }
+                    }
+
+                    $unassigned = max(0, (int) $item->quantity - (int) $selected->sum());
+                    if ($unassigned > 0) {
+                        $addNeed($item->product, $unassigned, $order->folio, null, $item->product->variants->isNotEmpty());
+                    }
+                }
+
+                foreach ($item->bundle?->items ?? [] as $bundleItem) {
+                    if (! $bundleItem->product) {
+                        continue;
+                    }
+                    $quantity = (int) $item->quantity * (int) $bundleItem->quantity;
+                    $addNeed($bundleItem->product, $quantity, $order->folio, null, $bundleItem->product->variants->isNotEmpty());
+                }
+            }
         }
 
         return $rows->sortBy(fn (array $row) => implode('|', [

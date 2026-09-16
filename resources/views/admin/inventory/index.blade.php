@@ -3,7 +3,7 @@
 @section('content')
 <section class="admin-section"><div class="container">
     <div class="admin-header">
-        <div><div class="eyebrow">Control de existencias</div><h1 class="fw-bold mt-2 mb-0"><i class="bi bi-boxes me-2 text-warning"></i>Inventario</h1><p class="text-secondary mt-2 mb-0">Las existencias se descuentan automáticamente al crear o modificar pedidos.</p></div>
+        <div><div class="eyebrow">Control de existencias</div><h1 class="fw-bold mt-2 mb-0"><i class="bi bi-boxes me-2 text-warning"></i>Inventario</h1><p class="text-secondary mt-2 mb-0">Las existencias se reservan únicamente mientras el pedido está en producción.</p></div>
         <a class="btn btn-outline-dark" href="{{ route('admin.catalog.index') }}"><i class="bi bi-bag-heart-fill me-2"></i>Ver catálogo</a>
     </div>
     <div class="inventory-stats">
@@ -36,7 +36,7 @@
     </div><div class="mt-4">{{ $products->links() }}</div></div>
     <aside class="col-xl-4"><div class="panel-card inventory-forecast">
         <div class="d-flex align-items-center justify-content-between gap-2 mb-2"><div class="d-flex align-items-center gap-2"><i class="bi bi-clipboard2-check-fill"></i><h2 class="h5 fw-bold mb-0">Necesidades de pedidos</h2></div><a class="btn btn-sm btn-dark" href="{{ route('admin.inventory.purchase-list.pdf') }}"><i class="bi bi-file-earmark-pdf-fill me-1"></i>Descargar PDF</a></div>
-        <p class="text-secondary small">Proyección de los pedidos pendientes. Las piezas ya están apartadas del inventario actual.</p>
+        <p class="text-secondary small">Proyección de pedidos pendientes. Estas piezas todavía no se descuentan del inventario.</p>
         <div class="inventory-forecast-summary">
             <span><small>Pedidos</small><strong>{{ $pendingOrdersCount }}</strong></span>
             <span><small>Piezas apartadas</small><strong>{{ $pendingUnits }}</strong></span>

@@ -17,8 +17,9 @@ class InventoryService
     public function syncOrder(Order $order, ?User $user = null): void
     {
         $order->loadMissing(['items.bundle.items']);
-        $desired = $order->status === 'cancelled' ? collect() : $this->requirements($order);
-        $desiredVariants = $order->status === 'cancelled' ? collect() : $this->variantRequirements($order);
+        $isInProduction = $order->status === 'in_progress';
+        $desired = $isInProduction ? $this->requirements($order) : collect();
+        $desiredVariants = $isInProduction ? $this->variantRequirements($order) : collect();
         $allocations = InventoryOrderAllocation::where('order_id', $order->id)->lockForUpdate()->get()->keyBy('catalog_product_id');
         $variantAllocations = InventoryVariantOrderAllocation::where('order_id', $order->id)->lockForUpdate()->get()->keyBy('catalog_product_variant_id');
         $productMovements = collect();
