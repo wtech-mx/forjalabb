@@ -10,12 +10,15 @@ use App\Models\InventoryOrderAllocation;
 use App\Models\InventoryVariantOrderAllocation;
 use App\Models\Order;
 use App\Services\InventoryService;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
 class InventoryController extends Controller
 {
@@ -133,6 +136,31 @@ class InventoryController extends Controller
         });
 
         return response()->json(['message' => 'Inventario actualizado correctamente.', 'stock' => (int) $product->fresh()->stock, 'selected_stock' => $movement->balance_after, 'minimum_stock' => (int) ($movement->variant?->fresh()->minimum_stock ?? $product->fresh()->minimum_stock)]);
+    }
+
+    public function purchaseListPdf(): Response
+    {
+        $rows = $this->pendingNeeds()
+            ->where('shortage', '>', 0)
+            ->values();
+
+        $options = new Options;
+        $options->set('isRemoteEnabled', true);
+        $options->set('chroot', public_path());
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml(view('admin.inventory.purchase-list-pdf', [
+            'rows' => $rows,
+            'totalUnits' => (int) $rows->sum('shortage'),
+            'generatedAt' => now(),
+        ])->render(), 'UTF-8');
+        $dompdf->setPaper('letter');
+        $dompdf->render();
+
+        return response($dompdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="lista-de-compras-'.now()->format('Y-m-d').'.pdf"',
+        ]);
     }
 
     public function variants(CatalogProduct $product): View

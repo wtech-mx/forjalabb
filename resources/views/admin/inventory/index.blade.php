@@ -35,7 +35,7 @@
         @empty <div class="panel-card text-center text-secondary">No encontramos productos.</div> @endforelse
     </div><div class="mt-4">{{ $products->links() }}</div></div>
     <aside class="col-xl-4"><div class="panel-card inventory-forecast">
-        <div class="d-flex align-items-center gap-2 mb-2"><i class="bi bi-clipboard2-check-fill"></i><h2 class="h5 fw-bold mb-0">Necesidades de pedidos</h2></div>
+        <div class="d-flex align-items-center justify-content-between gap-2 mb-2"><div class="d-flex align-items-center gap-2"><i class="bi bi-clipboard2-check-fill"></i><h2 class="h5 fw-bold mb-0">Necesidades de pedidos</h2></div><a class="btn btn-sm btn-dark" href="{{ route('admin.inventory.purchase-list.pdf') }}"><i class="bi bi-file-earmark-pdf-fill me-1"></i>Descargar PDF</a></div>
         <p class="text-secondary small">Proyección de los pedidos pendientes. Las piezas ya están apartadas del inventario actual.</p>
         <div class="inventory-forecast-summary">
             <span><small>Pedidos</small><strong>{{ $pendingOrdersCount }}</strong></span>

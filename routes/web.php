@@ -252,6 +252,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('orders', OrderController::class)->except(['index', 'show', 'destroy'])->middleware('can:orders.manage');
     Route::resource('orders', OrderController::class)->only(['index', 'show'])->middleware('can:orders.view');
     Route::get('/inventory', [InventoryController::class, 'index'])->middleware('can:inventory.view')->name('inventory.index');
+    Route::get('/inventory/purchase-list/pdf', [InventoryController::class, 'purchaseListPdf'])->middleware('can:inventory.view')->name('inventory.purchase-list.pdf');
     Route::post('/inventory/{product}/adjust', [InventoryController::class, 'adjust'])->middleware('can:inventory.manage')->name('inventory.adjust');
     Route::get('/inventory/{product}/variants', [InventoryController::class, 'variants'])->middleware('can:inventory.view')->name('inventory.variants');
     Route::put('/inventory/{product}/variants', [InventoryController::class, 'syncVariants'])->middleware('can:inventory.manage')->name('inventory.variants.update');
