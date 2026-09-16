@@ -10,7 +10,7 @@
                     <div class="eyebrow">Catalogo</div>
                     <h1 class="fw-bold mt-2 mb-0">Paquetes</h1>
                 </div>
-                @can('catalog.manage')
+                @can('packages.manage')
                     <a class="btn btn-dark" href="{{ route('admin.packages.create') }}">
                         <i class="bi bi-plus-circle me-2"></i>Nuevo paquete
                     </a>
@@ -51,7 +51,7 @@
                                     <td class="text-end">
                                         <div class="d-inline-flex gap-2">
                                             <a class="btn btn-sm btn-outline-dark" href="{{ route('admin.packages.preview', $bundle) }}"><i class="bi bi-eye"></i></a>
-                                            @can('catalog.manage')
+                                            @can('packages.manage')
                                                 <a class="btn btn-sm btn-dark" href="{{ route('admin.packages.edit', $bundle) }}"><i class="bi bi-pencil"></i></a>
                                             @endcan
                                         </div>

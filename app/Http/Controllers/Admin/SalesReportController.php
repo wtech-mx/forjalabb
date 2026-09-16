@@ -13,10 +13,12 @@ class SalesReportController extends Controller
 {
     public function index(Request $request): View
     {
-        $mode = $request->query('mode') === 'week' ? 'week' : 'month';
-        $date = Carbon::parse($request->query('date', now()->toDateString()));
-        $start = $mode === 'week' ? $date->copy()->startOfWeek() : $date->copy()->startOfMonth();
-        $end = $mode === 'week' ? $date->copy()->endOfWeek() : $date->copy()->endOfMonth();
+        $start = Carbon::parse($request->filled('start_date') ? $request->query('start_date') : now()->startOfMonth()->toDateString())->startOfDay();
+        $end = Carbon::parse($request->filled('end_date') ? $request->query('end_date') : now()->endOfMonth()->toDateString())->endOfDay();
+
+        if ($start->gt($end)) {
+            [$start, $end] = [$end->copy()->startOfDay(), $start->copy()->endOfDay()];
+        }
 
         $orders = Order::query()
             ->with(['customer', 'items.product', 'items.bundle', 'items.salePackage'])
@@ -72,7 +74,7 @@ class SalesReportController extends Controller
 
         $dailyRows = collect();
         for ($day = $start->copy(); $day->lte($end); $day->addDay()) {
-            $dailyRows->put($day->toDateString(), ['label' => $day->format($mode === 'week' ? 'D d' : 'd M'), 'sales' => 0, 'expense' => 0, 'profit' => 0]);
+            $dailyRows->put($day->toDateString(), ['label' => $day->format('d M'), 'sales' => 0, 'expense' => 0, 'profit' => 0]);
         }
         foreach ($orders as $order) {
             $key = $order->ordered_at->toDateString();
@@ -94,8 +96,6 @@ class SalesReportController extends Controller
         }
 
         return view('admin.reports.sales', [
-            'mode' => $mode,
-            'date' => $date,
             'start' => $start,
             'end' => $end,
             'orders' => $orders,

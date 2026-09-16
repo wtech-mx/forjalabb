@@ -27,7 +27,7 @@
                     <h2 class="h5 fw-bold mb-1"><i class="bi bi-grid-3x3-gap-fill me-2 text-primary"></i>Matriz de colores y tallas</h2>
                     <small class="text-secondary">Deja vacía la talla o el color cuando el producto solo tenga un atributo.</small>
                 </div>
-                @can('catalog.manage')
+                @can('inventory.manage')
                     <button class="btn btn-primary" type="button" data-add-variant><i class="bi bi-plus-circle me-2"></i>Agregar variante</button>
                 @endcan
             </div>
@@ -47,7 +47,7 @@
                     </div>
                 @endforeach
             </div>
-            @can('catalog.manage')
+            @can('inventory.manage')
                 <div class="d-flex justify-content-end mt-4"><button class="btn btn-dark btn-lg"><i class="bi bi-floppy-fill me-2"></i>Guardar matriz</button></div>
             @endcan
         </form>

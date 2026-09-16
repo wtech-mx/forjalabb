@@ -214,34 +214,34 @@ Route::post('/admin/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', DashboardController::class)->name('dashboard');
-    Route::get('/drive-gallery', [DriveGalleryController::class, 'index'])->middleware('can:orders.view')->name('drive-gallery.index');
-    Route::get('/drive-gallery/google/connect', [DriveGalleryController::class, 'connect'])->middleware(['can:orders.manage', 'throttle:10,1'])->name('drive-gallery.google.connect');
-    Route::get('/drive-gallery/google/callback', [DriveGalleryController::class, 'callback'])->middleware(['can:orders.manage', 'throttle:10,1'])->name('drive-gallery.google.callback');
-    Route::get('/drive-gallery/files', [DriveGalleryController::class, 'files'])->middleware(['can:orders.view', 'throttle:60,1'])->name('drive-gallery.files');
-    Route::post('/drive-gallery/files', [DriveGalleryController::class, 'upload'])->middleware(['can:orders.manage', 'throttle:20,1'])->name('drive-gallery.upload');
-    Route::post('/drive-gallery/folders', [DriveGalleryController::class, 'createFolder'])->middleware(['can:orders.manage', 'throttle:20,1'])->name('drive-gallery.folders.store');
-    Route::delete('/drive-gallery/items/{item}', [DriveGalleryController::class, 'trash'])->middleware(['can:orders.manage', 'throttle:30,1'])->name('drive-gallery.items.trash');
-    Route::get('/drive-gallery/files/{file}/download', [DriveGalleryController::class, 'download'])->middleware(['can:orders.view', 'throttle:60,1'])->name('drive-gallery.download');
+    Route::get('/', DashboardController::class)->middleware('can:dashboard.view')->name('dashboard');
+    Route::get('/drive-gallery', [DriveGalleryController::class, 'index'])->middleware('can:drive-gallery.view')->name('drive-gallery.index');
+    Route::get('/drive-gallery/google/connect', [DriveGalleryController::class, 'connect'])->middleware(['can:drive-gallery.manage', 'throttle:10,1'])->name('drive-gallery.google.connect');
+    Route::get('/drive-gallery/google/callback', [DriveGalleryController::class, 'callback'])->middleware(['can:drive-gallery.manage', 'throttle:10,1'])->name('drive-gallery.google.callback');
+    Route::get('/drive-gallery/files', [DriveGalleryController::class, 'files'])->middleware(['can:drive-gallery.view', 'throttle:60,1'])->name('drive-gallery.files');
+    Route::post('/drive-gallery/files', [DriveGalleryController::class, 'upload'])->middleware(['can:drive-gallery.manage', 'throttle:20,1'])->name('drive-gallery.upload');
+    Route::post('/drive-gallery/folders', [DriveGalleryController::class, 'createFolder'])->middleware(['can:drive-gallery.manage', 'throttle:20,1'])->name('drive-gallery.folders.store');
+    Route::delete('/drive-gallery/items/{item}', [DriveGalleryController::class, 'trash'])->middleware(['can:drive-gallery.manage', 'throttle:30,1'])->name('drive-gallery.items.trash');
+    Route::get('/drive-gallery/files/{file}/download', [DriveGalleryController::class, 'download'])->middleware(['can:drive-gallery.view', 'throttle:60,1'])->name('drive-gallery.download');
 
     Route::get('/settings', [SettingsController::class, 'index'])->middleware('can:settings.manage')->name('settings.index');
     Route::post('/settings/database/download', [SettingsController::class, 'download'])->middleware(['can:settings.manage', 'throttle:5,1'])->name('settings.database.download');
     Route::post('/settings/database/restore', [SettingsController::class, 'restore'])->middleware(['can:settings.manage', 'throttle:10,1'])->name('settings.database.restore');
     Route::get('/settings/whatsapp/status', [WhatsappController::class, 'status'])->middleware(['can:settings.manage', 'throttle:60,1'])->name('settings.whatsapp.status');
     Route::post('/settings/whatsapp/logout', [WhatsappController::class, 'logout'])->middleware(['can:settings.manage', 'throttle:5,1'])->name('settings.whatsapp.logout');
-    Route::get('/whatsapp', [WhatsappController::class, 'index'])->middleware('can:orders.view')->name('whatsapp.index');
-    Route::get('/whatsapp/chats', [WhatsappController::class, 'chats'])->middleware(['can:orders.view', 'throttle:120,1'])->name('whatsapp.chats');
-    Route::post('/whatsapp/messages', [WhatsappController::class, 'messages'])->middleware(['can:orders.view', 'throttle:120,1'])->name('whatsapp.messages');
-    Route::post('/whatsapp/send', [WhatsappController::class, 'sendChat'])->middleware(['can:orders.manage', 'throttle:60,1'])->name('whatsapp.send');
+    Route::get('/whatsapp', [WhatsappController::class, 'index'])->middleware('can:whatsapp.view')->name('whatsapp.index');
+    Route::get('/whatsapp/chats', [WhatsappController::class, 'chats'])->middleware(['can:whatsapp.view', 'throttle:120,1'])->name('whatsapp.chats');
+    Route::post('/whatsapp/messages', [WhatsappController::class, 'messages'])->middleware(['can:whatsapp.view', 'throttle:120,1'])->name('whatsapp.messages');
+    Route::post('/whatsapp/send', [WhatsappController::class, 'sendChat'])->middleware(['can:whatsapp.manage', 'throttle:60,1'])->name('whatsapp.send');
 
-    Route::get('/deliveries/map', DeliveryMapController::class)->middleware('can:orders.view')->name('deliveries.map');
-    Route::get('/deliveries/locations', [DeliveryMapController::class, 'locations'])->middleware('can:orders.view')->name('deliveries.locations');
-    Route::post('/deliveries/locations', [DeliveryMapController::class, 'storeLocation'])->middleware(['can:orders.view', 'throttle:30,1'])->name('deliveries.locations.store');
-    Route::get('/reports/sales', [SalesReportController::class, 'index'])->middleware('can:orders.view')->name('reports.sales');
-    Route::get('/reports/commissions', [CommissionReportController::class, 'index'])->middleware('can:orders.view')->name('reports.commissions');
-    Route::get('/reports/commissions/pdf', [CommissionReportController::class, 'pdf'])->middleware('can:orders.view')->name('reports.commissions.pdf');
-    Route::resource('expenses', ExpenseController::class)->only('index')->middleware('can:orders.view');
-    Route::resource('expenses', ExpenseController::class)->only(['store', 'destroy'])->middleware('can:orders.manage');
+    Route::get('/deliveries/map', DeliveryMapController::class)->middleware('can:deliveries.view')->name('deliveries.map');
+    Route::get('/deliveries/locations', [DeliveryMapController::class, 'locations'])->middleware('can:deliveries.view')->name('deliveries.locations');
+    Route::post('/deliveries/locations', [DeliveryMapController::class, 'storeLocation'])->middleware(['can:deliveries.manage', 'throttle:30,1'])->name('deliveries.locations.store');
+    Route::get('/reports/sales', [SalesReportController::class, 'index'])->middleware('can:reports.view')->name('reports.sales');
+    Route::get('/reports/commissions', [CommissionReportController::class, 'index'])->middleware('can:commissions.view')->name('reports.commissions');
+    Route::get('/reports/commissions/pdf', [CommissionReportController::class, 'pdf'])->middleware('can:commissions.view')->name('reports.commissions.pdf');
+    Route::resource('expenses', ExpenseController::class)->only('index')->middleware('can:expenses.view');
+    Route::resource('expenses', ExpenseController::class)->only(['store', 'destroy'])->middleware('can:expenses.manage');
     Route::get('/orders/{order}/pdf', [OrderController::class, 'pdf'])->middleware('can:orders.view')->name('orders.pdf');
     Route::get('/orders/{order}/receipt', [OrderController::class, 'receipt'])->middleware('can:orders.view')->name('orders.receipt');
     Route::post('/orders/{order}/whatsapp', [WhatsappController::class, 'send'])->middleware(['can:orders.manage', 'throttle:10,1'])->name('orders.whatsapp.send');
@@ -251,42 +251,44 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::patch('/orders/{order}/delivery-method', [OrderController::class, 'updateDeliveryMethod'])->middleware('can:orders.manage')->name('orders.delivery-method.update');
     Route::resource('orders', OrderController::class)->except(['index', 'show', 'destroy'])->middleware('can:orders.manage');
     Route::resource('orders', OrderController::class)->only(['index', 'show'])->middleware('can:orders.view');
-    Route::get('/inventory', [InventoryController::class, 'index'])->middleware('can:catalog.view')->name('inventory.index');
-    Route::post('/inventory/{product}/adjust', [InventoryController::class, 'adjust'])->middleware('can:catalog.manage')->name('inventory.adjust');
-    Route::get('/inventory/{product}/variants', [InventoryController::class, 'variants'])->middleware('can:catalog.view')->name('inventory.variants');
-    Route::put('/inventory/{product}/variants', [InventoryController::class, 'syncVariants'])->middleware('can:catalog.manage')->name('inventory.variants.update');
-    Route::get('/shipments', [ShipmentController::class, 'index'])->middleware('can:orders.view')->name('shipments.index');
-    Route::get('/shipping-quote', [ShipmentController::class, 'quickQuoteView'])->middleware('can:orders.view')->name('shipments.quick-quote');
-    Route::post('/shipping-quote', [ShipmentController::class, 'quickQuote'])->middleware('can:orders.view')->name('shipments.quick-quote.calculate');
-    Route::get('/shipping-quote/pickup-coverage', [ShipmentController::class, 'pickupCoverage'])->middleware('can:orders.view')->name('shipments.pickup-coverage');
-    Route::post('/shipping-quote/pickups', [ShipmentController::class, 'schedulePickup'])->middleware(['can:orders.manage', 'throttle:5,1'])->name('shipments.pickups.store');
-    Route::get('/shipments/create', [ShipmentController::class, 'selectOrder'])->middleware('can:orders.manage')->name('shipments.select-order');
-    Route::get('/shipments/postal-code/{postalCode}', [ShipmentController::class, 'postalCode'])->middleware('can:orders.manage')->name('shipments.postal-code');
-    Route::post('/orders/{order}/shipment/quote', [ShipmentController::class, 'draftQuote'])->middleware('can:orders.manage')->name('shipments.draft-quote');
-    Route::get('/orders/{order}/shipment/available-guides', [ShipmentController::class, 'availableGuides'])->middleware('can:orders.manage')->name('shipments.available-guides');
-    Route::post('/orders/{order}/shipment/assign-guide', [ShipmentController::class, 'assignGuide'])->middleware('can:orders.manage')->name('shipments.assign-guide');
-    Route::get('/orders/{order}/shipment/create', [ShipmentController::class, 'create'])->middleware('can:orders.manage')->name('shipments.create');
-    Route::post('/orders/{order}/shipment', [ShipmentController::class, 'store'])->middleware('can:orders.manage')->name('shipments.store');
-    Route::get('/shipments/{shipment}', [ShipmentController::class, 'show'])->middleware('can:orders.view')->name('shipments.show');
-    Route::get('/shipments/{shipment}/capture-qr', [ShipmentController::class, 'captureQr'])->middleware('can:orders.view')->name('shipments.capture-qr');
-    Route::put('/shipments/{shipment}', [ShipmentController::class, 'update'])->middleware('can:orders.manage')->name('shipments.update');
-    Route::post('/shipments/{shipment}/events', [ShipmentController::class, 'addEvent'])->middleware('can:orders.manage')->name('shipments.events.store');
-    Route::post('/shipments/{shipment}/quote', [ShipmentController::class, 'quote'])->middleware('can:orders.manage')->name('shipments.quote');
-    Route::post('/shipments/{shipment}/quote-rates', [ShipmentController::class, 'quoteRates'])->middleware('can:orders.manage')->name('shipments.quote-rates');
-    Route::post('/shipments/{shipment}/guide', [ShipmentController::class, 'generateGuide'])->middleware('can:orders.manage')->name('shipments.guide');
+    Route::get('/inventory', [InventoryController::class, 'index'])->middleware('can:inventory.view')->name('inventory.index');
+    Route::post('/inventory/{product}/adjust', [InventoryController::class, 'adjust'])->middleware('can:inventory.manage')->name('inventory.adjust');
+    Route::get('/inventory/{product}/variants', [InventoryController::class, 'variants'])->middleware('can:inventory.view')->name('inventory.variants');
+    Route::put('/inventory/{product}/variants', [InventoryController::class, 'syncVariants'])->middleware('can:inventory.manage')->name('inventory.variants.update');
+    Route::get('/shipments', [ShipmentController::class, 'index'])->middleware('can:shipments.view')->name('shipments.index');
+    Route::get('/shipping-quote', [ShipmentController::class, 'quickQuoteView'])->middleware('can:shipments.view')->name('shipments.quick-quote');
+    Route::post('/shipping-quote', [ShipmentController::class, 'quickQuote'])->middleware('can:shipments.view')->name('shipments.quick-quote.calculate');
+    Route::get('/shipping-quote/pickup-coverage', [ShipmentController::class, 'pickupCoverage'])->middleware('can:shipments.view')->name('shipments.pickup-coverage');
+    Route::post('/shipping-quote/pickups', [ShipmentController::class, 'schedulePickup'])->middleware(['can:shipments.manage', 'throttle:5,1'])->name('shipments.pickups.store');
+    Route::get('/shipments/create', [ShipmentController::class, 'selectOrder'])->middleware('can:shipments.manage')->name('shipments.select-order');
+    Route::get('/shipments/postal-code/{postalCode}', [ShipmentController::class, 'postalCode'])->middleware('can:shipments.manage')->name('shipments.postal-code');
+    Route::post('/orders/{order}/shipment/quote', [ShipmentController::class, 'draftQuote'])->middleware('can:shipments.manage')->name('shipments.draft-quote');
+    Route::get('/orders/{order}/shipment/available-guides', [ShipmentController::class, 'availableGuides'])->middleware('can:shipments.manage')->name('shipments.available-guides');
+    Route::post('/orders/{order}/shipment/assign-guide', [ShipmentController::class, 'assignGuide'])->middleware('can:shipments.manage')->name('shipments.assign-guide');
+    Route::get('/orders/{order}/shipment/create', [ShipmentController::class, 'create'])->middleware('can:shipments.manage')->name('shipments.create');
+    Route::post('/orders/{order}/shipment', [ShipmentController::class, 'store'])->middleware('can:shipments.manage')->name('shipments.store');
+    Route::get('/shipments/{shipment}', [ShipmentController::class, 'show'])->middleware('can:shipments.view')->name('shipments.show');
+    Route::get('/shipments/{shipment}/capture-qr', [ShipmentController::class, 'captureQr'])->middleware('can:shipments.view')->name('shipments.capture-qr');
+    Route::put('/shipments/{shipment}', [ShipmentController::class, 'update'])->middleware('can:shipments.manage')->name('shipments.update');
+    Route::post('/shipments/{shipment}/events', [ShipmentController::class, 'addEvent'])->middleware('can:shipments.manage')->name('shipments.events.store');
+    Route::post('/shipments/{shipment}/quote', [ShipmentController::class, 'quote'])->middleware('can:shipments.manage')->name('shipments.quote');
+    Route::post('/shipments/{shipment}/quote-rates', [ShipmentController::class, 'quoteRates'])->middleware('can:shipments.manage')->name('shipments.quote-rates');
+    Route::post('/shipments/{shipment}/guide', [ShipmentController::class, 'generateGuide'])->middleware('can:shipments.manage')->name('shipments.guide');
 
     Route::resource('customers', CustomerController::class)->only(['index'])->middleware('can:customers.view');
     Route::resource('customers', CustomerController::class)->only(['update'])->middleware('can:customers.manage');
 
-    Route::post('/mailing/{mailing}/send', [EmailCampaignController::class, 'send'])->name('mailing.send');
-    Route::post('/mailing/{mailing}/resend', [EmailCampaignController::class, 'resend'])->name('mailing.resend');
-    Route::get('/mailing/{mailing}/preview', [EmailCampaignController::class, 'preview'])->name('mailing.preview');
-    Route::resource('mailing', EmailCampaignController::class)->except('show');
+    Route::post('/mailing/{mailing}/send', [EmailCampaignController::class, 'send'])->middleware('can:mailing.manage')->name('mailing.send');
+    Route::post('/mailing/{mailing}/resend', [EmailCampaignController::class, 'resend'])->middleware('can:mailing.manage')->name('mailing.resend');
+    Route::get('/mailing/{mailing}/preview', [EmailCampaignController::class, 'preview'])->middleware('can:mailing.view')->name('mailing.preview');
+    Route::resource('mailing', EmailCampaignController::class)->only('index')->middleware('can:mailing.view');
+    Route::resource('mailing', EmailCampaignController::class)->except(['index', 'show'])->middleware('can:mailing.manage');
 
-    Route::get('/tags/invitations/create', [SmartTagController::class, 'createInvitation'])->name('tags.invitations.create');
-    Route::post('/tags/invitations', [SmartTagController::class, 'storeInvitation'])->name('tags.invitations.store');
-    Route::get('/tags/{tag}/qr', [SmartTagController::class, 'qr'])->name('tags.qr');
-    Route::resource('tags', SmartTagController::class)->except('destroy');
+    Route::get('/tags/invitations/create', [SmartTagController::class, 'createInvitation'])->middleware('can:tags.manage')->name('tags.invitations.create');
+    Route::post('/tags/invitations', [SmartTagController::class, 'storeInvitation'])->middleware('can:tags.manage')->name('tags.invitations.store');
+    Route::get('/tags/{tag}/qr', [SmartTagController::class, 'qr'])->middleware('can:tags.view')->name('tags.qr');
+    Route::resource('tags', SmartTagController::class)->only(['index', 'show'])->middleware('can:tags.view');
+    Route::resource('tags', SmartTagController::class)->only(['create', 'store', 'edit', 'update'])->middleware('can:tags.manage');
 
     Route::resource('catalog', CatalogProductController::class)
         ->parameters(['catalog' => 'catalog'])
@@ -306,13 +308,13 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('packages', CatalogBundleController::class)
         ->parameters(['packages' => 'package'])
         ->only('index')
-        ->middleware('can:catalog.view');
+        ->middleware('can:packages.view');
     Route::resource('packages', CatalogBundleController::class)
         ->parameters(['packages' => 'package'])
         ->except(['index', 'show'])
-        ->middleware('can:catalog.manage');
+        ->middleware('can:packages.manage');
     Route::get('/packages/{package}/preview', [CatalogBundleController::class, 'preview'])
-        ->middleware('can:catalog.view')
+        ->middleware('can:packages.view')
         ->name('packages.preview');
 
     Route::resource('users', UserController::class)

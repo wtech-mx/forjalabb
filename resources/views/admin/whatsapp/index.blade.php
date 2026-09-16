@@ -24,7 +24,7 @@
                 <div class="wa-thread d-none" data-wa-thread>
                     <header class="wa-thread-header"><button class="wa-back" type="button" data-wa-back><i class="bi bi-arrow-left"></i></button><span class="wa-avatar" data-wa-avatar>W</span><div><strong data-wa-name>Contacto</strong><small><i class="bi bi-circle-fill"></i> Conversación de WhatsApp</small></div><button type="button" title="Actualizar mensajes" data-wa-thread-refresh><i class="bi bi-arrow-clockwise"></i></button></header>
                     <div class="wa-messages" data-wa-messages></div>
-                    @can('orders.manage')
+                    @can('whatsapp.manage')
                         <form class="wa-composer" data-wa-composer><textarea rows="1" maxlength="4096" placeholder="Escribe un mensaje" aria-label="Mensaje" data-wa-message required></textarea><button type="submit" title="Enviar"><i class="bi bi-send-fill"></i></button></form>
                     @else
                         <div class="wa-readonly"><i class="bi bi-eye"></i> Tu rol permite consultar, pero no enviar mensajes.</div>

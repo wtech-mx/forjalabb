@@ -14,15 +14,12 @@
         <div class="panel-card mb-4">
             <form class="row g-3 align-items-end" method="GET">
                 <div class="col-md-4">
-                    <label class="form-label">Periodo</label>
-                    <select class="form-select" name="mode">
-                        <option value="month" @selected($mode === 'month')>Mes</option>
-                        <option value="week" @selected($mode === 'week')>Semana</option>
-                    </select>
+                    <label class="form-label" for="report-start-date">Fecha inicial</label>
+                    <input class="form-control" id="report-start-date" type="date" name="start_date" value="{{ $start->format('Y-m-d') }}" required>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Fecha de referencia</label>
-                    <input class="form-control" type="date" name="date" value="{{ $date->format('Y-m-d') }}">
+                    <label class="form-label" for="report-end-date">Fecha final</label>
+                    <input class="form-control" id="report-end-date" type="date" name="end_date" value="{{ $end->format('Y-m-d') }}" required>
                 </div>
                 <div class="col-md-auto">
                     <button class="btn btn-dark w-100"><i class="bi bi-funnel-fill me-2"></i>Ver reporte</button>
@@ -142,7 +139,7 @@
                     <h2 class="h5 fw-bold mb-1">Gastos reales registrados</h2>
                     <p class="text-secondary mb-0">Estos gastos se suman a los gastos estimados para calcular la utilidad aproximada.</p>
                 </div>
-                <a class="btn btn-outline-dark btn-sm" href="{{ route('admin.expenses.index', ['month' => $start->format('Y-m')]) }}"><i class="bi bi-wallet2 me-1"></i>Administrar gastos</a>
+                @can('expenses.view')<a class="btn btn-outline-dark btn-sm" href="{{ route('admin.expenses.index', ['month' => $start->format('Y-m')]) }}"><i class="bi bi-wallet2 me-1"></i>Administrar gastos</a>@endcan
             </div>
             <div class="table-responsive">
                 <table class="table align-middle mb-0">

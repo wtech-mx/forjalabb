@@ -27,7 +27,7 @@
                     <small>Mínimo: <b data-minimum>{{ $product->minimum_stock }}</b> · {{ $product->variants_count }} variante{{ $product->variants_count===1?'':'s' }}</small>
                     @if($product->out_variants_count)<div class="mt-2"><span class="badge text-bg-danger"><i class="bi bi-x-octagon-fill me-1"></i>{{ $product->out_variants_count }} agotadas</span></div>@elseif($product->low_variants_count)<div class="mt-2"><span class="badge text-bg-warning"><i class="bi bi-exclamation-triangle-fill me-1"></i>{{ $product->low_variants_count }} bajas</span></div>@endif
                     <a class="btn btn-sm btn-outline-primary w-100 mt-3" href="{{ route('admin.inventory.variants',$product) }}"><i class="bi bi-grid-3x3-gap-fill me-1"></i>Matriz de variantes</a>
-                    @can('catalog.manage')
+                    @can('inventory.manage')
                         <button class="btn btn-sm btn-outline-dark w-100 mt-2" type="button" data-adjust-button data-name="{{ $product->name }}" data-stock="{{ $product->stock }}" data-minimum="{{ $product->minimum_stock }}" data-variants="{{ base64_encode(json_encode($product->variants->map(fn($variant)=>['id'=>$variant->id,'label'=>$variant->label,'stock'=>$variant->stock,'minimum_stock'=>$variant->minimum_stock])->values())) }}" data-url="{{ route('admin.inventory.adjust',$product) }}"><i class="bi bi-arrow-left-right me-1"></i>Registrar movimiento</button>
                     @endcan
                 </div>
@@ -40,7 +40,7 @@
     </div></aside></div>
 </div></section>
 
-@can('catalog.manage')
+@can('inventory.manage')
 <div class="modal fade" id="inventoryAdjustModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
     <div class="modal-header"><div><div class="eyebrow">Entrada o salida</div><h2 class="modal-title h4 fw-bold" data-adjust-name></h2></div><button class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
     <form data-adjust-form><div class="modal-body">

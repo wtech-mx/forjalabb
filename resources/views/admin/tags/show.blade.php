@@ -12,7 +12,7 @@
                     <h1 class="fw-bold mt-2 mb-0">{{ $tag->display_name }}</h1>
                 </div>
                 <div class="d-flex flex-wrap gap-2">
-                    <a class="btn btn-outline-dark" href="{{ route('admin.tags.edit', $tag) }}"><i class="bi bi-pencil me-2"></i>Editar</a>
+                    @can('tags.manage')<a class="btn btn-outline-dark" href="{{ route('admin.tags.edit', $tag) }}"><i class="bi bi-pencil me-2"></i>Editar</a>@endcan
                     <a class="btn btn-dark" href="{{ route('admin.tags.index') }}"><i class="bi bi-list-ul me-2"></i>Listado</a>
                 </div>
             </div>

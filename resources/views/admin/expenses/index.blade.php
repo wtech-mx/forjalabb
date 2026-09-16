@@ -14,7 +14,7 @@
         </div>
 
         <div class="row g-4 mb-4">
-            @can('orders.manage')
+            @can('expenses.manage')
                 <div class="col-lg-5">
                     <div class="panel-card h-100">
                         <div class="form-section-title compact">
@@ -59,7 +59,7 @@
                 </div>
             @endcan
 
-            <div class="@can('orders.manage') col-lg-7 @else col-12 @endcan">
+            <div class="@can('expenses.manage') col-lg-7 @else col-12 @endcan">
                 <div class="panel-card h-100">
                     <div class="d-flex flex-wrap justify-content-between gap-3 align-items-end mb-3">
                         <div>
@@ -83,7 +83,7 @@
                                     <th>Concepto</th>
                                     <th>Categoría</th>
                                     <th class="text-end">Monto</th>
-                                    @can('orders.manage')<th class="text-end">Acciones</th>@endcan
+                                    @can('expenses.manage')<th class="text-end">Acciones</th>@endcan
                                 </tr>
                             </thead>
                             <tbody>
@@ -98,7 +98,7 @@
                                         </td>
                                         <td><span class="badge text-bg-light">{{ $expense->category }}</span></td>
                                         <td class="text-end fw-bold">${{ number_format((float) $expense->amount, 2) }}</td>
-                                        @can('orders.manage')
+                                        @can('expenses.manage')
                                             <td class="text-end">
                                                 <form method="POST" action="{{ route('admin.expenses.destroy', $expense) }}" data-confirm="Este gasto se quitará de los reportes." data-confirm-title="¿Eliminar gasto?" data-confirm-button="Sí, eliminar">
                                                     @csrf
@@ -110,7 +110,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td class="text-center text-secondary py-4" colspan="@can('orders.manage') 5 @else 4 @endcan">No hay gastos registrados en este mes.</td>
+                                        <td class="text-center text-secondary py-4" colspan="@can('expenses.manage') 5 @else 4 @endcan">No hay gastos registrados en este mes.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

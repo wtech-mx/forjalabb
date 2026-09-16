@@ -12,7 +12,7 @@
                 </div>
                 <div class="d-flex flex-wrap gap-2">
                     <a class="btn btn-outline-dark" href="{{ route('admin.packages.index') }}"><i class="bi bi-arrow-left me-2"></i>Volver</a>
-                    @can('catalog.manage')
+                    @can('packages.manage')
                         <a class="btn btn-dark" href="{{ route('admin.packages.edit', $bundle) }}"><i class="bi bi-pencil me-2"></i>Editar</a>
                     @endcan
                 </div>

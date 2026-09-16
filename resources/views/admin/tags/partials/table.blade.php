@@ -34,7 +34,7 @@
                     <td class="text-end">
                         <div class="btn-group btn-group-sm">
                             <a class="btn btn-outline-dark" href="{{ route('admin.tags.show', $tag) }}" title="Ver"><i class="bi bi-eye"></i></a>
-                            <a class="btn btn-outline-dark" href="{{ route('admin.tags.edit', $tag) }}" title="Editar"><i class="bi bi-pencil"></i></a>
+                            @can('tags.manage')<a class="btn btn-outline-dark" href="{{ route('admin.tags.edit', $tag) }}" title="Editar"><i class="bi bi-pencil"></i></a>@endcan
                             @if($tag->is_active)<a class="btn btn-outline-dark" href="{{ $tag->public_url }}" target="_blank" rel="noopener" title="Perfil público"><i class="bi bi-box-arrow-up-right"></i></a>@elseif($tag->intake_url)<a class="btn btn-outline-warning" href="{{ $tag->intake_url }}" target="_blank" rel="noopener" title="Formulario del cliente"><i class="bi bi-link-45deg"></i></a>@endif
                         </div>
                     </td>

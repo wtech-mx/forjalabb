@@ -13,6 +13,7 @@
             </div>
             @endcan
 
+            @can('tags.view')
             <div class="admin-header mb-3">
                 <div><div class="eyebrow">Smart Tags</div><h2 class="h4 fw-bold mt-2 mb-0">Identificaciones registradas</h2></div>
                 <a class="btn btn-sm btn-outline-dark" href="{{ route('admin.tags.index') }}">Administrar tags</a>
@@ -27,7 +28,9 @@
                     <div class="col-6 col-lg-3"><div class="metric-card analytics-metric-card"><i class="bi {{ $icon }}"></i><span>{{ $label }}</span><strong>{{ $value }}</strong></div></div>
                 @endforeach
             </div>
+            @endcan
 
+            @can('catalog.view')
             <div class="panel-card mb-4">
                 <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
                     <h2 class="h5 fw-bold mb-0">Ultimos productos</h2>
@@ -35,6 +38,7 @@
                 </div>
                 @include('admin.catalog-products.partials.table', ['products' => $latestProducts])
             </div>
+            @endcan
 
             <div class="admin-header mt-5 mb-3">
                 <div>
