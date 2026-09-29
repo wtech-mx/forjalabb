@@ -24,6 +24,16 @@ use Illuminate\Support\Str;
     'minimum_stock',
     'cover_photo_path',
     'presentation_mode',
+    'is_personalizable',
+    'personalization_method',
+    'personalization_x',
+    'personalization_y',
+    'personalization_width',
+    'personalization_height',
+    'personalization_rotation',
+    'personalization_font_size',
+    'personalization_font_family',
+    'personalization_text_color',
     'badge',
     'image_path',
     'icon',
@@ -53,6 +63,14 @@ class CatalogProduct extends Model
     public const MODE_GALLERY = 'gallery';
     public const MODE_CUSTOMIZATION = 'customization';
 
+    public const PERSONALIZATION_LASER = 'laser';
+    public const PERSONALIZATION_SUBLIMATION = 'sublimation';
+
+    public const PERSONALIZATION_METHODS = [
+        self::PERSONALIZATION_LASER => 'Grabado laser',
+        self::PERSONALIZATION_SUBLIMATION => 'Sublimado',
+    ];
+
     public const PRESENTATION_MODES = [
         self::MODE_GALLERY => 'Galeria de fotos',
         self::MODE_CUSTOMIZATION => 'Personalizacion de producto',
@@ -63,7 +81,14 @@ class CatalogProduct extends Model
         return [
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
+            'is_personalizable' => 'boolean',
             'sort_order' => 'integer',
+            'personalization_x' => 'integer',
+            'personalization_y' => 'integer',
+            'personalization_width' => 'integer',
+            'personalization_height' => 'integer',
+            'personalization_rotation' => 'integer',
+            'personalization_font_size' => 'integer',
             'cost_subtotal' => 'decimal:2',
             'friends_price' => 'decimal:2',
             'public_price' => 'decimal:2',

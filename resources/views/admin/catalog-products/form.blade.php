@@ -152,16 +152,16 @@
                             </button>
                         </div>
 
-                        <div class="panel-card mb-4" data-gallery-fields>
+                        <div class="panel-card mb-4">
                             <div class="form-section-title">
                                 <i class="bi bi-images"></i>
                                 <div>
-                                    <h2>Galeria del producto</h2>
-                                    <p>Sube varias fotos. El cliente las vera en carrusel.</p>
+                                    <h2>Fotos del producto</h2>
+                                    <p>Estas fotos aparecen en la galeria interna y como opciones de foto base en el personalizador.</p>
                                 </div>
                             </div>
                             <div class="row g-3">
-                                <div class="col-md-5">
+                                <div class="col-md-5" data-gallery-stock-fields>
                                     <label class="form-label" for="stock">Stock del producto</label>
                                     <input class="form-control @error('stock') is-invalid @enderror" id="stock" name="stock" type="number" min="0" value="{{ old('stock', $product->stock ?? 0) }}" data-gallery-stock>
                                     @error('stock')<div class="invalid-feedback">{{ $message }}</div>@enderror
@@ -181,6 +181,78 @@
                                         </div>
                                     @endif
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-card mb-4">
+                            <div class="form-section-title">
+                                <i class="bi bi-brush-fill"></i>
+                                <div>
+                                    <h2>Plantilla de personalizacion</h2>
+                                    <p>Define una zona fija para escribir nombres sin alterar la foto del producto.</p>
+                                </div>
+                            </div>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" id="is_personalizable" name="is_personalizable" type="checkbox" value="1" @checked(old('is_personalizable', $product->is_personalizable))>
+                                <label class="form-check-label" for="is_personalizable">Usar este producto en el personalizador</label>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label" for="personalization_method">Metodo</label>
+                                    <select class="form-select @error('personalization_method') is-invalid @enderror" id="personalization_method" name="personalization_method">
+                                        @foreach (\App\Models\CatalogProduct::PERSONALIZATION_METHODS as $value => $label)
+                                            <option value="{{ $value }}" @selected(old('personalization_method', $product->personalization_method ?: \App\Models\CatalogProduct::PERSONALIZATION_LASER) === $value)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('personalization_method')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="personalization_font_family">Tipografia</label>
+                                    <select class="form-select @error('personalization_font_family') is-invalid @enderror" id="personalization_font_family" name="personalization_font_family">
+                                        @foreach (['Montserrat', 'Arial', 'Helvetica', 'Georgia', 'Times New Roman', 'Verdana', 'Trebuchet MS', 'Tahoma', 'Courier New', 'Lucida Console', 'Impact', 'Arial Black', 'Palatino Linotype', 'Garamond', 'Bookman Old Style', 'Cambria', 'Candara', 'Century Gothic', 'Consolas', 'Franklin Gothic Medium', 'Gill Sans', 'Segoe UI', 'Optima', 'Didot', 'Baskerville', 'Copperplate', 'Brush Script MT', 'Lucida Handwriting', 'Comic Sans MS'] as $font)
+                                            <option value="{{ $font }}" @selected(old('personalization_font_family', $product->personalization_font_family ?: 'Montserrat') === $font)>{{ $font }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('personalization_font_family')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="personalization_x">Centro X %</label>
+                                    <input class="form-control @error('personalization_x') is-invalid @enderror" id="personalization_x" name="personalization_x" type="number" min="0" max="100" value="{{ old('personalization_x', $product->personalization_x ?? 50) }}">
+                                    @error('personalization_x')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="personalization_y">Centro Y %</label>
+                                    <input class="form-control @error('personalization_y') is-invalid @enderror" id="personalization_y" name="personalization_y" type="number" min="0" max="100" value="{{ old('personalization_y', $product->personalization_y ?? 52) }}">
+                                    @error('personalization_y')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="personalization_width">Ancho %</label>
+                                    <input class="form-control @error('personalization_width') is-invalid @enderror" id="personalization_width" name="personalization_width" type="number" min="8" max="100" value="{{ old('personalization_width', $product->personalization_width ?? 34) }}">
+                                    @error('personalization_width')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="personalization_height">Alto %</label>
+                                    <input class="form-control @error('personalization_height') is-invalid @enderror" id="personalization_height" name="personalization_height" type="number" min="4" max="100" value="{{ old('personalization_height', $product->personalization_height ?? 12) }}">
+                                    @error('personalization_height')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="personalization_rotation">Rotacion del texto</label>
+                                    <input class="form-control @error('personalization_rotation') is-invalid @enderror" id="personalization_rotation" name="personalization_rotation" type="number" min="-180" max="180" value="{{ old('personalization_rotation', $product->personalization_rotation ?? 0) }}">
+                                    @error('personalization_rotation')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="personalization_font_size">Tamano base</label>
+                                    <input class="form-control @error('personalization_font_size') is-invalid @enderror" id="personalization_font_size" name="personalization_font_size" type="number" min="12" max="220" value="{{ old('personalization_font_size', $product->personalization_font_size ?? 58) }}">
+                                    @error('personalization_font_size')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="personalization_text_color">Color sublimado</label>
+                                    <input class="form-control form-control-color w-100 @error('personalization_text_color') is-invalid @enderror" id="personalization_text_color" name="personalization_text_color" type="color" value="{{ old('personalization_text_color', $product->personalization_text_color ?: '#2b2118') }}">
+                                    @error('personalization_text_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
+                            </div>
+                            <div class="alert alert-light mt-3 mb-0">
+                                <i class="bi bi-info-circle me-2"></i>La posicion usa porcentajes de la foto: 50/50 es el centro. Para laser, el personalizador bloqueara color y simulara grabado.
                             </div>
                         </div>
 
@@ -313,7 +385,7 @@
             const packageList = form.querySelector('[data-package-list]');
             const packageTemplate = document.querySelector('[data-package-template]').innerHTML;
             const modeSelect = form.querySelector('[name="presentation_mode"]');
-            const galleryFields = form.querySelector('[data-gallery-fields]');
+            const galleryStockFields = form.querySelector('[data-gallery-stock-fields]');
             const customizationFields = form.querySelector('[data-customization-fields]');
             const galleryStock = form.querySelector('[data-gallery-stock]');
             const stockSummaryLabel = form.querySelector('[data-stock-summary-label]');
@@ -338,8 +410,8 @@
                 if (stockSummaryLabel) {
                     stockSummaryLabel.textContent = isGallery ? 'Stock del producto' : 'Stock total por colores';
                 }
-                if (galleryFields) {
-                    galleryFields.hidden = !isGallery;
+                if (galleryStockFields) {
+                    galleryStockFields.hidden = !isGallery;
                 }
                 if (customizationFields) {
                     customizationFields.hidden = isGallery;

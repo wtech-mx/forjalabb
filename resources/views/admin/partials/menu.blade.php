@@ -26,6 +26,7 @@
             @can('inventory.view')<a class="{{ request()->routeIs('admin.inventory.*') ? 'active' : '' }}" href="{{ route('admin.inventory.index') }}"><i class="bi bi-boxes"></i><span><strong>Inventario</strong><small>Existencias y movimientos</small></span></a>@endcan
             @can('catalog.view')
                 <a class="{{ request()->routeIs('admin.catalog.*') ? 'active' : '' }}" href="{{ route('admin.catalog.index') }}"><i class="bi bi-bag-heart-fill"></i><span><strong>Catalogo</strong><small>Productos y precios</small></span></a>
+                <a class="{{ request()->routeIs('admin.personalizer.*') ? 'active' : '' }}" href="{{ route('admin.personalizer.index') }}"><i class="bi bi-brush-fill"></i><span><strong>Personalizador</strong><small>Nombres en productos</small></span></a>
                 <a href="{{ route('catalog.magazine.priced') }}" target="_blank"><i class="bi bi-tags-fill"></i><span><strong>Revista con precios</strong><small>Catálogo para venta directa</small></span></a>
                 <a href="{{ route('catalog.magazine.unpriced') }}" target="_blank"><i class="bi bi-eye-slash-fill"></i><span><strong>Revista sin precios</strong><small>Catálogo para cotización</small></span></a>
             @endcan

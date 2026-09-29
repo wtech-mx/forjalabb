@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\ProductPersonalizationController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SalesReportController;
 use App\Http\Controllers\Admin\SettingsController;
@@ -305,6 +306,9 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/catalog/google-merchant/sync', [CatalogProductController::class, 'syncMerchant'])
         ->middleware(['can:catalog.manage', 'throttle:3,1'])
         ->name('catalog.merchant.sync');
+    Route::get('/personalizador', [ProductPersonalizationController::class, 'index'])
+        ->middleware('can:catalog.view')
+        ->name('personalizer.index');
 
     Route::resource('packages', CatalogBundleController::class)
         ->parameters(['packages' => 'package'])
