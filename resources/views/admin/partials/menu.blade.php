@@ -25,6 +25,7 @@
             @can('mailing.view')<a class="{{ request()->routeIs('admin.mailing.*') ? 'active' : '' }}" href="{{ route('admin.mailing.index') }}"><i class="bi bi-envelope-paper-heart-fill"></i><span><strong>Mailing</strong><small>Editor y mini campañas</small></span></a>@endcan
             @can('inventory.view')<a class="{{ request()->routeIs('admin.inventory.*') ? 'active' : '' }}" href="{{ route('admin.inventory.index') }}"><i class="bi bi-boxes"></i><span><strong>Inventario</strong><small>Existencias y movimientos</small></span></a>@endcan
             @can('catalog.view')
+                <a class="{{ request()->routeIs('admin.catalog-quotes.*') ? 'active' : '' }}" href="{{ route('admin.catalog-quotes.index') }}"><i class="bi bi-file-earmark-pdf-fill"></i><span><strong>Catálogo PDF y mayoreo</strong><small>Precios personalizados</small></span></a>
                 <a class="{{ request()->routeIs('admin.catalog.*') ? 'active' : '' }}" href="{{ route('admin.catalog.index') }}"><i class="bi bi-bag-heart-fill"></i><span><strong>Catalogo</strong><small>Productos y precios</small></span></a>
                 <a class="{{ request()->routeIs('admin.personalizer.*') ? 'active' : '' }}" href="{{ route('admin.personalizer.index') }}"><i class="bi bi-brush-fill"></i><span><strong>Personalizador</strong><small>Nombres en productos</small></span></a>
                 <a href="{{ route('catalog.magazine.priced') }}" target="_blank"><i class="bi bi-tags-fill"></i><span><strong>Revista con precios</strong><small>Catálogo para venta directa</small></span></a>

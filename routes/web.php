@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CatalogBundleController;
 use App\Http\Controllers\Admin\CatalogProductController;
+use App\Http\Controllers\Admin\CatalogQuoteController;
 use App\Http\Controllers\Admin\CommissionReportController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DeliveryMapController;
@@ -291,6 +292,9 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/tags/{tag}/qr', [SmartTagController::class, 'qr'])->middleware('can:tags.view')->name('tags.qr');
     Route::resource('tags', SmartTagController::class)->only(['index', 'show'])->middleware('can:tags.view');
     Route::resource('tags', SmartTagController::class)->only(['create', 'store', 'edit', 'update'])->middleware('can:tags.manage');
+
+    Route::get('/catalog-quotes', [CatalogQuoteController::class, 'index'])->middleware('can:catalog.view')->name('catalog-quotes.index');
+    Route::post('/catalog-quotes/pdf', [CatalogQuoteController::class, 'pdf'])->middleware(['can:catalog.view', 'throttle:20,1'])->name('catalog-quotes.pdf');
 
     Route::resource('catalog', CatalogProductController::class)
         ->parameters(['catalog' => 'catalog'])

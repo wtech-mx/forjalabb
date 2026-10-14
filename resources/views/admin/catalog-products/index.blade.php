@@ -15,6 +15,7 @@
                         <i class="bi bi-plus-circle me-2"></i>Nuevo producto
                     </a></div>
                 @endcan
+                <a class="btn btn-outline-dark" href="{{ route('admin.catalog-quotes.index') }}"><i class="bi bi-file-earmark-pdf me-2"></i>PDF y mayoreo</a>
             </div>
 
             <div class="panel-card">
