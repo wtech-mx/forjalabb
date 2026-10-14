@@ -104,8 +104,8 @@ Route::get('/', function () {
             ->first(),
         'catalogProducts' => CatalogProduct::active()
             ->where('is_featured', false)
-            ->orderBy('sort_order')
-            ->orderBy('name')
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->get(),
         'catalogBundles' => CatalogBundle::active()
             ->with(['items.product'])
